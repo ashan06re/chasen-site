@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run lint:*)",
+      "Bash(find src -type f*)",
+      "Bash(find . -name *.tsx*)",
+      "Bash(find . -name *.ts*)",
+      "Bash(grep -r*)",
+      "Bash(grep -n*)",
+      "Bash(ls*)",
+      "Bash(cat*)"
+    ]
+  }
+}
