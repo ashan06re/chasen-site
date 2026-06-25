@@ -133,7 +133,7 @@ export default function StoreSection({ store, menuCardsEn, dark = false }: Props
 
                   <h3
                     className="font-[var(--font-noto-serif-jp)] text-sm tracking-wider mb-2 leading-snug"
-                    style={{ color: dark ? "#F7F5F0" : "#1A1A18" }}
+                    style={{ color: "#1A1A18" }}
                   >
                     {cardTitle}
                   </h3>
