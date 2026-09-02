@@ -4,7 +4,7 @@
 
 茶筅（Chasen）日本茶スタンドのコーポレートサイト。Next.js 16.2.9 (App Router) + Tailwind CSS v4 + Notion CMS。
 
-**状態**: 全ページ完成・Notion連携済み・JP/EN言語切り替え実装済み・**Vercel公開済み**（2026-07-04確認）
+**状態**: 全ページ完成・Notion連携済み・日英を URL で分離（`/` と `/en`）・**Vercel公開済み**
 
 - 本番URL: https://chasen-site-eight.vercel.app
 - GitHub: https://github.com/ashan06re/chasen-site （pushで自動デプロイ、1〜2分で反映）
@@ -21,10 +21,13 @@
 ```
 src/
   app/
-    layout.tsx, page.tsx, news/page.tsx
-    stores/kyoto/page.tsx, stores/kyoto/menu/page.tsx
-    stores/kumamoto/page.tsx, stores/kumamoto/menu/page.tsx
+    (ja)/          日本語ルート。layout.tsx（html lang="ja"）と全ページの実体
+      page.tsx, news/, stores/kyoto/, stores/kyoto/menu/, stores/kumamoto/, stores/kumamoto/menu/, privacy/, terms/
+    (en)/          英語ルート。layout.tsx（html lang="en"）
+      en/…         (ja) の各 page.tsx を import して default export し直すだけ（メタデータのみ英語）
+    globals.css, sitemap.ts, robots.ts, icon.png, api/notion-image/
   components/
+    RootShell.tsx  両ルートレイアウト共通の <html>〜<body>（フォント・LangProvider・Analytics）
     Header.tsx, HeroSection.tsx, BrandStorySection.tsx, YoshidaSection.tsx
     StoreSection.tsx, ContactSection.tsx, AnimateIn.tsx
     StorePageLayout.tsx, StoreMenuLayout.tsx
@@ -36,11 +39,18 @@ src/
     notion.ts           # Notion API クライアント・全DB関数
 ```
 
-## 言語切り替えの仕組み
+## 言語切り替えの仕組み（2026-09-02 に URL 分離へ移行）
 
-`src/lib/langContext.tsx` の `useLang()` で `lang: "ja" | "en"` を取得。  
-EN時は `src/data/storeContent.ts` の `default〇〇En` 定数にフォールバック。  
-設定は `localStorage("chasen_lang")` に保存。
+言語は **URL で決まる**: `/…` が日本語、`/en/…` が英語。両方とも静的生成され、Google に別ページとして
+インデックスされる（`hreflang` は `src/lib/i18n.ts` の `pageAlternates()` が全ページに付ける）。
+
+- `src/lib/langContext.tsx` の `useLang()` → `{ lang, setLang, localize }`。
+  `localize("/stores/kyoto")` が現在の言語に合った URL を返すので、**内部リンクは必ず `localize()` を通す**
+- `setLang("en")` は同じページの英語 URL へ遷移する（`localStorage("chasen_lang")` にも保存）。
+  保存済みの言語と逆の URL を開いたときだけ、クライアント側でその言語へ寄せる
+- 英語ページを増やすときは `(ja)` にページを作り、`(en)/en/` に同名ファイルで import して re-export、
+  `sitemap.ts` にパスを1行足す（日英両 URL が自動で出る）
+- EN時のテキストは Notion の英語行 → 無ければ `src/data/storeContent.ts` の `default〇〇En` 定数
 
 ## デザインカラー
 
@@ -64,6 +74,17 @@ EN時は `src/data/storeContent.ts` の `default〇〇En` 定数にフォール�
 
 `revalidate = 60`（更新後最大1分で反映）。`表示する` チェックボックスが必須。  
 環境変数は `.env.local`。slug は `kyoto` / `kumamoto` 固定（変更禁止）。
+
+### メニューの日英の対応
+
+フルメニューDB・ホームカードDBとも、日本語行と英語行は別レコード。**写真は日本語行にだけ登録すればよい**
+（英語行に写真が無ければ、同じカテゴリ・同じ順番の日本語行の写真を使う）。並び順は `表示順`（数値）。
+日英で同じ `表示順` を付けておくと対応がずれない。
+
+熊本店のメニューは 2026-09-02 に写真ベースで仮登録した（8カテゴリ58品、価格は空欄）。
+それ以前のダミー行は削除せず `表示する` を外してある。ロールバック用の page id は
+このリポジトリ外（作業ログ）にあるが、Notion 上で `表示する` を戻せば復元できる。
+高台寺店のメニューはまだダミーデータのまま。
 
 ### 画像は必ずプロキシ経由（重要）
 
@@ -96,31 +117,28 @@ npm run build  # 本番ビルド確認
 
 ## 残タスク
 
-**優先度順**（2026-09-02 時点。A は完了。B〜D はユーザーの回答が要る）
+**2026-09-02 に完了**: コントラスト/タップ領域修正、英語 URL 分離、Instagram の店舗別リンク、
+熊本店メニューの仮登録（写真つき）。
 
-- ~~**A** 文字コントラストとタップ領域の修正~~ → 2026-09-02 完了（下の「デザイン監査」参照）
-- **B** メニュー写真38件をNotionに登録（ホーム用6件 / 高台寺16件 / 熊本16件が未登録）
-  素材: `~/Downloads/chasen_project/KUMAMOTOchasen20260126JPEG` に62枚
-- **C** 下の「確認待ち」の回答をサイトへ反映
-- **D** デザインの作り直し（ユーザーの指摘箇所待ち）
+**ユーザーの確認待ち**
+
+1. 熊本店メニューの仮登録内容の確認（品名・価格・「要確認」印の付いた10品。Notion 上で直接編集できる）
+2. 高台寺店のメニュー実データ（現状ダミー。写真素材も未受領）
+3. 下の「確認待ち」
 
 **未着手**
 
-1. 英語版のURL分離（`/en/...`）。現状 localStorage 切り替えのため英語ページが
-   1つもインデックスされない。訪日客が主要ターゲットなら最大の機会損失
-2. 予約フォームのiframe埋め込み or 予約SaaS連携（現状はGoogleフォームへの外部リンク）
-3. `/privacy`・`/terms` の正式な事業者名・所在地（各ファイルの `TODO` コメント）
-4. 独自ドメイン設定（設定後 `NEXT_PUBLIC_SITE_URL` を更新）
-5. Vercelダッシュボードでの Analytics 有効化（コード側は導入済み・ユーザー作業）
+1. 予約フォームのiframe埋め込み or 予約SaaS連携（現状はGoogleフォームへの外部リンク）
+2. `/privacy`・`/terms` の正式な事業者名・所在地（各ファイルの `TODO` コメント）
+3. 独自ドメイン設定（設定後 `NEXT_PUBLIC_SITE_URL` を更新）
+4. Vercelダッシュボードでの Analytics 有効化（コード側は導入済み・ユーザー作業）
+5. Google Search Console に `/en` 配下の登録（sitemap.xml を再送信するだけ）
 
 ## 確認待ち（ユーザーの回答が要る。勝手に変えないこと）
 
-1. **フッターのInstagramが別店舗のもの** — 現在 `@chasen_kyoto10f`（京都駅10F店）。
-   このサイトが扱う2店舗の公式は `@chasen_french_kodaiji`（高台寺）と
-   `@chasen_cafe_kumamoto`（熊本）。`src/lib/site.ts` の `INSTAGRAM_URL` に集約済みで、
-   構造化データの `sameAs` とフッターが共有している
-2. **高台寺店の営業時間** — ユーザー指示により 22:00 で統一済み。ただし食べログ・るるぶは
-   11:00〜21:00（L.O.20:30）で、22:00は京都駅店の時間と一致する
+1. ~~フッターのInstagram~~ → 2026-09-02 に店舗別へ変更済み。Notion「店舗情報」DB の `Instagram` 列で管理
+   （空なら `src/lib/site.ts` の `INSTAGRAM`）。フッターと店舗ページの店舗情報、構造化データの `sameAs` が共有
+2. ~~高台寺店の営業時間~~ → ユーザーが 22:00 で確定（2026-09-02）
 3. **京都駅にもう1店舗ある** — 「焼き窯スイーツ茶筅」075-352-3401。
    このサイトが高台寺店と熊本店しか扱っていないのが意図的かどうか未確認
 

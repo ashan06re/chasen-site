@@ -1,3 +1,5 @@
+import { INSTAGRAM } from "@/lib/site";
+
 /**
  * ===================================================
  *  茶筅 Chasen — 店舗コンテンツ 一元管理ファイル
@@ -64,6 +66,7 @@ export interface StoreInfo {
   description: string;
   descriptionEn?: string;
   accentColor: string; // 店舗ページHeroの背景色
+  instagram?: string;  // 店舗の公式 Instagram URL（Notion「店舗情報」DB で管理。無ければ site.ts の INSTAGRAM）
 }
 
 export interface FullMenuItem {
@@ -249,6 +252,7 @@ const kyoto: StoreContent = {
     descriptionEn:
       "A Japanese tea stand nestled in a cobblestone alley near Kodaiji Temple in Kyoto. Blending quietly into the historic streetscape, we welcome every visitor with a carefully crafted cup made from select tea leaves.",
     accentColor: "#2A4D25",
+    instagram: INSTAGRAM.kyoto,
   },
 
   // ▼ ここを編集 → ホームページのメニューカードに即反映
@@ -544,6 +548,7 @@ const kumamoto: StoreContent = {
     descriptionEn:
       "A tea stand in the heart of Sakuramachi, Kumamoto, offering a fresh take on Japanese tea. We bring the finest leaves grown in Kumamoto's rich natural environment, served in a modern style. Whether you're a local or just passing through, you're always welcome to stop in.",
     accentColor: "#1A1A18",
+    instagram: INSTAGRAM.kumamoto,
   },
 
   // ▼ ここを編集 → ホームページのメニューカードに即反映

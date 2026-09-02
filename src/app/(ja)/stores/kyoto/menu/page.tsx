@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageAlternates } from "@/lib/i18n";
 import StoreMenuLayout from "@/components/StoreMenuLayout";
 import Footer from "@/components/Footer";
 import { storeContent } from "@/data/storeContent";
@@ -9,7 +10,7 @@ export const revalidate = 60;
 export const metadata: Metadata = {
   title: "Chasen 高台寺店 メニュー",
   description: "Chasen 高台寺店の全メニュー。ドリンク・スイーツ・フードメニュー・セット。",
-  alternates: { canonical: "/stores/kyoto/menu" },
+  alternates: pageAlternates("/stores/kyoto/menu", "ja"),
   openGraph: {
     title: "Chasen 高台寺店 メニュー | 茶筅 Chasen",
     description: "Chasen 高台寺店の全メニュー。ドリンク・スイーツ・フードメニュー・セット。",

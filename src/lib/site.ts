@@ -8,9 +8,14 @@ export const SITE_URL = (
 export const SITE_NAME = "茶筅 Chasen";
 export const OG_IMAGE = "/og.jpg";
 
-/** 公式SNS。構造化データの sameAs とフッターで共有する */
-export const INSTAGRAM_URL =
-  "https://www.instagram.com/chasen_kyoto10f?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==";
+/** 店舗ごとの公式 Instagram。Notion「店舗情報」DB の Instagram 列があればそちらが優先される */
+export const INSTAGRAM: Record<"kyoto" | "kumamoto", string> = {
+  kyoto:    "https://www.instagram.com/chasen_french_kodaiji/",
+  kumamoto: "https://www.instagram.com/chasen_cafe_kumamoto/",
+};
+
+/** ブランド全体の sameAs（Organization 構造化データ用） */
+export const INSTAGRAM_URLS = Object.values(INSTAGRAM);
 
 export const absoluteUrl = (path: string) =>
   `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;

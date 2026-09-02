@@ -84,6 +84,8 @@ export async function getMenuCards(
         { property: "表示する", checkbox: { equals: true } },
       ],
     },
+    // 表示順（数値）で並べる。未設定の行は後ろに回る
+    sorts: [{ property: "表示順", direction: "ascending" }],
   });
 
   const ja: MenuCard[] = [];
@@ -110,6 +112,11 @@ export async function getMenuCards(
       ja.push(card);
     }
   }
+
+  // 英語行に写真が無ければ、同じ順番の日本語行の写真を使う（写真は日本語行にだけ登録すればよい）
+  en.forEach((card, i) => {
+    if (!card.photoUrl && ja[i]?.photoUrl) card.photoUrl = ja[i].photoUrl;
+  });
 
   return { ja, en };
 }
@@ -161,6 +168,14 @@ export async function getFullMenuSections(
       });
     }
     targetMap.get(categoryId)!.items.push(item);
+  }
+
+  // 英語行に写真が無ければ、同じカテゴリ・同じ順番の日本語行の写真を使う
+  for (const [categoryId, enSection] of enMap) {
+    const jaItems = jaMap.get(categoryId)?.items ?? [];
+    enSection.items.forEach((item, i) => {
+      if (!item.photoUrl && jaItems[i]?.photoUrl) item.photoUrl = jaItems[i].photoUrl;
+    });
   }
 
   return {
@@ -431,6 +446,7 @@ export async function getAllStoreInfo(): Promise<{
         description:   text(p["紹介文"])           || def.description,
         descriptionEn: def.descriptionEn,
         accentColor:   text(p["アクセントカラー"])  || def.accentColor,
+        instagram:     (p["Instagram"] ? text(p["Instagram"]) : "") || def.instagram,
       };
 
       if (lang === "英語") {

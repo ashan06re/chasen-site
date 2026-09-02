@@ -23,7 +23,7 @@ interface Props {
 }
 
 export default function Header({ initialDark = false }: Props) {
-  const { lang, setLang }              = useLang();
+  const { lang, setLang, localize } = useLang();
   const [scrolled, setScrolled]        = useState(initialDark);
   const [menuOpen, setMenuOpen]        = useState(false);
   const [storeOpen, setStoreOpen]      = useState(false);
@@ -59,7 +59,7 @@ export default function Header({ initialDark = false }: Props) {
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 min-h-11 hover:opacity-80 transition-opacity">
+        <Link href={localize("/")} className="flex items-center gap-3 min-h-11 hover:opacity-80 transition-opacity">
           <div className="w-9 h-9 rounded-full overflow-hidden bg-[#F7F5F0] ring-1 ring-white/30 flex-shrink-0 p-[5px]">
             <Image
               src="/logo-mark.png"
@@ -78,7 +78,7 @@ export default function Header({ initialDark = false }: Props) {
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-10">
           <Link
-            href="/#brand"
+            href={localize("/#brand")}
             className="inline-flex items-center min-h-11 text-[#F7F5F0]/75 hover:text-[#F7F5F0] text-sm tracking-[0.15em] transition-colors font-[var(--font-cormorant)]"
           >
             {t.brand}
@@ -116,7 +116,7 @@ export default function Header({ initialDark = false }: Props) {
                 {stores.map((store) => (
                   <Link
                     key={store.href}
-                    href={store.href}
+                    href={localize(store.href)}
                     className="group relative flex flex-col px-7 py-[18px] border-b border-[#F7F5F0]/5 last:border-0 overflow-hidden"
                     onClick={() => setStoreOpen(false)}
                   >
@@ -136,14 +136,14 @@ export default function Header({ initialDark = false }: Props) {
           </div>
 
           <Link
-            href="/news"
+            href={localize("/news")}
             className="inline-flex items-center min-h-11 text-[#F7F5F0]/75 hover:text-[#F7F5F0] text-sm tracking-[0.15em] transition-colors font-[var(--font-cormorant)]"
           >
             {t.news}
           </Link>
 
           <Link
-            href="/#contact"
+            href={localize("/#contact")}
             className="inline-flex items-center min-h-11 text-[#F7F5F0]/75 hover:text-[#F7F5F0] text-sm tracking-[0.15em] transition-colors font-[var(--font-cormorant)]"
           >
             {t.contact}
@@ -187,7 +187,7 @@ export default function Header({ initialDark = false }: Props) {
       >
         <nav className="px-6 py-4 flex flex-col gap-1">
           <Link
-            href="/#brand"
+            href={localize("/#brand")}
             className="block py-2 text-[#F7F5F0]/80 text-lg tracking-widest font-[var(--font-noto-serif-jp)]"
             onClick={() => setMenuOpen(false)}
           >
@@ -202,7 +202,7 @@ export default function Header({ initialDark = false }: Props) {
               {stores.map((store) => (
                 <Link
                   key={store.href}
-                  href={store.href}
+                  href={localize(store.href)}
                   className="block py-3 text-[#F7F5F0]/55 text-sm tracking-wider font-[var(--font-cormorant)] hover:text-[#F7F5F0] transition-colors"
                   onClick={() => setMenuOpen(false)}
                 >
@@ -213,7 +213,7 @@ export default function Header({ initialDark = false }: Props) {
           </div>
 
           <Link
-            href="/news"
+            href={localize("/news")}
             className="block py-2 text-[#F7F5F0]/80 text-lg tracking-widest font-[var(--font-noto-serif-jp)]"
             onClick={() => setMenuOpen(false)}
           >
@@ -221,7 +221,7 @@ export default function Header({ initialDark = false }: Props) {
           </Link>
 
           <Link
-            href="/#contact"
+            href={localize("/#contact")}
             className="block py-2 text-[#F7F5F0]/80 text-lg tracking-widest font-[var(--font-noto-serif-jp)]"
             onClick={() => setMenuOpen(false)}
           >

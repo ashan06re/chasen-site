@@ -2,7 +2,7 @@
 import Link from "next/link";
 import type { StoreInfo, SiteSettings } from "@/data/storeContent";
 import { useLang } from "@/lib/langContext";
-import { INSTAGRAM_URL } from "@/lib/site";
+import { INSTAGRAM } from "@/lib/site";
 
 function InstagramIcon({ className }: { className?: string }) {
   return (
@@ -27,7 +27,7 @@ interface Props {
 }
 
 export default function FooterContent({ kyoto, kumamoto, kyotoEn, kumamotoEn, settings, settingsEn }: Props) {
-  const { lang } = useLang();
+  const { lang, localize } = useLang();
   const currentYear = new Date().getFullYear();
 
   const currentKyoto    = lang === "en" && kyotoEn    ? kyotoEn    : kyoto;
@@ -55,20 +55,26 @@ export default function FooterContent({ kyoto, kumamoto, kyotoEn, kumamotoEn, se
               {tagline}
             </p>
 
-            {/* SNS */}
-            <div className="mt-3 flex gap-3">
-              <a
-                href={INSTAGRAM_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-                className="flex items-center gap-2 py-3 text-chasen-muted-light hover:text-[#B8A882] transition-colors"
-              >
-                <InstagramIcon className="w-5 h-5" />
-                <span className="font-[var(--font-cormorant)] text-sm tracking-wider">
-                  Instagram
-                </span>
-              </a>
+            {/* SNS（店舗ごとの公式アカウント） */}
+            <div className="mt-3 flex flex-col">
+              {[
+                { href: currentKyoto.instagram    || INSTAGRAM.kyoto,    label: lang === "en" ? "Kodaiji"  : "高台寺店" },
+                { href: currentKumamoto.instagram || INSTAGRAM.kumamoto, label: lang === "en" ? "Kumamoto" : "熊本店" },
+              ].map(({ href, label }) => (
+                <a
+                  key={href}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Instagram ${label}`}
+                  className="inline-flex items-center gap-2 py-2.5 min-h-11 text-chasen-muted-light hover:text-[#B8A882] transition-colors"
+                >
+                  <InstagramIcon className="w-5 h-5" />
+                  <span className="font-[var(--font-cormorant)] text-sm tracking-wider">
+                    Instagram <span className="font-[var(--font-noto-serif-jp)] text-xs">{label}</span>
+                  </span>
+                </a>
+              ))}
             </div>
           </div>
 
@@ -80,7 +86,7 @@ export default function FooterContent({ kyoto, kumamoto, kyotoEn, kumamotoEn, se
             <ul className="space-y-2">
               <li>
                 <Link
-                  href="/stores/kyoto"
+                  href={localize("/stores/kyoto")}
                   className="inline-flex items-center min-h-11 font-[var(--font-cormorant)] text-[#F7F5F0]/70 text-base tracking-wider hover:text-[#F7F5F0] transition-colors"
                 >
                   {currentKyoto.name}
@@ -91,7 +97,7 @@ export default function FooterContent({ kyoto, kumamoto, kyotoEn, kumamotoEn, se
               </li>
               <li>
                 <Link
-                  href="/stores/kumamoto"
+                  href={localize("/stores/kumamoto")}
                   className="inline-flex items-center min-h-11 font-[var(--font-cormorant)] text-[#F7F5F0]/70 text-base tracking-wider hover:text-[#F7F5F0] transition-colors"
                 >
                   {currentKumamoto.name}
@@ -123,13 +129,13 @@ export default function FooterContent({ kyoto, kumamoto, kyotoEn, kumamotoEn, se
           </p>
           <div className="flex gap-6">
             <Link
-              href="/privacy"
+              href={localize("/privacy")}
               className="inline-flex items-center justify-center min-w-11 min-h-11 -my-3.5 font-[var(--font-cormorant)] text-chasen-muted-light text-xs tracking-wider hover:text-[#B8A882] transition-colors"
             >
               Privacy Policy
             </Link>
             <Link
-              href="/terms"
+              href={localize("/terms")}
               className="inline-flex items-center justify-center min-w-11 min-h-11 -my-3.5 font-[var(--font-cormorant)] text-chasen-muted-light text-xs tracking-wider hover:text-[#B8A882] transition-colors"
             >
               Terms

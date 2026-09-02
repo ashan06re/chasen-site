@@ -5,6 +5,13 @@ import Link from "next/link";
 import type { StoreContent } from "@/data/storeContent";
 import { useLang } from "@/lib/langContext";
 import { readableOn, mix } from "@/lib/color";
+import { INSTAGRAM } from "@/lib/site";
+
+/** "https://www.instagram.com/chasen_cafe_kumamoto/" → "@chasen_cafe_kumamoto" */
+const instagramHandle = (url: string) => {
+  const m = url.match(/instagram\.com\/([^/?#]+)/);
+  return m ? `@${m[1]}` : url;
+};
 
 const t = {
   ja: {
@@ -50,20 +57,22 @@ export default function StorePageLayout({
   reservationUrl?: string;
   reservationUrlEn?: string;
 }) {
-  const { lang } = useLang();
+  const { lang, localize } = useLang();
   const resolvedReservationUrl = lang === "en" ? (reservationUrlEn || reservationUrl) : reservationUrl;
   const tx = t[lang];
   const { info } = store;
   const news = lang === "en" && newsEn && newsEn.length > 0 ? newsEn : store.news;
 
   const tel = (lang === "en" ? infoEn?.tel : info.tel) ?? info.tel;
+  const instagram = info.instagram || INSTAGRAM[info.slug];
 
-  const infoRows: Array<{ label: string; value: string; href?: string }> = [
+  const infoRows: Array<{ label: string; value: string; href?: string; external?: boolean }> = [
     { label: tx.address, value: lang === "en" ? (infoEn?.address ?? info.address) : info.address },
     { label: tx.hours,   value: info.hours },
     ...(tel ? [{ label: tx.tel, value: tel, href: `tel:${tel.replace(/-/g, "")}` }] : []),
     { label: tx.closed,  value: lang === "en" ? (infoEn?.closed ?? info.closedEn ?? info.closed) : info.closed },
     { label: tx.access,  value: lang === "en" ? (infoEn?.access ?? info.accessEn ?? info.access) : info.access },
+    ...(instagram ? [{ label: "Instagram", value: instagramHandle(instagram), href: instagram, external: true }] : []),
   ];
 
   const description = lang === "en"
@@ -109,7 +118,7 @@ export default function StorePageLayout({
                   {tx.storeInfo}
                 </p>
                 <dl className="space-y-5">
-                  {infoRows.map(({ label, value, href }) => (
+                  {infoRows.map(({ label, value, href, external }) => (
                     <div
                       key={label}
                       className="flex gap-6 border-b border-[#E8E0D0] pb-5"
@@ -119,7 +128,12 @@ export default function StorePageLayout({
                       </dt>
                       <dd className="font-[var(--font-noto-serif-jp)] text-sm text-[#1A1A18] leading-relaxed tracking-wide">
                         {href ? (
-                          <a href={href} className="inline-block py-3 -my-3 hover:text-[#3D6B35] transition-colors">
+                          <a
+                            href={href}
+                            target={external ? "_blank" : undefined}
+                            rel={external ? "noopener noreferrer" : undefined}
+                            className="inline-block py-3 -my-3 hover:text-[#3D6B35] transition-colors"
+                          >
                             {value}
                           </a>
                         ) : (
@@ -142,7 +156,7 @@ export default function StorePageLayout({
                 </p>
                 <div className="mt-8 flex flex-wrap gap-4">
                   <Link
-                    href={`/stores/${info.slug}/menu`}
+                    href={localize(`/stores//menu`)}
                     className="inline-flex items-center gap-3 border border-[#3D6B35] text-[#3D6B35] font-[var(--font-noto-serif-jp)] text-sm tracking-[0.2em] px-8 py-4 hover:bg-[#3D6B35] hover:text-[#F7F5F0] transition-colors"
                   >
                     {tx.viewMenu}
@@ -207,7 +221,7 @@ export default function StorePageLayout({
         {/* 戻るリンク */}
         <section className="bg-[#F7F5F0] py-16 px-6 text-center">
           <Link
-            href="/#stores"
+            href={localize("/#stores")}
             className="inline-flex items-center gap-3 py-3 font-[var(--font-cormorant)] text-sm tracking-[0.3em] uppercase text-chasen-gold-deep hover:opacity-60 transition-opacity"
           >
             <span className="w-8 h-px bg-current inline-block" />

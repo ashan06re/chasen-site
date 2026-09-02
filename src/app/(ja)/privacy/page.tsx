@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
+import { pageAlternates } from "@/lib/i18n";
 import LegalPageContent, { type LegalDocument } from "@/components/LegalPageContent";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "プライバシーポリシー",
   description: "茶筅 Chasen における個人情報の取り扱いについて。",
-  alternates: { canonical: "/privacy" },
+  alternates: pageAlternates("/privacy", "ja"),
   robots: { index: true, follow: true },
 };
 

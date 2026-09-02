@@ -19,7 +19,7 @@ const t = {
 };
 
 export default function StoreSection({ store, menuCardsEn, dark = false }: Props) {
-  const { lang } = useLang();
+  const { lang, localize } = useLang();
   const tx = t[lang];
   const { info } = store;
   const menuCards = lang === "en" && menuCardsEn && menuCardsEn.length > 0
@@ -27,7 +27,7 @@ export default function StoreSection({ store, menuCardsEn, dark = false }: Props
     : store.menuCards;
   const bgColor   = dark ? "#1A1A18" : "#F7F5F0";
   const textColor = dark ? "#F7F5F0" : "#1A1A18";
-  const storePath = `/stores/${info.slug}`;
+  const storePath = localize(`/stores/`);
 
   const bgText = info.slug === "kyoto" ? "京都" : info.slug === "kumamoto" ? "熊本" : null;
   const bgTextColor = dark ? "rgba(255,255,255,0.015)" : "rgba(0,0,0,0.04)";

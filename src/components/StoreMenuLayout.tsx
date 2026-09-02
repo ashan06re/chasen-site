@@ -22,7 +22,7 @@ const t = {
 };
 
 export default function StoreMenuLayout({ info, fullMenu, fullMenuEn }: Props) {
-  const { lang } = useLang();
+  const { lang, localize } = useLang();
   const tx = t[lang];
   const sections = lang === "en" && fullMenuEn && fullMenuEn.length > 0 ? fullMenuEn : fullMenu;
 
@@ -212,7 +212,7 @@ export default function StoreMenuLayout({ info, fullMenu, fullMenuEn }: Props) {
         <section className="bg-[#F7F5F0] py-16 px-6">
           <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
             <Link
-              href={`/stores/${info.slug}`}
+              href={localize(`/stores/`)}
               className="inline-flex items-center gap-3 py-3 font-[var(--font-cormorant)] text-sm tracking-[0.3em] uppercase text-chasen-gold-deep hover:opacity-60 transition-opacity"
             >
               <span className="w-8 h-px bg-current inline-block" />

@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
+import { pageAlternates } from "@/lib/i18n";
 import LegalPageContent, { type LegalDocument } from "@/components/LegalPageContent";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "サイトのご利用について",
   description: "茶筅 Chasen ウェブサイトのご利用条件・免責事項・著作権について。",
-  alternates: { canonical: "/terms" },
+  alternates: pageAlternates("/terms", "ja"),
   robots: { index: true, follow: true },
 };
 
