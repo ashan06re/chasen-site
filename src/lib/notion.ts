@@ -27,6 +27,18 @@ const notion = new Client({
   notionVersion: "2022-06-28",
 });
 
+/** Notion API は1回100件までしか返さないので、続きページも全部読む（メニューは日英で100行を超える） */
+async function queryAll(params: Parameters<typeof notion.databases.query>[0]) {
+  const results: Awaited<ReturnType<typeof notion.databases.query>>["results"] = [];
+  let cursor: string | undefined;
+  do {
+    const res = await notion.databases.query({ ...params, start_cursor: cursor, page_size: 100 });
+    results.push(...res.results);
+    cursor = res.has_more && res.next_cursor ? res.next_cursor : undefined;
+  } while (cursor);
+  return { results };
+}
+
 const MENU_DB_ID             = process.env.NOTION_MENU_DB_ID!;
 const NEWS_DB_ID             = process.env.NOTION_NEWS_DB_ID!;
 const KYOTO_MENU_DB_ID       = process.env.NOTION_KYOTO_MENU_DB_ID!;
@@ -76,7 +88,7 @@ function imageUrl(
 export async function getMenuCards(
   store: "高台寺店" | "熊本店"
 ): Promise<{ ja: MenuCard[]; en: MenuCard[] }> {
-  const res = await notion.databases.query({
+  const res = await queryAll({
     database_id: MENU_DB_ID,
     filter: {
       and: [
@@ -130,7 +142,7 @@ const FULL_MENU_DB: Record<"高台寺店" | "熊本店", string> = {
 export async function getFullMenuSections(
   store: "高台寺店" | "熊本店"
 ): Promise<{ ja: import("@/data/storeContent").FullMenuSection[]; en: import("@/data/storeContent").FullMenuSection[] }> {
-  const res = await notion.databases.query({
+  const res = await queryAll({
     database_id: FULL_MENU_DB[store],
     filter: { property: "表示する", checkbox: { equals: true } },
     sorts: [{ property: "表示順", direction: "ascending" }],
@@ -186,7 +198,7 @@ export async function getFullMenuSections(
 
 // ── お知らせ取得（ブランド全体お知らせページ用）──────────
 export async function getAllNewsItems(): Promise<{ ja: BrandNewsItem[]; en: BrandNewsItem[] }> {
-  const res = await notion.databases.query({
+  const res = await queryAll({
     database_id: NEWS_DB_ID,
     filter: { property: "表示する", checkbox: { equals: true } },
     sorts: [{ property: "日付", direction: "descending" }],
@@ -222,7 +234,7 @@ export async function getBrandStory(): Promise<{ ja: BrandStoryContent; en: Bran
   if (!BRAND_STORY_DB_ID) return { ja: defaultBrandStory, en: defaultBrandStoryEn };
 
   try {
-    const res = await notion.databases.query({
+    const res = await queryAll({
       database_id: BRAND_STORY_DB_ID,
       filter: { property: "表示する", checkbox: { equals: true } },
     });
@@ -258,7 +270,7 @@ export async function getYoshidaSettings(): Promise<{ ja: YoshidaSettings; en: Y
   if (!YOSHIDA_SETTINGS_DB_ID) return { ja: defaultYoshidaSettings, en: defaultYoshidaSettingsEn };
 
   try {
-    const res = await notion.databases.query({
+    const res = await queryAll({
       database_id: YOSHIDA_SETTINGS_DB_ID,
       filter: { property: "表示する", checkbox: { equals: true } },
     });
@@ -293,7 +305,7 @@ export async function getYoshidaFeatures(): Promise<{ ja: YoshidaFeature[]; en: 
   if (!YOSHIDA_DB_ID) return { ja: defaultYoshidaFeatures, en: defaultYoshidaFeaturesEn };
 
   try {
-    const res = await notion.databases.query({
+    const res = await queryAll({
       database_id: YOSHIDA_DB_ID,
       filter: { property: "表示する", checkbox: { equals: true } },
       sorts: [{ property: "表示順", direction: "ascending" }],
@@ -330,7 +342,7 @@ export async function getSiteSettings(): Promise<{ ja: SiteSettings; en: SiteSet
   if (!SITE_SETTINGS_DB_ID) return { ja: defaultSiteSettings, en: defaultSiteSettingsEn };
 
   try {
-    const res = await notion.databases.query({
+    const res = await queryAll({
       database_id: SITE_SETTINGS_DB_ID,
       filter: { property: "表示する", checkbox: { equals: true } },
     });
@@ -374,7 +386,7 @@ export async function getReservationUrls(): Promise<{ ja: string; en: string }> 
   if (!RESERVATION_DB_ID) return { ja: "#", en: "#" };
 
   try {
-    const res = await notion.databases.query({
+    const res = await queryAll({
       database_id: RESERVATION_DB_ID,
       filter: { property: "表示する", checkbox: { equals: true } },
     });
@@ -413,7 +425,7 @@ export async function getAllStoreInfo(): Promise<{
   if (!STORE_INFO_DB_ID) return { ja: fallbackJa, en: fallbackEn };
 
   try {
-    const res = await notion.databases.query({
+    const res = await queryAll({
       database_id: STORE_INFO_DB_ID,
       filter: { property: "表示する", checkbox: { equals: true } },
     });
@@ -467,7 +479,7 @@ export async function getYoshidaImages(): Promise<YoshidaImages> {
   if (!YOSHIDA_IMAGES_DB_ID) return {};
 
   try {
-    const res = await notion.databases.query({
+    const res = await queryAll({
       database_id: YOSHIDA_IMAGES_DB_ID,
       filter: { property: "表示する", checkbox: { equals: true } },
       page_size: 1,
@@ -501,7 +513,7 @@ export async function getStoreInfo(
 export async function getNewsItems(
   store: "高台寺店" | "熊本店"
 ): Promise<{ ja: NewsItem[]; en: NewsItem[] }> {
-  const res = await notion.databases.query({
+  const res = await queryAll({
     database_id: NEWS_DB_ID,
     filter: {
       and: [
