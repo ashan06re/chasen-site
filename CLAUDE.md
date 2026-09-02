@@ -75,7 +75,7 @@ ISRキャッシュ配信中に署名が切れて画像が全滅する。その�
 | `src/lib/site.ts` | `SITE_URL`（`NEXT_PUBLIC_SITE_URL` で上書き可）・OG画像パス |
 | `src/lib/structuredData.ts` | JSON-LD（`CafeOrCoffeeShop` / `Organization` / `WebSite`）。住所・営業時間はNotionの店舗情報DBを参照 |
 | `src/app/sitemap.ts` / `robots.ts` | `/sitemap.xml`・`/robots.txt` を自動生成。**ページを追加したら `sitemap.ts` にも追記する** |
-| `public/og.jpg` | OGP画像（1200×630） |
+| `public/og.jpg` | OGP画像（1200×630、ロゴ版）。SNSでURLを貼ったときのサムネイル |
 
 独自ドメインを設定したら、Vercelの環境変数 `NEXT_PUBLIC_SITE_URL` を変えるだけでよい。
 
@@ -95,12 +95,24 @@ npm run build  # 本番ビルド確認
 5. 英語版のURL分離（現状は localStorage 切り替えのため `/en/...` が無く、英語ページがGoogleにインデックスされない）
 6. 予約フォームのiframe埋め込み or 予約SaaS連携（現状はGoogleフォームへの外部リンク）
 
-## ヒーロー
+## ヒーロー（2.5Dパララックス）
 
-`public/hero-kyoto.jpg`（八坂の塔）を `next/image` で表示し、マウス位置とスクロールに
-連動したパースペクティブ視差＋Ken Burns（`globals.css` の `hero-drift`）で動かしている。
-`prefers-reduced-motion` では動きを止める。動画版（`public/hero.mp4` / `hero_compressed.mp4`）は
-`.gitignore` で除外されたまま未使用。
+| ファイル | 役割 |
+|---------|------|
+| `public/hero-kyoto.jpg` | 八坂の塔の写真。`next/image` で最初に表示される（LCP用） |
+| `public/hero-kyoto-depth.jpg` | 深度マップ（白=手前 / 黒=奥）。写真から生成した推定値 |
+| `src/components/HeroCanvas.tsx` | three.js。深度に応じて画素の動く量を変え、1枚の写真に奥行きを作る |
+| `src/components/HeroSection.tsx` | 上記2つの出し分け＋テキストの視差 |
+
+three.js は**動的import**で初期バンドルから外してある。読み込み完了までは `<Image>` が
+そのまま見えていて、準備できたらcanvasがフェードインする。段階的に品質が下がる作り：
+
+1. WebGLあり → 深度パララックス（マウス・スクロール・自動ドリフト）
+2. WebGLなし → CSSのパースペクティブ視差
+3. `prefers-reduced-motion` → 完全に静止
+
+写真を差し替えるときは深度マップも作り直すこと（明るさ・彩度・ディテール・縦位置から
+推定する簡易生成。生成スクリプトは残していないので、必要なら再作成する）。
 
 ## 予約フォームURL管理
 

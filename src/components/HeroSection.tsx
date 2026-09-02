@@ -1,9 +1,13 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import type { SiteSettings } from "@/data/storeContent";
 import { defaultSiteSettingsEn } from "@/data/storeContent";
 import { useLang } from "@/lib/langContext";
+
+// three.js を初期バンドルから外す。読み込めるまでは下の <Image> がそのまま見えている
+const HeroCanvas = dynamic(() => import("./HeroCanvas"), { ssr: false });
 
 interface Props {
   settings: SiteSettings;
@@ -26,6 +30,10 @@ export default function HeroSection({ settings, settingsEn }: Props) {
   const [scrollY, setScrollY] = useState(0);
   const [reduceMotion, setReduceMotion] = useState(false);
 
+  // WebGL版（2.5Dパララックス）が動き出したか。動き出したらCSS側の視差は止める
+  const [canvasReady, setCanvasReady] = useState(false);
+  const handleCanvasReady = useCallback(() => setCanvasReady(true), []);
+
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
     const apply = () => setReduceMotion(query.matches);
@@ -35,7 +43,7 @@ export default function HeroSection({ settings, settingsEn }: Props) {
   }, []);
 
   useEffect(() => {
-    if (reduceMotion) return;
+    if (reduceMotion || canvasReady) return;
 
     let frame = 0;
 
@@ -65,12 +73,12 @@ export default function HeroSection({ settings, settingsEn }: Props) {
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("scroll", onScroll);
     };
-  }, [reduceMotion]);
+  }, [reduceMotion, canvasReady]);
 
   // スクロールで写真はゆっくり沈み、テキストは速く上へ抜ける（視差）
   const progress = reduceMotion ? 0 : Math.min(scrollY / 700, 1);
 
-  const photoStyle = reduceMotion
+  const photoStyle = reduceMotion || canvasReady
     ? undefined
     : {
         transform: `translate3d(${pointer.x * -14}px, ${pointer.y * -10 + progress * 90}px, 0) scale(${1.12 + progress * 0.06}) rotateX(${pointer.y * 1.4}deg) rotateY(${pointer.x * -1.8}deg)`,
@@ -99,7 +107,10 @@ export default function HeroSection({ settings, settingsEn }: Props) {
         }}
       >
         {/* 内側は常時ゆっくり流れるKen Burns（外側のマウス追従と干渉しないよう層を分ける）*/}
-        <div className="hero-drift absolute inset-0">
+        <div
+          className="hero-drift absolute inset-0 transition-opacity duration-1000"
+          style={canvasReady ? { opacity: 0, animation: "none" } : undefined}
+        >
           <Image
             src="/hero-kyoto.jpg"
             alt="高台寺・八坂の塔を望む京都の街並み"
@@ -112,6 +123,13 @@ export default function HeroSection({ settings, settingsEn }: Props) {
           />
         </div>
       </div>
+
+      {/* 深度マップを使った2.5Dパララックス。WebGLが無ければ描かれず、上の写真が残る */}
+      <HeroCanvas
+        imageSrc="/hero-kyoto.jpg"
+        depthSrc="/hero-kyoto-depth.jpg"
+        onReady={handleCanvasReady}
+      />
 
       {/* 陰影レイヤー: 文字の可読性を確保しつつ、奥行きを強調する */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#1A1A18]/45 via-[#1A1A18]/40 to-[#1A1A18]/75" />

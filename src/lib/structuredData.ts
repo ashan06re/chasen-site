@@ -14,6 +14,13 @@ const AREA: Record<StoreInfo["slug"], { region: string; locality: string }> = {
   kumamoto: { region: "熊本県", locality: "熊本市中央区" },
 };
 
+/** "〒605-0825 京都府…" のような住所から郵便番号と番地部分を分ける */
+function parseAddress(address: string): { postalCode?: string; streetAddress: string } {
+  const m = address.match(/〒?\s*(\d{3}-\d{4})\s*(.*)/);
+  if (!m) return { streetAddress: address };
+  return { postalCode: m[1], streetAddress: m[2].trim() || address };
+}
+
 /** "11:00 — 21:00" のような文字列から開店・閉店時刻を取り出す */
 function parseHours(hours: string): { opens: string; closes: string } | null {
   const m = hours.match(/(\d{1,2}:\d{2})\s*[^\d]{1,3}\s*(\d{1,2}:\d{2})/);
@@ -30,6 +37,7 @@ export function storeSchema(info: StoreInfo) {
   const path = `/stores/${info.slug}`;
   const hours = parseHours(info.hours);
   const area = AREA[info.slug];
+  const address = parseAddress(info.address);
 
   return {
     "@context": "https://schema.org",
@@ -46,7 +54,8 @@ export function storeSchema(info: StoreInfo) {
     hasMenu: absoluteUrl(`${path}/menu`),
     address: {
       "@type": "PostalAddress",
-      streetAddress: info.address,
+      streetAddress: address.streetAddress,
+      ...(address.postalCode ? { postalCode: address.postalCode } : {}),
       addressLocality: area.locality,
       addressRegion: area.region,
       addressCountry: "JP",
