@@ -170,6 +170,8 @@ export default function StoreMenuLayout({ info, fullMenu, fullMenuEn }: Props) {
                             {item.description}
                           </p>
 
+                          {/* 価格が未入力の品は価格行ごと出さない（「税抜」だけが残らないように） */}
+                          {item.price && (
                           <div className="mt-4 flex items-baseline gap-2">
                             <span
                               className="font-[var(--font-cormorant)] text-2xl tracking-wider"
@@ -188,6 +190,7 @@ export default function StoreMenuLayout({ info, fullMenu, fullMenuEn }: Props) {
                               {tx.taxNote}
                             </span>
                           </div>
+                          )}
 
                           <div
                             className="mt-4 h-px"
