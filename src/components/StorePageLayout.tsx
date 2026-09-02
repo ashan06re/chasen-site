@@ -11,6 +11,7 @@ const t = {
     about: "About",
     address: "住所",
     hours: "営業時間",
+    tel: "電話",
     closed: "定休日",
     access: "アクセス",
     viewMenu: "全メニューを見る",
@@ -24,6 +25,7 @@ const t = {
     about: "About",
     address: "Address",
     hours: "Hours",
+    tel: "Tel",
     closed: "Closed",
     access: "Access",
     viewMenu: "View Full Menu",
@@ -53,9 +55,12 @@ export default function StorePageLayout({
   const { info } = store;
   const news = lang === "en" && newsEn && newsEn.length > 0 ? newsEn : store.news;
 
-  const infoRows = [
+  const tel = (lang === "en" ? infoEn?.tel : info.tel) ?? info.tel;
+
+  const infoRows: Array<{ label: string; value: string; href?: string }> = [
     { label: tx.address, value: lang === "en" ? (infoEn?.address ?? info.address) : info.address },
     { label: tx.hours,   value: info.hours },
+    ...(tel ? [{ label: tx.tel, value: tel, href: `tel:${tel.replace(/-/g, "")}` }] : []),
     { label: tx.closed,  value: lang === "en" ? (infoEn?.closed ?? info.closedEn ?? info.closed) : info.closed },
     { label: tx.access,  value: lang === "en" ? (infoEn?.access ?? info.accessEn ?? info.access) : info.access },
   ];
@@ -103,7 +108,7 @@ export default function StorePageLayout({
                   {tx.storeInfo}
                 </p>
                 <dl className="space-y-5">
-                  {infoRows.map(({ label, value }) => (
+                  {infoRows.map(({ label, value, href }) => (
                     <div
                       key={label}
                       className="flex gap-6 border-b border-[#E8E0D0] pb-5"
@@ -112,7 +117,13 @@ export default function StorePageLayout({
                         {label}
                       </dt>
                       <dd className="font-[var(--font-noto-serif-jp)] text-sm text-[#1A1A18] leading-relaxed tracking-wide">
-                        {value}
+                        {href ? (
+                          <a href={href} className="hover:text-[#3D6B35] transition-colors">
+                            {value}
+                          </a>
+                        ) : (
+                          value
+                        )}
                       </dd>
                     </div>
                   ))}

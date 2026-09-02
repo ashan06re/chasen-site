@@ -3,6 +3,8 @@ import { Cormorant_Garamond, Noto_Serif_JP } from "next/font/google";
 import "./globals.css";
 import { LangProvider } from "@/lib/langContext";
 import { SITE_URL, SITE_NAME, OG_IMAGE } from "@/lib/site";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -65,6 +67,8 @@ export default function RootLayout({
     >
       <body>
         <LangProvider>{children}</LangProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

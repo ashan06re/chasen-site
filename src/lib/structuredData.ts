@@ -48,6 +48,7 @@ export function storeSchema(info: StoreInfo) {
     description: info.description,
     url: absoluteUrl(path),
     image: absoluteUrl(OG_IMAGE),
+    ...(info.tel ? { telephone: info.tel } : {}),
     servesCuisine: ["日本茶", "抹茶", "和スイーツ"],
     priceRange: "¥¥",
     currenciesAccepted: "JPY",

@@ -55,6 +55,7 @@ export interface StoreInfo {
   nameEn?: string;    // 例: "Chasen Kodaiji"
   area: string;       // 例: "Kyoto"
   address: string;
+  tel?: string;       // 例: "075-366-5905"（Notion「店舗情報」DBで管理）
   hours: string;
   closed: string;
   closedEn?: string;
@@ -237,6 +238,7 @@ const kyoto: StoreContent = {
     nameEn: "Chasen Kodaiji",
     area: "Kyoto",
     address: "〒605-0825 京都府京都市東山区下河原町高台寺境内",
+    tel: "075-366-5905",
     hours: "11:00 — 22:00",
     closed: "不定休",
     closedEn: "Irregular",
@@ -531,6 +533,7 @@ const kumamoto: StoreContent = {
     nameEn: "Chasen Kumamoto",
     area: "Kumamoto",
     address: "〒860-0805 熊本県熊本市中央区桜町3-10 SAKURA MACHI Kumamoto 3F",
+    tel: "096-285-9336",
     hours: "11:00 — 21:00",
     closed: "不定休",
     closedEn: "Irregular",

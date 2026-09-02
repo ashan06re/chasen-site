@@ -422,6 +422,7 @@ export async function getAllStoreInfo(): Promise<{
         nameEn:        def.nameEn,
         area:          text(p["エリア"])           || def.area,
         address:       text(p["住所"])             || def.address,
+        tel:           text(p["電話番号"])         || def.tel,
         hours:         text(p["営業時間"])         || def.hours,
         closed:        text(p["定休日"])           || def.closed,
         closedEn:      def.closedEn,
