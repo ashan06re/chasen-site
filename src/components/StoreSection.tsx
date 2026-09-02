@@ -2,6 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import AnimateIn from "./AnimateIn";
+import TiltCard from "./TiltCard";
 import type { StoreContent, MenuCard } from "@/data/storeContent";
 import { useLang } from "@/lib/langContext";
 
@@ -88,12 +89,18 @@ export default function StoreSection({ store, menuCardsEn, dark = false }: Props
               const cardCategory = lang === "en" ? (card.categoryEn    ?? card.category)    : card.category;
               const cardDesc     = lang === "en" ? (card.descriptionEn ?? card.description) : card.description;
               return (
-              <article
+              <TiltCard
                 key={i}
-                className="flex-shrink-0 flex flex-col border rounded-sm overflow-hidden"
+                className="flex-shrink-0"
+                maxTilt={4.5}
                 style={{
                   width: "calc(min(100vw - 6rem, 80rem - 6rem) / 3.6)",
                   minWidth: "180px",
+                }}
+              >
+              <article
+                className="flex h-full flex-col border rounded-sm overflow-hidden"
+                style={{
                   backgroundColor: card.bg,
                   borderColor: `${card.accent}20`,
                 }}
@@ -167,6 +174,7 @@ export default function StoreSection({ store, menuCardsEn, dark = false }: Props
                   />
                 </div>
               </article>
+              </TiltCard>
               );
             })}
           </div>

@@ -60,13 +60,13 @@ export default function Header({ initialDark = false }: Props) {
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-          <div className="w-9 h-9 rounded-full overflow-hidden bg-white ring-1 ring-white/30 flex-shrink-0">
+          <div className="w-9 h-9 rounded-full overflow-hidden bg-[#F7F5F0] ring-1 ring-white/30 flex-shrink-0 p-[5px]">
             <Image
-              src="/logo.jpg"
-              alt="Chasen logo"
+              src="/logo-mark.png"
+              alt="茶筅 Chasen"
               width={36}
               height={36}
-              className="object-cover w-full h-full scale-110"
+              className="object-contain w-full h-full"
               priority
             />
           </div>

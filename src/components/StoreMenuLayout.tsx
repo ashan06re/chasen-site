@@ -2,6 +2,7 @@
 import Image from "next/image";
 import Header from "./Header";
 import AnimateIn from "./AnimateIn";
+import TiltCard from "./TiltCard";
 import Link from "next/link";
 import type { FullMenuSection, StoreInfo } from "@/data/storeContent";
 import { useLang } from "@/lib/langContext";
@@ -111,6 +112,7 @@ export default function StoreMenuLayout({ info, fullMenu, fullMenuEn }: Props) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-12">
                   {section.items.map((item, i) => (
                     <AnimateIn key={i} delay={i * 80}>
+                      <TiltCard maxTilt={4}>
                       <article className="group flex flex-col">
                         <div
                           className="relative aspect-[4/3] mb-5 overflow-hidden flex items-center justify-center"
@@ -194,6 +196,7 @@ export default function StoreMenuLayout({ info, fullMenu, fullMenuEn }: Props) {
                           />
                         </div>
                       </article>
+                      </TiltCard>
                     </AnimateIn>
                   ))}
                 </div>

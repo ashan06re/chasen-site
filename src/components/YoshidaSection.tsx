@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import AnimateIn from "./AnimateIn";
+import ParallaxFrame from "./ParallaxFrame";
 import type { YoshidaFeature, YoshidaImages, YoshidaSettings } from "@/data/storeContent";
 import { defaultYoshidaSettingsEn, defaultYoshidaFeaturesEn } from "@/data/storeContent";
 import { useLang } from "@/lib/langContext";
@@ -15,11 +16,11 @@ interface Props {
 
 function RoundedImage({ src, alt, className = "" }: { src?: string; alt: string; className?: string }) {
   return (
-    <div className={`relative rounded-[2rem] overflow-hidden bg-[#1A1E14] ${className}`}>
+    <ParallaxFrame className={`rounded-[2rem] bg-[#1A1E14] ${className}`} amount={0.07}>
       {src && (
         <Image src={src} alt={alt} fill className="object-cover" sizes="(max-width: 768px) 100vw, 50vw" />
       )}
-    </div>
+    </ParallaxFrame>
   );
 }
 
