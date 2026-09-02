@@ -49,6 +49,29 @@ function selectName(prop: Record<string, unknown>): string {
   return s?.name ?? "";
 }
 
+type NotionFile = { type?: string; file?: { url: string }; external?: { url: string } };
+
+/**
+ * Notionのファイルプロパティから、失効しない画像URLを作る。
+ *
+ * Notionにアップロードされたファイル（file）の署名付きURLは1時間で失効するため、
+ * そのまま埋め込まず /api/notion-image プロキシ経由のURLを返す。
+ * 外部URL（external）は失効しないのでそのまま使う。
+ */
+function imageUrl(
+  pageId: string,
+  prop: Record<string, unknown> | undefined,
+  propName: string,
+  index = 0
+): string | undefined {
+  const files = (prop as { files?: NotionFile[] } | undefined)?.files ?? [];
+  const target = files[index];
+  if (!target) return undefined;
+  if (target.external?.url) return target.external.url;
+  if (!target.file?.url) return undefined;
+  return `/api/notion-image/${pageId}/${index}/${encodeURIComponent(propName)}`;
+}
+
 // ── メニュー取得（ホームSwiperカード用）──────────────────
 export async function getMenuCards(
   store: "高台寺店" | "熊本店"
@@ -68,8 +91,7 @@ export async function getMenuCards(
 
   for (const page of res.results) {
     const p = (page as { properties: Record<string, Record<string, unknown>> }).properties;
-    const files = (p["写真"] as { files?: Array<{ type: string; file?: { url: string }; external?: { url: string } }> })?.files ?? [];
-    const photoUrl = files[0]?.file?.url ?? files[0]?.external?.url ?? undefined;
+    const photoUrl = imageUrl((page as { id: string }).id, p["写真"], "写真");
     const lang = selectName(p["言語"]);
 
     const card: MenuCard = {
@@ -117,8 +139,7 @@ export async function getFullMenuSections(
 
     const categoryId = selectName(p["カテゴリID"]);
     const lang       = selectName(p["言語"]);
-    const files = (p["写真"] as { files?: Array<{ type: string; file?: { url: string }; external?: { url: string } }> })?.files ?? [];
-    const photoUrl = files[0]?.file?.url ?? files[0]?.external?.url ?? undefined;
+    const photoUrl   = imageUrl((page as { id: string }).id, p["写真"], "写真");
 
     const item: import("@/data/storeContent").FullMenuItem = {
       name:        (p["メニュー名"] as { title?: Array<{ plain_text: string }> })?.title?.[0]?.plain_text ?? "",
@@ -425,11 +446,6 @@ export async function getAllStoreInfo(): Promise<{
 }
 
 // ── 吉田銘茶園 画像取得（専用DB: 吉田銘茶園 設定_画像）──────────
-function fileUrl(prop: Record<string, unknown>): string | undefined {
-  const files = (prop as { files?: Array<{ type: string; file?: { url: string }; external?: { url: string } }> }).files ?? [];
-  return files[0]?.file?.url ?? files[0]?.external?.url ?? undefined;
-}
-
 export async function getYoshidaImages(): Promise<YoshidaImages> {
   if (!YOSHIDA_IMAGES_DB_ID) return {};
 
@@ -442,13 +458,14 @@ export async function getYoshidaImages(): Promise<YoshidaImages> {
 
     if (res.results.length === 0) return {};
 
+    const pageId = (res.results[0] as { id: string }).id;
     const p = (res.results[0] as { properties: Record<string, Record<string, unknown>> }).properties;
 
     return {
-      main:     fileUrl(p["メイン画像"]),
-      feature1: fileUrl(p["特徴1画像"]),
-      feature2: fileUrl(p["特徴2画像"]),
-      feature3: fileUrl(p["特徴3画像"]),
+      main:     imageUrl(pageId, p["メイン画像"], "メイン画像"),
+      feature1: imageUrl(pageId, p["特徴1画像"], "特徴1画像"),
+      feature2: imageUrl(pageId, p["特徴2画像"], "特徴2画像"),
+      feature3: imageUrl(pageId, p["特徴3画像"], "特徴3画像"),
     };
   } catch {
     return {};

@@ -3,13 +3,22 @@ import StorePageLayout from "@/components/StorePageLayout";
 import Footer from "@/components/Footer";
 import FloatingButtons from "@/components/FloatingButtons";
 import { storeContent } from "@/data/storeContent";
+import JsonLd from "@/components/JsonLd";
+import { storeSchema } from "@/lib/structuredData";
 import { getNewsItems, getStoreInfo, getReservationUrls } from "@/lib/notion";
 
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: "Chasen 高台寺店 | 茶筅 Chasen",
+  title: "Chasen 高台寺店",
   description: "京都・高台寺近くに佇む日本茶スタンド。厳選茶葉で一杯一杯を丁寧に。",
+  alternates: { canonical: "/stores/kyoto" },
+  openGraph: {
+    title: "Chasen 高台寺店 | 茶筅 Chasen",
+    description: "京都・高台寺近くに佇む日本茶スタンド。厳選茶葉で一杯一杯を丁寧に。",
+    url: "/stores/kyoto",
+    type: "website",
+  },
 };
 
 export default async function KyotoStorePage() {
@@ -25,6 +34,7 @@ export default async function KyotoStorePage() {
 
   return (
     <>
+      <JsonLd data={storeSchema(infoResult.ja)} />
       <StorePageLayout
         store={{ ...storeContent.kyoto, info: infoResult.ja, news: newsResult.ja }}
         newsEn={newsEn}

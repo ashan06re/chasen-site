@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import Link from "next/link";
 import AnimateIn from "./AnimateIn";
 import type { StoreContent, MenuCard } from "@/data/storeContent";
@@ -99,18 +100,19 @@ export default function StoreSection({ store, menuCardsEn, dark = false }: Props
               >
                 {/* 写真エリア */}
                 <div
-                  className="w-full aspect-[4/3] flex items-center justify-center overflow-hidden"
+                  className="relative w-full aspect-[4/3] flex items-center justify-center overflow-hidden"
                   style={{
                     backgroundColor: `${card.accent}12`,
                     borderBottom: `1px solid ${card.accent}20`,
                   }}
                 >
                   {card.photoUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
+                    <Image
                       src={card.photoUrl}
                       alt={cardTitle}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                      fill
+                      sizes="(max-width: 768px) 60vw, 280px"
+                      className="object-cover hover:scale-105 transition-transform duration-500"
                     />
                   ) : (
                     <span

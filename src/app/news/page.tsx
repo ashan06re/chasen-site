@@ -7,8 +7,15 @@ import { brandNewsFallback, type BrandNewsItem } from "@/data/storeContent";
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: "お知らせ | 茶筅 Chasen",
+  title: "お知らせ",
   description: "茶筅 Chasen のブランド全体のお知らせ・イベント情報をご覧いただけます。",
+  alternates: { canonical: "/news" },
+  openGraph: {
+    title: "お知らせ | 茶筅 Chasen",
+    description: "茶筅 Chasen のブランド全体のお知らせ・イベント情報をご覧いただけます。",
+    url: "/news",
+    type: "website",
+  },
 };
 
 const toEnglish = (items: BrandNewsItem[]): BrandNewsItem[] =>

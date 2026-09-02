@@ -17,6 +17,8 @@ import {
   defaultSiteSettings,
   defaultSiteSettingsEn,
 } from "@/data/storeContent";
+import JsonLd from "@/components/JsonLd";
+import { organizationSchema, websiteSchema, storeSchema } from "@/lib/structuredData";
 import {
   getMenuCards,
   getBrandStory,
@@ -64,6 +66,14 @@ export default async function HomePage() {
 
   return (
     <>
+      <JsonLd
+        data={[
+          organizationSchema(siteSettingsResult.ja.contactEmail),
+          websiteSchema(),
+          storeSchema(kyotoInfo),
+          storeSchema(kumamotoInfo),
+        ]}
+      />
       <Header />
       <main>
         <HeroSection

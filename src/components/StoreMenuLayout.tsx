@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import Header from "./Header";
 import AnimateIn from "./AnimateIn";
 import Link from "next/link";
@@ -112,7 +113,7 @@ export default function StoreMenuLayout({ info, fullMenu, fullMenuEn }: Props) {
                     <AnimateIn key={i} delay={i * 80}>
                       <article className="group flex flex-col">
                         <div
-                          className="aspect-[4/3] mb-5 overflow-hidden flex items-center justify-center"
+                          className="relative aspect-[4/3] mb-5 overflow-hidden flex items-center justify-center"
                           style={{
                             backgroundColor: isDark
                               ? "rgba(247,245,240,0.05)"
@@ -123,11 +124,12 @@ export default function StoreMenuLayout({ info, fullMenu, fullMenuEn }: Props) {
                           }}
                         >
                           {item.photoUrl ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
+                            <Image
                               src={item.photoUrl}
                               alt={item.name}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                              fill
+                              sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                              className="object-cover group-hover:scale-105 transition-transform duration-500"
                             />
                           ) : (
                             <span

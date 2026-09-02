@@ -7,8 +7,15 @@ import { getFullMenuSections } from "@/lib/notion";
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: "メニュー | Chasen 熊本店",
+  title: "Chasen 熊本店 メニュー",
   description: "Chasen 熊本店の全メニュー。ドリンク・スイーツ・フードメニュー・セット。",
+  alternates: { canonical: "/stores/kumamoto/menu" },
+  openGraph: {
+    title: "Chasen 熊本店 メニュー | 茶筅 Chasen",
+    description: "Chasen 熊本店の全メニュー。ドリンク・スイーツ・フードメニュー・セット。",
+    url: "/stores/kumamoto/menu",
+    type: "website",
+  },
 };
 
 export default async function KumamotoMenuPage() {

@@ -7,8 +7,15 @@ import { getFullMenuSections } from "@/lib/notion";
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: "メニュー | Chasen 高台寺店",
+  title: "Chasen 高台寺店 メニュー",
   description: "Chasen 高台寺店の全メニュー。ドリンク・スイーツ・フードメニュー・セット。",
+  alternates: { canonical: "/stores/kyoto/menu" },
+  openGraph: {
+    title: "Chasen 高台寺店 メニュー | 茶筅 Chasen",
+    description: "Chasen 高台寺店の全メニュー。ドリンク・スイーツ・フードメニュー・セット。",
+    url: "/stores/kyoto/menu",
+    type: "website",
+  },
 };
 
 export default async function KyotoMenuPage() {

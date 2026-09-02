@@ -124,18 +124,18 @@ export default function FooterContent({ kyoto, kumamoto, kyotoEn, kumamotoEn, se
             {copyright}
           </p>
           <div className="flex gap-6">
-            <a
-              href="#"
+            <Link
+              href="/privacy"
               className="font-[var(--font-cormorant)] text-[#6B6B5E] text-xs tracking-wider hover:text-[#B8A882] transition-colors"
             >
               Privacy Policy
-            </a>
-            <a
-              href="#"
+            </Link>
+            <Link
+              href="/terms"
               className="font-[var(--font-cormorant)] text-[#6B6B5E] text-xs tracking-wider hover:text-[#B8A882] transition-colors"
             >
               Terms
-            </a>
+            </Link>
           </div>
         </div>
       </div>

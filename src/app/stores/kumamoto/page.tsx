@@ -3,13 +3,22 @@ import StorePageLayout from "@/components/StorePageLayout";
 import Footer from "@/components/Footer";
 import FloatingButtons from "@/components/FloatingButtons";
 import { storeContent } from "@/data/storeContent";
+import JsonLd from "@/components/JsonLd";
+import { storeSchema } from "@/lib/structuredData";
 import { getNewsItems, getStoreInfo, getReservationUrls } from "@/lib/notion";
 
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: "Chasen 熊本店 | 茶筅 Chasen",
+  title: "Chasen 熊本店",
   description: "熊本・桜町の日本茶スタンド。熊本の自然が育てた茶葉を現代のスタイルで。",
+  alternates: { canonical: "/stores/kumamoto" },
+  openGraph: {
+    title: "Chasen 熊本店 | 茶筅 Chasen",
+    description: "熊本・桜町の日本茶スタンド。熊本の自然が育てた茶葉を現代のスタイルで。",
+    url: "/stores/kumamoto",
+    type: "website",
+  },
 };
 
 export default async function KumamotoStorePage() {
@@ -25,6 +34,7 @@ export default async function KumamotoStorePage() {
 
   return (
     <>
+      <JsonLd data={storeSchema(infoResult.ja)} />
       <StorePageLayout
         store={{ ...storeContent.kumamoto, info: infoResult.ja, news: newsResult.ja }}
         newsEn={newsEn}

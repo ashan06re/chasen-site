@@ -41,3 +41,24 @@ body {
 }
 
 
+
+/* Hero: 写真をゆっくり流し続けるKen Burns（マウス追従とは別レイヤー） */
+@keyframes hero-drift {
+  0% {
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+  100% {
+    transform: scale(1.07) translate3d(-1.5%, -1%, 0);
+  }
+}
+
+.hero-drift {
+  animation: hero-drift 32s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-drift {
+    animation: none;
+  }
+}
