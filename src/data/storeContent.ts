@@ -237,7 +237,7 @@ const kyoto: StoreContent = {
     nameEn: "Chasen Kodaiji",
     area: "Kyoto",
     address: "〒605-0825 京都府京都市東山区下河原町高台寺境内",
-    hours: "11:00 — 21:00",
+    hours: "11:00 — 22:00",
     closed: "不定休",
     closedEn: "Irregular",
     access: "京阪「祇園四条」駅より徒歩約15分",

@@ -2,9 +2,7 @@
 import Link from "next/link";
 import type { StoreInfo, SiteSettings } from "@/data/storeContent";
 import { useLang } from "@/lib/langContext";
-
-const INSTAGRAM_URL =
-  "https://www.instagram.com/chasen_kyoto10f?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==";
+import { INSTAGRAM_URL } from "@/lib/site";
 
 function InstagramIcon({ className }: { className?: string }) {
   return (

@@ -1,5 +1,5 @@
 import type { StoreInfo } from "@/data/storeContent";
-import { SITE_NAME, SITE_URL, OG_IMAGE, absoluteUrl } from "@/lib/site";
+import { SITE_NAME, SITE_URL, OG_IMAGE, INSTAGRAM_URL, absoluteUrl } from "@/lib/site";
 
 /**
  * 構造化データ（JSON-LD）ビルダー
@@ -72,6 +72,7 @@ export function storeSchema(info: StoreInfo) {
           ],
         }
       : {}),
+    sameAs: [INSTAGRAM_URL],
     parentOrganization: { "@id": `${SITE_URL}#organization` },
   };
 }
@@ -86,6 +87,7 @@ export function organizationSchema(email?: string) {
     url: SITE_URL,
     logo: absoluteUrl("/logo.jpg"),
     image: absoluteUrl(OG_IMAGE),
+    sameAs: [INSTAGRAM_URL],
     ...(email ? { email } : {}),
   };
 }

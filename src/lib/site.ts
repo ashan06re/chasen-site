@@ -8,5 +8,9 @@ export const SITE_URL = (
 export const SITE_NAME = "茶筅 Chasen";
 export const OG_IMAGE = "/og.jpg";
 
+/** 公式SNS。構造化データの sameAs とフッターで共有する */
+export const INSTAGRAM_URL =
+  "https://www.instagram.com/chasen_kyoto10f?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==";
+
 export const absoluteUrl = (path: string) =>
   `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
