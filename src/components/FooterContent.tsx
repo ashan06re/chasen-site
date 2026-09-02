@@ -51,18 +51,18 @@ export default function FooterContent({ kyoto, kumamoto, kyotoEn, kumamotoEn, se
             <p className="font-[var(--font-cormorant)] text-[#B8A882] text-sm tracking-[0.3em]">
               Chasen
             </p>
-            <p className="mt-4 font-[var(--font-noto-serif-jp)] text-[#6B6B5E] text-xs leading-relaxed tracking-wide">
+            <p className="mt-4 font-[var(--font-noto-serif-jp)] text-chasen-muted-light text-xs leading-relaxed tracking-wide">
               {tagline}
             </p>
 
             {/* SNS */}
-            <div className="mt-6 flex gap-3">
+            <div className="mt-3 flex gap-3">
               <a
                 href={INSTAGRAM_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
-                className="flex items-center gap-2 text-[#6B6B5E] hover:text-[#B8A882] transition-colors"
+                className="flex items-center gap-2 py-3 text-chasen-muted-light hover:text-[#B8A882] transition-colors"
               >
                 <InstagramIcon className="w-5 h-5" />
                 <span className="font-[var(--font-cormorant)] text-sm tracking-wider">
@@ -77,26 +77,26 @@ export default function FooterContent({ kyoto, kumamoto, kyotoEn, kumamotoEn, se
             <p className="font-[var(--font-cormorant)] text-[#B8A882] text-xs tracking-[0.4em] uppercase mb-5">
               Stores
             </p>
-            <ul className="space-y-4">
+            <ul className="space-y-2">
               <li>
                 <Link
                   href="/stores/kyoto"
-                  className="font-[var(--font-cormorant)] text-[#F7F5F0]/70 text-base tracking-wider hover:text-[#F7F5F0] transition-colors"
+                  className="inline-flex items-center min-h-11 font-[var(--font-cormorant)] text-[#F7F5F0]/70 text-base tracking-wider hover:text-[#F7F5F0] transition-colors"
                 >
                   {currentKyoto.name}
                 </Link>
-                <p className="font-[var(--font-noto-serif-jp)] text-[#6B6B5E] text-xs mt-0.5">
+                <p className="font-[var(--font-noto-serif-jp)] text-chasen-muted-light text-xs -mt-1">
                   {currentKyoto.area} / {currentKyoto.hours}
                 </p>
               </li>
               <li>
                 <Link
                   href="/stores/kumamoto"
-                  className="font-[var(--font-cormorant)] text-[#F7F5F0]/70 text-base tracking-wider hover:text-[#F7F5F0] transition-colors"
+                  className="inline-flex items-center min-h-11 font-[var(--font-cormorant)] text-[#F7F5F0]/70 text-base tracking-wider hover:text-[#F7F5F0] transition-colors"
                 >
                   {currentKumamoto.name}
                 </Link>
-                <p className="font-[var(--font-noto-serif-jp)] text-[#6B6B5E] text-xs mt-0.5">
+                <p className="font-[var(--font-noto-serif-jp)] text-chasen-muted-light text-xs -mt-1">
                   {currentKumamoto.area} / {currentKumamoto.hours}
                 </p>
               </li>
@@ -110,7 +110,7 @@ export default function FooterContent({ kyoto, kumamoto, kyotoEn, kumamotoEn, se
             </p>
             <a
               href={`mailto:${settings.contactEmail}`}
-              className="font-[var(--font-cormorant)] text-[#F7F5F0]/60 text-sm tracking-wide hover:text-[#F7F5F0] transition-colors"
+              className="inline-block py-3 -my-3 font-[var(--font-cormorant)] text-[#F7F5F0]/60 text-sm tracking-wide hover:text-[#F7F5F0] transition-colors"
             >
               {settings.contactEmail}
             </a>
@@ -118,19 +118,19 @@ export default function FooterContent({ kyoto, kumamoto, kyotoEn, kumamotoEn, se
         </div>
 
         <div className="mt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="font-[var(--font-cormorant)] text-[#6B6B5E] text-xs tracking-wider">
+          <p className="font-[var(--font-cormorant)] text-chasen-muted-light text-xs tracking-wider">
             {copyright}
           </p>
           <div className="flex gap-6">
             <Link
               href="/privacy"
-              className="font-[var(--font-cormorant)] text-[#6B6B5E] text-xs tracking-wider hover:text-[#B8A882] transition-colors"
+              className="inline-flex items-center justify-center min-w-11 min-h-11 -my-3.5 font-[var(--font-cormorant)] text-chasen-muted-light text-xs tracking-wider hover:text-[#B8A882] transition-colors"
             >
               Privacy Policy
             </Link>
             <Link
               href="/terms"
-              className="font-[var(--font-cormorant)] text-[#6B6B5E] text-xs tracking-wider hover:text-[#B8A882] transition-colors"
+              className="inline-flex items-center justify-center min-w-11 min-h-11 -my-3.5 font-[var(--font-cormorant)] text-chasen-muted-light text-xs tracking-wider hover:text-[#B8A882] transition-colors"
             >
               Terms
             </Link>

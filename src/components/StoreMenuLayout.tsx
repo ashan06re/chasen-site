@@ -6,6 +6,7 @@ import TiltCard from "./TiltCard";
 import Link from "next/link";
 import type { FullMenuSection, StoreInfo } from "@/data/storeContent";
 import { useLang } from "@/lib/langContext";
+import { readableOn } from "@/lib/color";
 
 interface Props {
   info: StoreInfo;
@@ -36,7 +37,7 @@ export default function StoreMenuLayout({ info, fullMenu, fullMenuEn }: Props) {
           style={{ backgroundColor: info.accentColor }}
         >
           <div className="max-w-5xl mx-auto">
-            <p className="font-[var(--font-cormorant)] text-[#B8A882] text-sm tracking-[0.5em] uppercase mb-4">
+            <p className="font-[var(--font-cormorant)] text-sm tracking-[0.5em] uppercase mb-4" style={{ color: readableOn("#B8A882", info.accentColor) }}>
               {info.area} — Menu
             </p>
             <h1 className="font-[var(--font-cormorant)] text-6xl md:text-8xl font-light text-[#F7F5F0] tracking-wider leading-tight">
@@ -57,12 +58,12 @@ export default function StoreMenuLayout({ info, fullMenu, fullMenuEn }: Props) {
 
         {/* カテゴリ ナビゲーション */}
         <nav className="sticky top-0 z-30 bg-[#F7F5F0] border-b border-[#E8E0D0] shadow-sm">
-          <div className="max-w-5xl mx-auto px-6 flex gap-8 overflow-x-auto py-4 no-scrollbar">
+          <div className="max-w-5xl mx-auto px-6 flex gap-8 overflow-x-auto py-1 no-scrollbar">
             {sections.map((section) => (
               <a
                 key={section.id}
                 href={`#${section.id}`}
-                className="font-[var(--font-cormorant)] text-sm tracking-[0.4em] uppercase text-[#6B6B5E] hover:text-[#3D6B35] transition-colors whitespace-nowrap flex-shrink-0"
+                className="inline-flex items-center justify-center min-w-11 py-3 font-[var(--font-cormorant)] text-sm tracking-[0.4em] uppercase text-chasen-muted hover:text-[#3D6B35] transition-colors whitespace-nowrap flex-shrink-0"
               >
                 {section.labelEn}
               </a>
@@ -74,7 +75,9 @@ export default function StoreMenuLayout({ info, fullMenu, fullMenuEn }: Props) {
         {sections.map((section, sIdx) => {
           const bg = SECTION_BG_PALETTE[sIdx % SECTION_BG_PALETTE.length];
           const isDark = bg === "#1A1A18";
-          const labelColor = "#B8A882";
+          const labelColor = isDark ? "#B8A882" : "#75663F";
+          const accent = readableOn(section.accent, bg);
+          const accentLarge = readableOn(section.accent, bg, 3);
 
           return (
             <section
@@ -88,7 +91,7 @@ export default function StoreMenuLayout({ info, fullMenu, fullMenuEn }: Props) {
                   <div className="flex items-center gap-6 mb-14">
                     <h2
                       className="font-[var(--font-cormorant)] text-5xl md:text-6xl font-light tracking-wide flex-shrink-0"
-                      style={{ color: section.accent }}
+                      style={{ color: accentLarge }}
                     >
                       {section.labelEn}
                     </h2>
@@ -147,7 +150,7 @@ export default function StoreMenuLayout({ info, fullMenu, fullMenuEn }: Props) {
                           {item.note && (
                             <span
                               className="font-[var(--font-cormorant)] text-xs tracking-[0.3em] uppercase mb-2"
-                              style={{ color: section.accent }}
+                              style={{ color: accent }}
                             >
                               {item.note}
                             </span>
@@ -170,7 +173,7 @@ export default function StoreMenuLayout({ info, fullMenu, fullMenuEn }: Props) {
                           <div className="mt-4 flex items-baseline gap-2">
                             <span
                               className="font-[var(--font-cormorant)] text-2xl tracking-wider"
-                              style={{ color: section.accent }}
+                              style={{ color: accent }}
                             >
                               {item.price}
                             </span>
@@ -178,8 +181,8 @@ export default function StoreMenuLayout({ info, fullMenu, fullMenuEn }: Props) {
                               className="font-[var(--font-noto-serif-jp)] text-[10px] tracking-wider"
                               style={{
                                 color: isDark
-                                  ? "rgba(184,168,130,0.7)"
-                                  : "#B8A882",
+                                  ? "rgba(184,168,130,0.85)"
+                                  : "#75663F",
                               }}
                             >
                               {tx.taxNote}
@@ -210,9 +213,9 @@ export default function StoreMenuLayout({ info, fullMenu, fullMenuEn }: Props) {
           <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
             <Link
               href={`/stores/${info.slug}`}
-              className="inline-flex items-center gap-3 font-[var(--font-cormorant)] text-sm tracking-[0.3em] uppercase text-[#B8A882] hover:opacity-60 transition-opacity"
+              className="inline-flex items-center gap-3 py-3 font-[var(--font-cormorant)] text-sm tracking-[0.3em] uppercase text-chasen-gold-deep hover:opacity-60 transition-opacity"
             >
-              <span className="w-8 h-px bg-[#B8A882] inline-block" />
+              <span className="w-8 h-px bg-current inline-block" />
               <span>Back to {info.name}</span>
             </Link>
             <a

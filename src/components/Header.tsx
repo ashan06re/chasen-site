@@ -59,7 +59,7 @@ export default function Header({ initialDark = false }: Props) {
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+        <Link href="/" className="flex items-center gap-3 min-h-11 hover:opacity-80 transition-opacity">
           <div className="w-9 h-9 rounded-full overflow-hidden bg-[#F7F5F0] ring-1 ring-white/30 flex-shrink-0 p-[5px]">
             <Image
               src="/logo-mark.png"
@@ -79,7 +79,7 @@ export default function Header({ initialDark = false }: Props) {
         <nav className="hidden md:flex items-center gap-10">
           <Link
             href="/#brand"
-            className="text-[#F7F5F0]/75 hover:text-[#F7F5F0] text-sm tracking-[0.15em] transition-colors font-[var(--font-cormorant)]"
+            className="inline-flex items-center min-h-11 text-[#F7F5F0]/75 hover:text-[#F7F5F0] text-sm tracking-[0.15em] transition-colors font-[var(--font-cormorant)]"
           >
             {t.brand}
           </Link>
@@ -88,7 +88,7 @@ export default function Header({ initialDark = false }: Props) {
           <div ref={storeRef} className="relative">
             <button
               onClick={() => setStoreOpen((o) => !o)}
-              className="flex items-center gap-1.5 text-[#F7F5F0]/75 hover:text-[#F7F5F0] text-sm tracking-[0.15em] transition-colors font-[var(--font-cormorant)]"
+              className="flex items-center gap-1.5 min-h-11 text-[#F7F5F0]/75 hover:text-[#F7F5F0] text-sm tracking-[0.15em] transition-colors font-[var(--font-cormorant)]"
             >
               {t.stores}
               <svg
@@ -121,7 +121,7 @@ export default function Header({ initialDark = false }: Props) {
                     onClick={() => setStoreOpen(false)}
                   >
                     <span className="absolute left-0 top-0 bottom-0 w-[2px] bg-[#3D6B35] origin-center scale-y-0 group-hover:scale-y-100 transition-transform duration-200" />
-                    <span className="font-[var(--font-cormorant)] text-[#B8A882]/55 group-hover:text-[#B8A882] text-[10px] tracking-[0.6em] uppercase mb-1.5 transition-colors duration-200">
+                    <span className="font-[var(--font-cormorant)] text-[#B8A882]/70 group-hover:text-[#B8A882] text-[10px] tracking-[0.6em] uppercase mb-1.5 transition-colors duration-200">
                       {store.area}
                     </span>
                     <span className="font-[var(--font-cormorant)] text-[#F7F5F0]/65 group-hover:text-[#F7F5F0] text-[13px] tracking-[0.15em] transition-colors duration-200">
@@ -137,31 +137,31 @@ export default function Header({ initialDark = false }: Props) {
 
           <Link
             href="/news"
-            className="text-[#F7F5F0]/75 hover:text-[#F7F5F0] text-sm tracking-[0.15em] transition-colors font-[var(--font-cormorant)]"
+            className="inline-flex items-center min-h-11 text-[#F7F5F0]/75 hover:text-[#F7F5F0] text-sm tracking-[0.15em] transition-colors font-[var(--font-cormorant)]"
           >
             {t.news}
           </Link>
 
           <Link
             href="/#contact"
-            className="text-[#F7F5F0]/75 hover:text-[#F7F5F0] text-sm tracking-[0.15em] transition-colors font-[var(--font-cormorant)]"
+            className="inline-flex items-center min-h-11 text-[#F7F5F0]/75 hover:text-[#F7F5F0] text-sm tracking-[0.15em] transition-colors font-[var(--font-cormorant)]"
           >
             {t.contact}
           </Link>
         </nav>
 
         {/* 言語切り替え */}
-        <div className="hidden md:flex items-center gap-1 text-[#F7F5F0]/60 text-xs tracking-widest font-[var(--font-cormorant)]">
+        <div className="hidden md:flex items-center text-[#F7F5F0]/60 text-xs tracking-widest font-[var(--font-cormorant)]">
           <button
             onClick={() => setLang("ja")}
-            className={`transition-colors px-1 ${lang === "ja" ? "text-[#F7F5F0]" : "hover:text-[#F7F5F0]"}`}
+            className={`inline-flex items-center justify-center min-w-11 min-h-11 transition-colors ${lang === "ja" ? "text-[#F7F5F0]" : "hover:text-[#F7F5F0]"}`}
           >
             JP
           </button>
           <span>/</span>
           <button
             onClick={() => setLang("en")}
-            className={`transition-colors px-1 ${lang === "en" ? "text-[#F7F5F0]" : "hover:text-[#F7F5F0]"}`}
+            className={`inline-flex items-center justify-center min-w-11 min-h-11 transition-colors ${lang === "en" ? "text-[#F7F5F0]" : "hover:text-[#F7F5F0]"}`}
           >
             EN
           </button>
@@ -169,7 +169,7 @@ export default function Header({ initialDark = false }: Props) {
 
         {/* モバイル ハンバーガー */}
         <button
-          className="md:hidden text-[#F7F5F0] flex flex-col gap-1.5 p-2"
+          className="md:hidden text-[#F7F5F0] w-11 h-11 -mr-2 flex flex-col items-center justify-center gap-1.5"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="メニュー"
         >
@@ -185,25 +185,25 @@ export default function Header({ initialDark = false }: Props) {
           menuOpen ? "max-h-[32rem] opacity-100" : "max-h-0 opacity-0"
         } bg-[#1A1A18]/98`}
       >
-        <nav className="px-6 py-6 flex flex-col gap-5">
+        <nav className="px-6 py-4 flex flex-col gap-1">
           <Link
             href="/#brand"
-            className="text-[#F7F5F0]/80 text-lg tracking-widest font-[var(--font-noto-serif-jp)]"
+            className="block py-2 text-[#F7F5F0]/80 text-lg tracking-widest font-[var(--font-noto-serif-jp)]"
             onClick={() => setMenuOpen(false)}
           >
             {t.brand}
           </Link>
 
           <div>
-            <p className="text-[#F7F5F0]/80 text-lg tracking-widest font-[var(--font-noto-serif-jp)] mb-3">
+            <p className="py-2 text-[#F7F5F0]/80 text-lg tracking-widest font-[var(--font-noto-serif-jp)] mb-1">
               {t.stores}
             </p>
-            <div className="pl-4 flex flex-col gap-3 border-l border-[#F7F5F0]/10">
+            <div className="pl-4 flex flex-col border-l border-[#F7F5F0]/10">
               {stores.map((store) => (
                 <Link
                   key={store.href}
                   href={store.href}
-                  className="text-[#F7F5F0]/55 text-sm tracking-wider font-[var(--font-cormorant)] hover:text-[#F7F5F0] transition-colors"
+                  className="block py-3 text-[#F7F5F0]/55 text-sm tracking-wider font-[var(--font-cormorant)] hover:text-[#F7F5F0] transition-colors"
                   onClick={() => setMenuOpen(false)}
                 >
                   {store.label}
@@ -214,7 +214,7 @@ export default function Header({ initialDark = false }: Props) {
 
           <Link
             href="/news"
-            className="text-[#F7F5F0]/80 text-lg tracking-widest font-[var(--font-noto-serif-jp)]"
+            className="block py-2 text-[#F7F5F0]/80 text-lg tracking-widest font-[var(--font-noto-serif-jp)]"
             onClick={() => setMenuOpen(false)}
           >
             {t.news}
@@ -222,24 +222,24 @@ export default function Header({ initialDark = false }: Props) {
 
           <Link
             href="/#contact"
-            className="text-[#F7F5F0]/80 text-lg tracking-widest font-[var(--font-noto-serif-jp)]"
+            className="block py-2 text-[#F7F5F0]/80 text-lg tracking-widest font-[var(--font-noto-serif-jp)]"
             onClick={() => setMenuOpen(false)}
           >
             {t.contact}
           </Link>
 
           {/* モバイル言語切り替え */}
-          <div className="flex items-center gap-2 pt-2 border-t border-[#F7F5F0]/10">
+          <div className="flex items-center mt-2 pt-1 border-t border-[#F7F5F0]/10">
             <button
               onClick={() => { setLang("ja"); setMenuOpen(false); }}
-              className={`font-[var(--font-cormorant)] text-sm tracking-widest transition-colors ${lang === "ja" ? "text-[#F7F5F0]" : "text-[#F7F5F0]/40 hover:text-[#F7F5F0]"}`}
+              className={`inline-flex items-center justify-center min-w-11 min-h-11 font-[var(--font-cormorant)] text-sm tracking-widest transition-colors ${lang === "ja" ? "text-[#F7F5F0]" : "text-[#F7F5F0]/40 hover:text-[#F7F5F0]"}`}
             >
               JP
             </button>
             <span className="text-[#F7F5F0]/30">/</span>
             <button
               onClick={() => { setLang("en"); setMenuOpen(false); }}
-              className={`font-[var(--font-cormorant)] text-sm tracking-widest transition-colors ${lang === "en" ? "text-[#F7F5F0]" : "text-[#F7F5F0]/40 hover:text-[#F7F5F0]"}`}
+              className={`inline-flex items-center justify-center min-w-11 min-h-11 font-[var(--font-cormorant)] text-sm tracking-widest transition-colors ${lang === "en" ? "text-[#F7F5F0]" : "text-[#F7F5F0]/40 hover:text-[#F7F5F0]"}`}
             >
               EN
             </button>

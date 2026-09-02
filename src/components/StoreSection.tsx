@@ -5,6 +5,7 @@ import AnimateIn from "./AnimateIn";
 import TiltCard from "./TiltCard";
 import type { StoreContent, MenuCard } from "@/data/storeContent";
 import { useLang } from "@/lib/langContext";
+import { readableOn } from "@/lib/color";
 
 interface Props {
   store: StoreContent;
@@ -52,13 +53,13 @@ export default function StoreSection({ store, menuCardsEn, dark = false }: Props
         {/* Header */}
         <div className="px-6 md:px-12 mb-12">
           <AnimateIn>
-            <p className="font-[var(--font-cormorant)] text-[#B8A882] text-sm tracking-[0.5em] uppercase mb-4">
+            <p className={`font-[var(--font-cormorant)] text-sm tracking-[0.5em] uppercase mb-4 ${dark ? "text-chasen-gold" : "text-chasen-gold-deep"}`}>
               {info.area}
             </p>
           </AnimateIn>
           <AnimateIn delay={100}>
             <div className="flex flex-wrap items-end justify-between gap-4">
-              <Link href={storePath} className="group">
+              <Link href={storePath} className="group inline-block py-1 -my-1">
                 <h2
                   className="font-[var(--font-cormorant)] text-4xl md:text-5xl font-light tracking-wider group-hover:opacity-70 transition-opacity"
                   style={{ color: textColor }}
@@ -66,13 +67,13 @@ export default function StoreSection({ store, menuCardsEn, dark = false }: Props
                   {lang === "en" ? (info.nameEn ?? info.name) : info.name}
                 </h2>
               </Link>
-              <p className="font-[var(--font-cormorant)] text-sm tracking-[0.2em] text-[#6B6B5E]">
+              <p className={`font-[var(--font-cormorant)] text-sm tracking-[0.2em] ${dark ? "text-chasen-muted-light" : "text-chasen-muted"}`}>
                 {info.hours}
               </p>
             </div>
           </AnimateIn>
           <AnimateIn delay={200}>
-            <p className="mt-4 font-[var(--font-noto-serif-jp)] text-[#6B6B5E] text-base leading-[2] tracking-wide font-light max-w-xl">
+            <p className={`mt-4 font-[var(--font-noto-serif-jp)] text-base leading-[2] tracking-wide font-light max-w-xl ${dark ? "text-chasen-muted-light" : "text-chasen-muted"}`}>
               {lang === "en" && info.descriptionEn ? info.descriptionEn : info.description}
             </p>
           </AnimateIn>
@@ -135,7 +136,7 @@ export default function StoreSection({ store, menuCardsEn, dark = false }: Props
                 <div className="flex flex-col flex-1 p-4">
                   <span
                     className="font-[var(--font-cormorant)] text-xs tracking-[0.3em] uppercase mb-1"
-                    style={{ color: card.accent, minHeight: "1em" }}
+                    style={{ color: readableOn(card.accent, card.bg), minHeight: "1em" }}
                   >
                     {cardCategory}
                   </span>
@@ -149,7 +150,7 @@ export default function StoreSection({ store, menuCardsEn, dark = false }: Props
 
                   <p
                     className="font-[var(--font-noto-serif-jp)] text-xs leading-[1.9] tracking-wide font-light flex-1"
-                    style={{ color: "#6B6B5E" }}
+                    style={{ color: readableOn("#6B6B5E", card.bg) }}
                   >
                     {cardDesc}
                   </p>
@@ -158,11 +159,11 @@ export default function StoreSection({ store, menuCardsEn, dark = false }: Props
                     <div className="mt-3 flex items-baseline gap-1">
                       <span
                         className="font-[var(--font-cormorant)] text-xl tracking-wider"
-                        style={{ color: card.accent }}
+                        style={{ color: readableOn(card.accent, card.bg) }}
                       >
                         {card.price}
                       </span>
-                      <span className="font-[var(--font-noto-serif-jp)] text-[10px] tracking-wider text-[#B8A882]">
+                      <span className="font-[var(--font-noto-serif-jp)] text-[10px] tracking-wider" style={{ color: readableOn("#B8A882", card.bg) }}>
                         {tx.taxNote}
                       </span>
                     </div>
@@ -185,10 +186,10 @@ export default function StoreSection({ store, menuCardsEn, dark = false }: Props
           <div className="px-6 md:px-12 mt-8">
             <Link
               href={storePath}
-              className="inline-flex items-center gap-3 font-[var(--font-cormorant)] text-sm tracking-[0.3em] uppercase text-[#B8A882] hover:opacity-60 transition-opacity"
+              className={`inline-flex items-center gap-3 py-3 font-[var(--font-cormorant)] text-sm tracking-[0.3em] uppercase hover:opacity-60 transition-opacity ${dark ? "text-chasen-gold" : "text-chasen-gold-deep"}`}
             >
               <span>{tx.viewStore}</span>
-              <span className="w-8 h-px inline-block bg-[#B8A882]" />
+              <span className="w-8 h-px inline-block bg-current" />
             </Link>
           </div>
         </AnimateIn>

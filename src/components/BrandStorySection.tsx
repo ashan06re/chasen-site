@@ -18,7 +18,7 @@ export default function BrandStorySection({ content = defaultBrandStory, content
       <div className="max-w-6xl mx-auto">
         {/* Section label */}
         <AnimateIn>
-          <p className="font-[var(--font-cormorant)] text-[#B8A882] text-sm tracking-[0.5em] uppercase mb-16">
+          <p className="font-[var(--font-cormorant)] text-chasen-gold-deep text-sm tracking-[0.5em] uppercase mb-16">
             Brand Story
           </p>
         </AnimateIn>

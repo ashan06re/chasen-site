@@ -29,7 +29,7 @@ export default function LegalPageContent({ ja, en }: Props) {
       <Header initialDark />
       <main className="bg-[#F7F5F0] min-h-screen pt-32 pb-24">
         <div className="max-w-3xl mx-auto px-6">
-          <p className="font-[var(--font-cormorant)] text-xs tracking-[0.4em] text-[#B8A882] uppercase mb-4">
+          <p className="font-[var(--font-cormorant)] text-xs tracking-[0.4em] text-chasen-gold-deep uppercase mb-4">
             {doc.label}
           </p>
           <h1 className="font-[var(--font-noto-serif-jp)] text-3xl md:text-4xl font-light tracking-[0.1em] text-[#1A1A18] mb-3">

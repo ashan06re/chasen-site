@@ -3,6 +3,7 @@ import Header from "./Header";
 import AnimateIn from "./AnimateIn";
 import type { BrandNewsItem } from "@/data/storeContent";
 import { useLang } from "@/lib/langContext";
+import { readableOn, mix } from "@/lib/color";
 
 const storeLabelMap: Record<string, { label: string; labelEn: string; color: string }> = {
   高台寺店: { label: "高台寺店", labelEn: "Kodaiji",  color: "#2A4D25" },
@@ -91,12 +92,12 @@ export default function NewsPageContent({ itemsJa, itemsEn }: Props) {
                             className="font-[var(--font-cormorant)] text-xs tracking-[0.3em] uppercase px-3 py-1 rounded-full"
                             style={{
                               backgroundColor: `${item.badgeColor}20`,
-                              color: item.badgeColor,
+                              color: readableOn(item.badgeColor, mix(item.badgeColor, "#FFFFFF", 0.125)),
                             }}
                           >
                             {item.badge}
                           </span>
-                          <span className="font-[var(--font-cormorant)] text-[#B8A882] text-xs tracking-wider ml-auto">
+                          <span className="font-[var(--font-cormorant)] text-chasen-gold-deep text-xs tracking-wider ml-auto">
                             {item.date}
                           </span>
                         </div>

@@ -6,8 +6,10 @@
   --color-chasen-light: #F7F5F0;
   --color-chasen-dark: #1A1A18;
   --color-chasen-beige: #E8E0D0;
-  --color-chasen-gold: #B8A882;
-  --color-chasen-muted: #6B6B5E;
+  --color-chasen-gold: #B8A882;        /* 暗い背景専用（オフホワイト上では2.1:1で不可） */
+  --color-chasen-gold-deep: #75663F;   /* 明るい背景用ゴールド（5.2:1） */
+  --color-chasen-muted: #6B6B5E;       /* 明るい背景用グレー（4.9:1） */
+  --color-chasen-muted-light: #949486; /* 暗い背景用グレー（5.7:1） */
 
   --font-cormorant: var(--font-cormorant);
   --font-noto: var(--font-noto-serif-jp);

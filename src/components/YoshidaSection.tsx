@@ -116,7 +116,7 @@ export default function YoshidaSection({ settings, features, settingsEn, feature
                   {feature.name}
                 </h3>
                 <div className="w-6 h-px bg-[#2E3028] mb-5" />
-                <p className="font-[var(--font-noto-serif-jp)] text-[#5E5E54] text-sm leading-[2.2] tracking-wide font-light">
+                <p className="font-[var(--font-noto-serif-jp)] text-chasen-muted-light text-sm leading-[2.2] tracking-wide font-light">
                   {feature.description}
                 </p>
               </div>

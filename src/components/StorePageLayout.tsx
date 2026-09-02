@@ -4,6 +4,7 @@ import AnimateIn from "./AnimateIn";
 import Link from "next/link";
 import type { StoreContent } from "@/data/storeContent";
 import { useLang } from "@/lib/langContext";
+import { readableOn, mix } from "@/lib/color";
 
 const t = {
   ja: {
@@ -80,7 +81,7 @@ export default function StorePageLayout({
           style={{ backgroundColor: info.accentColor }}
         >
           <div className="max-w-5xl mx-auto">
-            <p className="font-[var(--font-cormorant)] text-[#B8A882] text-sm tracking-[0.5em] uppercase mb-4">
+            <p className="font-[var(--font-cormorant)] text-sm tracking-[0.5em] uppercase mb-4" style={{ color: readableOn("#B8A882", info.accentColor) }}>
               {info.area}
             </p>
             <h1 className="font-[var(--font-cormorant)] text-6xl md:text-8xl font-light text-[#F7F5F0] tracking-wider leading-tight">
@@ -104,7 +105,7 @@ export default function StorePageLayout({
           <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-14">
             <AnimateIn>
               <div>
-                <p className="font-[var(--font-cormorant)] text-[#B8A882] text-xs tracking-[0.5em] uppercase mb-6">
+                <p className="font-[var(--font-cormorant)] text-chasen-gold-deep text-xs tracking-[0.5em] uppercase mb-6">
                   {tx.storeInfo}
                 </p>
                 <dl className="space-y-5">
@@ -113,12 +114,12 @@ export default function StorePageLayout({
                       key={label}
                       className="flex gap-6 border-b border-[#E8E0D0] pb-5"
                     >
-                      <dt className="font-[var(--font-noto-serif-jp)] text-xs tracking-wider text-[#B8A882] w-20 flex-shrink-0 pt-0.5">
+                      <dt className="font-[var(--font-noto-serif-jp)] text-xs tracking-wider text-chasen-gold-deep w-20 flex-shrink-0 pt-0.5">
                         {label}
                       </dt>
                       <dd className="font-[var(--font-noto-serif-jp)] text-sm text-[#1A1A18] leading-relaxed tracking-wide">
                         {href ? (
-                          <a href={href} className="hover:text-[#3D6B35] transition-colors">
+                          <a href={href} className="inline-block py-3 -my-3 hover:text-[#3D6B35] transition-colors">
                             {value}
                           </a>
                         ) : (
@@ -133,10 +134,10 @@ export default function StorePageLayout({
 
             <AnimateIn delay={150}>
               <div>
-                <p className="font-[var(--font-cormorant)] text-[#B8A882] text-xs tracking-[0.5em] uppercase mb-6">
+                <p className="font-[var(--font-cormorant)] text-chasen-gold-deep text-xs tracking-[0.5em] uppercase mb-6">
                   {tx.about}
                 </p>
-                <p className="font-[var(--font-noto-serif-jp)] text-[#6B6B5E] text-base leading-[2.2] tracking-wide font-light">
+                <p className="font-[var(--font-noto-serif-jp)] text-chasen-muted text-base leading-[2.2] tracking-wide font-light">
                   {description}
                 </p>
                 <div className="mt-8 flex flex-wrap gap-4">
@@ -181,19 +182,19 @@ export default function StorePageLayout({
                         className="font-[var(--font-cormorant)] text-xs tracking-[0.3em] uppercase px-3 py-1 rounded-full"
                         style={{
                           backgroundColor: `${item.badgeColor}25`,
-                          color: item.badgeColor,
+                          color: readableOn(item.badgeColor, mix(item.badgeColor, "#1A1A18", 0.15)),
                         }}
                       >
                         {item.badge}
                       </span>
-                      <span className="font-[var(--font-cormorant)] text-[#6B6B5E] text-xs tracking-wider">
+                      <span className="font-[var(--font-cormorant)] text-chasen-muted-light text-xs tracking-wider">
                         {item.date}
                       </span>
                     </div>
                     <h3 className="font-[var(--font-noto-serif-jp)] text-lg text-[#F7F5F0] tracking-wider mb-3">
                       {item.title}
                     </h3>
-                    <p className="font-[var(--font-noto-serif-jp)] text-sm text-[#6B6B5E] leading-[1.9] tracking-wide font-light">
+                    <p className="font-[var(--font-noto-serif-jp)] text-sm text-chasen-muted-light leading-[1.9] tracking-wide font-light">
                       {item.body}
                     </p>
                   </article>
@@ -207,9 +208,9 @@ export default function StorePageLayout({
         <section className="bg-[#F7F5F0] py-16 px-6 text-center">
           <Link
             href="/#stores"
-            className="inline-flex items-center gap-3 font-[var(--font-cormorant)] text-sm tracking-[0.3em] uppercase text-[#B8A882] hover:opacity-60 transition-opacity"
+            className="inline-flex items-center gap-3 py-3 font-[var(--font-cormorant)] text-sm tracking-[0.3em] uppercase text-chasen-gold-deep hover:opacity-60 transition-opacity"
           >
-            <span className="w-8 h-px bg-[#B8A882] inline-block" />
+            <span className="w-8 h-px bg-current inline-block" />
             <span>{tx.backToStores}</span>
           </Link>
         </section>
