@@ -174,6 +174,40 @@ npm run build  # 本番ビルド確認
 
 小さいサイズでは「Chasen」の細い文字が潰れるため、アイコンはマークのみにしてある。
 
+## 序幕「点てる」（redesign ブランチ）
+
+トップの `HeroSection` を置き換えた、スクロール＝時間の3D序幕。`src/components/opening/`。
+
+| ファイル | 役割 |
+|---------|------|
+| `src/lib/openingScript.ts` | 台本。進行度→各演出の値、カメラの通り道。**three.js を import しないこと**（初期バンドルに乗る） |
+| `Opening.tsx` | 420svh の枠と sticky。`onScrollFrame()` で進行度を出し、文字の不透明度は DOM に直接書く |
+| `OpeningCanvas.tsx` | R3F の Canvas。動的 import。カメラ・光・後処理 |
+| `environment.ts` | 環境マップ（IBL）を小さなシーンから PMREM で焼く。HDRI 画像は読まない |
+| `textures.ts` | 手続き生成の法線／粗さ／木目／泡マップ |
+| `Room.tsx` `TeaBowl.tsx` `Chasen3D.tsx` `Foam.tsx` `Steam.tsx` `Pour.tsx` | 物語に出てくる物だけ |
+
+**進行度の渡し方**: 毎フレーム setState すると 60fps で再描画が走る。`OpeningState`（可変オブジェクト）
+を共有し、各コンポーネントが自分の `useFrame` の中で読む。`Rig` が priority `-10` で先に書き換える。
+
+**3Dが安っぽく見えたときに疑う順番**（実際にこの順で直した）:
+
+1. **環境マップが無い** — ライトだけだと陶器がプラスチックに見える。`environment.ts`
+2. **被写界深度が無い** — マクロで全部にピントが合っているとCGに見える。`DepthOfField`
+3. **形が完璧すぎる** — 回転体の茶碗に手びねりの歪みを足す
+4. **法線マップの周波数が高すぎる** — ちらついて面が白茶ける。`normalScale` と repeat を下げ、`anisotropy` を上げる
+5. **回転体の継ぎ目** — 最終列の法線を先頭列で上書きする（`TeaBowl.tsx`）。ノイズも整数周期にしてタイル可能にする
+6. **泡を球のインスタンスで並べる** — 必ず「粒」に見える。微泡は法線マップを貼ったドーム面、粗い泡だけインスタンス
+7. **湯気・湯を出しすぎ** — 煙幕・蛍光灯に見える。薄く短く
+
+**フォールバック3段階**: WebGL → `public/opening/opening-still.jpg`（3Dの1コマ目をそのまま書き出したもの）
+→ `prefers-reduced-motion` で 100svh の静止画。静止画は演出を変えたら撮り直す。
+
+**性能**: `(pointer: coarse)` / コア数 / 画面幅で後処理と影を落とす（`heavy`）。縦長画面では横画角を
+保つよう垂直画角を広げる（これが無いとスマホで茶碗がはみ出す）。
+
+**素材**: 2019年の実写動画は全クリップ不採用（2026-09-03 ユーザー判断）。`素材_選定/posters/` の静止画は使用可。
+
 ## モーション（3D演出）
 
 演出は3種類に統一してある。すべて `prefers-reduced-motion` で無効化される。

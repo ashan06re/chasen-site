@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
-import HeroSection from "@/components/HeroSection";
+import Opening from "@/components/opening/Opening";
+import SmoothScroll from "@/components/SmoothScroll";
 import BrandStorySection from "@/components/BrandStorySection";
 import YoshidaSection from "@/components/YoshidaSection";
 import StoreSection from "@/components/StoreSection";
@@ -74,12 +75,10 @@ export default async function HomePage() {
           storeSchema(kumamotoInfo),
         ]}
       />
+      <SmoothScroll />
       <Header />
       <main>
-        <HeroSection
-          settings={siteSettingsResult.ja}
-          settingsEn={siteSettingsResult.en}
-        />
+        <Opening />
         <BrandStorySection
           content={brandStoryResult.ja}
           contentEn={brandStoryResult.en}
