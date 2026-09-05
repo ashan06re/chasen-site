@@ -55,7 +55,7 @@ scene.render.image_settings.color_depth = "16"
 scene.render.filepath = OUT
 scene.view_settings.view_transform = "AgX"
 scene.view_settings.look = "AgX - Medium High Contrast"
-scene.view_settings.exposure = -0.25
+scene.view_settings.exposure = -0.4
 scene.render.film_transparent = False
 
 # ---------- ヘルパ ----------
@@ -140,7 +140,7 @@ bg = wn.nodes.new("ShaderNodeBackground")
 # HDRI（comfy_cafe 等）は窓の輝度が高すぎて天板が全面明るくなるので使わない。
 # 暗い茶室: ほぼ黒の空に、ごく弱い暖色の返りだけ
 bg.inputs["Color"].default_value = (0.35, 0.28, 0.20, 1)
-bg.inputs["Strength"].default_value = 0.02
+bg.inputs["Strength"].default_value = 0.008
 wn.links.new(bg.outputs["Background"], wout.inputs["Surface"])
 # カメラには HDRI を見せない（背景は暗い壁が受ける）
 lp = wn.nodes.new("ShaderNodeLightPath")
@@ -169,20 +169,42 @@ def area(name, loc, target, size, power, color, size_y=None):
     o.rotation_euler = d.to_track_quat("-Z", "Y").to_euler()
     return o
 
-# 障子の面光源（主光源、左前・やや上）
-sh = area("Shoji", (-0.42, -0.30, 0.34), (0, 0, 0.05), 0.45, 12, (1.0, 0.86, 0.66), size_y=0.65); sh.data.spread = math.radians(11)
-# 縁を切る逆光（右奥、冷たい）
-# 逆光は茶碗の口縁だけをかすめる。強いと手前の天板に落ちて青白く光る
-rm_ = area("Rim", (0.40, 0.50, 0.30), (0, 0, 0.085), 0.10, 1.6, (0.62, 0.74, 0.90)); rm_.data.spread = math.radians(5)
-# 上からの弱い返し
-tp = area("Top", (0.08, -0.06, 0.9), (0, 0, 0.05), 0.35, 0.4, (1.0, 0.95, 0.88)); tp.data.spread = math.radians(12)
+# 大きく柔らかい主光源（左上）。参考写真の物撮りライティング
+key = area("Shoji", (-0.70, -0.55, 1.30), (0, 0, 0.04), 1.4, 42, (1.0, 0.93, 0.84), size_y=1.4)
+# 右からの弱い返し
+fill = area("Top", (0.75, 0.15, 0.55), (0, 0, 0.04), 0.8, 2.5, (0.90, 0.93, 1.0))
+# 奥からの弱い逆光。口縁と穂先の輪郭
+rm_ = area("Rim", (0.15, 0.70, 0.45), (0, 0, 0.08), 0.35, 3, (1.0, 0.96, 0.90)); rm_.data.spread = math.radians(25)
 
-# ---------- カウンター ----------
+# ---------- 台: 黒いスレートの板 ----------
 bpy.ops.mesh.primitive_plane_add(size=3.0, location=(0, 0.7, 0))
 counter = bpy.context.active_object
 counter.name = "Counter"
-wood = pbr_material("Wood", os.path.join(TEX, "dark_wood"), "dark_wood", scale=1.0, tint=(0.075, 0.062, 0.050, 1), rough_mul=0.95, bump=0.5)
-counter.data.materials.append(wood)
+slate, nt, bsdf, out = new_material("Slate")
+coord = nt.nodes.new("ShaderNodeTexCoord")
+mottle = nt.nodes.new("ShaderNodeTexNoise"); mottle.inputs["Scale"].default_value = 9; mottle.inputs["Detail"].default_value = 8; mottle.inputs["Roughness"].default_value = 0.72
+grain = nt.nodes.new("ShaderNodeTexNoise"); grain.inputs["Scale"].default_value = 700; grain.inputs["Detail"].default_value = 4
+scratch = nt.nodes.new("ShaderNodeTexWave"); scratch.inputs["Scale"].default_value = 60; scratch.inputs["Distortion"].default_value = 18; scratch.inputs["Detail"].default_value = 3
+scratch.wave_type = "BANDS"; scratch.bands_direction = "DIAGONAL"
+for n in (mottle, grain, scratch):
+    nt.links.new(coord.outputs["Object"], n.inputs["Vector"])
+cr = nt.nodes.new("ShaderNodeValToRGB")
+cr.color_ramp.elements[0].position = 0.30; cr.color_ramp.elements[0].color = (0.0035, 0.0035, 0.004, 1)
+cr.color_ramp.elements[1].position = 0.80; cr.color_ramp.elements[1].color = (0.022, 0.022, 0.023, 1)
+nt.links.new(mottle.outputs["Fac"], cr.inputs["Fac"])
+nt.links.new(cr.outputs["Color"], bsdf.inputs["Base Color"])
+rr = nt.nodes.new("ShaderNodeMapRange"); rr.inputs["To Min"].default_value = 0.70; rr.inputs["To Max"].default_value = 0.95
+nt.links.new(mottle.outputs["Fac"], rr.inputs["Value"])
+nt.links.new(rr.outputs["Result"], bsdf.inputs["Roughness"])
+b1 = nt.nodes.new("ShaderNodeBump"); b1.inputs["Strength"].default_value = 0.45; b1.inputs["Distance"].default_value = 0.003
+nt.links.new(mottle.outputs["Fac"], b1.inputs["Height"])
+b2 = nt.nodes.new("ShaderNodeBump"); b2.inputs["Strength"].default_value = 0.25; b2.inputs["Distance"].default_value = 0.0003
+nt.links.new(grain.outputs["Fac"], b2.inputs["Height"]); nt.links.new(b1.outputs["Normal"], b2.inputs["Normal"])
+b3 = nt.nodes.new("ShaderNodeBump"); b3.inputs["Strength"].default_value = 0.08; b3.inputs["Distance"].default_value = 0.0004
+nt.links.new(scratch.outputs["Fac"], b3.inputs["Height"]); nt.links.new(b2.outputs["Normal"], b3.inputs["Normal"])
+nt.links.new(b3.outputs["Normal"], bsdf.inputs["Normal"])
+set_input(bsdf, "Specular IOR Level", 0.18)
+counter.data.materials.append(slate)
 
 # 奥の壁（土壁、ほぼ闇）
 bpy.ops.mesh.primitive_plane_add(size=6.0, location=(0, 2.2, 1.0), rotation=(math.radians(90), 0, 0))
@@ -192,14 +214,14 @@ plaster = pbr_material("Plaster", os.path.join(TEX, "clay_plaster"), "clay_plast
 wall.data.materials.append(plaster)
 
 # ---------- 茶碗（黒楽） ----------
-BOWL_PROFILE = [  # (r, z) 外→口→内→底。楽茶碗の筒型。壁厚 5mm、高台つき
-    (0.000, 0.000), (0.020, 0.000), (0.023, 0.004), (0.025, 0.010),
-    (0.036, 0.017), (0.047, 0.030), (0.054, 0.048), (0.0575, 0.064),
-    (0.0590, 0.076), (0.0582, 0.084), (0.0535, 0.0848),
-    (0.0512, 0.0790), (0.0510, 0.0700), (0.0490, 0.0520), (0.0430, 0.0340),
-    (0.0320, 0.0200), (0.0160, 0.0120), (0.0000, 0.0110),
+BOWL_PROFILE = [  # (r, z) 外→口→内→底。筒茶碗。壁厚 5〜6mm、高台つき
+    (0.000, 0.000), (0.024, 0.000), (0.026, 0.004), (0.030, 0.009),
+    (0.046, 0.016), (0.054, 0.030), (0.058, 0.050), (0.0600, 0.068),
+    (0.0605, 0.080), (0.0595, 0.0835), (0.0545, 0.0838),
+    (0.0525, 0.0790), (0.0520, 0.0680), (0.0500, 0.0500), (0.0440, 0.0320),
+    (0.0330, 0.0190), (0.0160, 0.0120), (0.0000, 0.0110),
 ]
-INNER = [(0.011, 0.0), (0.012, 0.016), (0.020, 0.032), (0.034, 0.043), (0.052, 0.049), (0.070, 0.051), (0.080, 0.052)]
+INNER = [(0.011, 0.0), (0.012, 0.016), (0.019, 0.033), (0.032, 0.044), (0.050, 0.050), (0.068, 0.052), (0.079, 0.0525)]
 def inner_radius_at(z):
     if z <= INNER[0][0]:
         return INNER[0][1]
@@ -220,7 +242,7 @@ def lathe(name, profile, segments=128, wobble=None):
             if wobble and r > 1e-6:
                 w = wobble(a, z)
                 rr = r * (1 + w)
-                zz = z + w * 0.06
+                zz = z + w * 0.004
             row.append(bm.verts.new((rr * math.cos(a), rr * math.sin(a), zz)))
         rows.append(row)
     for j in range(len(rows) - 1):
@@ -239,51 +261,116 @@ def lathe(name, profile, segments=128, wobble=None):
 
 def bowl_wobble(a, z):
     # 手びねりの歪み。口縁は山道（高さも波打つ）
-    return (math.sin(a * 3 + 0.7) * 0.040 + math.sin(a * 5 - 1.9) * 0.022
-            + math.sin(a * 8 + 2.4 + z * 40) * 0.012 + math.sin(a * 13 + z * 60) * 0.006) * (0.3 + z * 8)
+    # 轆轤挽きのわずかな歪み。口縁の高さは揃える（山道にしない）
+    return (math.sin(a * 2 + 0.7) * 0.010 + math.sin(a * 5 - 1.9) * 0.005
+            + math.sin(a * 9 + 2.4 + z * 40) * 0.003) * (0.4 + z * 6)
 
 bowl = add_obj("Bowl", lathe("BowlMesh", BOWL_PROFILE, 160, bowl_wobble))
 smooth(bowl)
 sub = bowl.modifiers.new("Subsurf", "SUBSURF")
 sub.levels = sub.render_levels = 2
 
-# 黒楽の釉薬: 黒地に赤茶と青の照り、粗さのムラ、貫入
-m, nt, bsdf, out = new_material("Raku")
+# 信楽風の土物。素地はマットでザラつき、長石の白い粒と鉄粉、轆轤目。下半分に灰釉の帯
+m, nt, bsdf, out = new_material("Shigaraki")
 coord = nt.nodes.new("ShaderNodeTexCoord")
-noise1 = nt.nodes.new("ShaderNodeTexNoise"); noise1.inputs["Scale"].default_value = 140; noise1.inputs["Detail"].default_value = 7; noise1.inputs["Roughness"].default_value = 0.7
-noise2 = nt.nodes.new("ShaderNodeTexNoise"); noise2.inputs["Scale"].default_value = 14;  noise2.inputs["Detail"].default_value = 4
-noise3 = nt.nodes.new("ShaderNodeTexNoise"); noise3.inputs["Scale"].default_value = 28;  noise3.inputs["Detail"].default_value = 2
-nt.links.new(coord.outputs["Object"], noise1.inputs["Vector"])
-nt.links.new(coord.outputs["Object"], noise2.inputs["Vector"])
-nt.links.new(coord.outputs["Object"], noise3.inputs["Vector"])
-ramp = nt.nodes.new("ShaderNodeValToRGB")
-ramp.color_ramp.elements[0].position = 0.35; ramp.color_ramp.elements[0].color = (0.006, 0.005, 0.005, 1)
-ramp.color_ramp.elements[1].position = 0.80; ramp.color_ramp.elements[1].color = (0.045, 0.026, 0.018, 1)
-nt.links.new(noise2.outputs["Fac"], ramp.inputs["Fac"])
-kase = nt.nodes.new("ShaderNodeTexNoise"); kase.inputs["Scale"].default_value = 5; kase.inputs["Detail"].default_value = 5; kase.inputs["Roughness"].default_value = 0.65
-nt.links.new(coord.outputs["Object"], kase.inputs["Vector"])
-kr = nt.nodes.new("ShaderNodeValToRGB")
-kr.color_ramp.elements[0].position = 0.56; kr.color_ramp.elements[0].color = (0, 0, 0, 1)
-kr.color_ramp.elements[1].position = 0.70; kr.color_ramp.elements[1].color = (0.16, 0.07, 0.035, 1)
-nt.links.new(kase.outputs["Fac"], kr.inputs["Fac"])
-kmix = nt.nodes.new("ShaderNodeMix"); kmix.data_type = "RGBA"; kmix.blend_type = "ADD"; kmix.inputs["Factor"].default_value = 1.0
-nt.links.new(ramp.outputs["Color"], kmix.inputs[6]); nt.links.new(kr.outputs["Color"], kmix.inputs[7])
-nt.links.new(kmix.outputs[2], bsdf.inputs["Base Color"])
-rr = nt.nodes.new("ShaderNodeMapRange"); rr.inputs["From Min"].default_value = 0.3; rr.inputs["From Max"].default_value = 0.7
-rr.inputs["To Min"].default_value = 0.42; rr.inputs["To Max"].default_value = 0.80
-nt.links.new(noise2.outputs["Fac"], rr.inputs["Value"])
-nt.links.new(rr.outputs["Result"], bsdf.inputs["Roughness"])
-bump0 = nt.nodes.new("ShaderNodeBump"); bump0.inputs["Strength"].default_value = 0.35; bump0.inputs["Distance"].default_value = 0.004
-nt.links.new(noise3.outputs["Fac"], bump0.inputs["Height"])
-bump = nt.nodes.new("ShaderNodeBump"); bump.inputs["Strength"].default_value = 0.25; bump.inputs["Distance"].default_value = 0.0008
-nt.links.new(noise1.outputs["Fac"], bump.inputs["Height"])
-nt.links.new(bump0.outputs["Normal"], bump.inputs["Normal"])
-nt.links.new(bump.outputs["Normal"], bsdf.inputs["Normal"])
-set_input(bsdf, "Coat Weight", 0.22)
-cr2 = nt.nodes.new("ShaderNodeMapRange"); cr2.inputs["To Min"].default_value = 0.20; cr2.inputs["To Max"].default_value = 0.65
-nt.links.new(noise2.outputs["Fac"], cr2.inputs["Value"])
-if "Coat Roughness" in bsdf.inputs: nt.links.new(cr2.outputs["Result"], bsdf.inputs["Coat Roughness"])
-set_input(bsdf, "Specular IOR Level", 0.5)
+def noise(scale, detail=4, rough=0.5):
+    n = nt.nodes.new("ShaderNodeTexNoise")
+    n.inputs["Scale"].default_value = scale; n.inputs["Detail"].default_value = detail; n.inputs["Roughness"].default_value = rough
+    nt.links.new(coord.outputs["Object"], n.inputs["Vector"])
+    return n
+def mathn(op, a=None, b=None, v1=None):
+    n = nt.nodes.new("ShaderNodeMath"); n.operation = op
+    if a is not None: nt.links.new(a, n.inputs[0])
+    if b is not None: nt.links.new(b, n.inputs[1])
+    if v1 is not None: n.inputs[1].default_value = v1
+    return n
+# 素地の色ムラ（焼き締めの赤茶〜焦げ茶）
+tone = noise(11, 8, 0.75)
+clay = nt.nodes.new("ShaderNodeValToRGB")
+clay.color_ramp.elements[0].position = 0.25; clay.color_ramp.elements[0].color = (0.012, 0.009, 0.007, 1)
+clay.color_ramp.elements[1].position = 0.82; clay.color_ramp.elements[1].color = (0.13, 0.095, 0.065, 1)
+e = clay.color_ramp.elements.new(0.55); e.color = (0.075, 0.045, 0.028, 1)
+e = clay.color_ramp.elements.new(0.68); e.color = (0.15, 0.080, 0.040, 1)
+nt.links.new(tone.outputs["Fac"], clay.inputs["Fac"])
+# 焦げ（火前の黒ずみ）
+scorch = noise(3, 3, 0.6)
+sc = nt.nodes.new("ShaderNodeValToRGB")
+sc.color_ramp.elements[0].position = 0.45; sc.color_ramp.elements[0].color = (1, 1, 1, 1)
+sc.color_ramp.elements[1].position = 0.65; sc.color_ramp.elements[1].color = (0.25, 0.24, 0.24, 1)
+nt.links.new(scorch.outputs["Fac"], sc.inputs["Fac"])
+mul = nt.nodes.new("ShaderNodeMix"); mul.data_type = "RGBA"; mul.blend_type = "MULTIPLY"; mul.inputs["Factor"].default_value = 1.0
+nt.links.new(clay.outputs["Color"], mul.inputs[6]); nt.links.new(sc.outputs["Color"], mul.inputs[7])
+# 長石の白い粒（石はぜ）
+feld = nt.nodes.new("ShaderNodeTexVoronoi"); feld.inputs["Scale"].default_value = 190; feld.inputs["Randomness"].default_value = 1.0
+nt.links.new(coord.outputs["Object"], feld.inputs["Vector"])
+feld_mask = mathn("LESS_THAN", feld.outputs["Distance"], v1=0.11)
+feld_gate = noise(40, 2); fg = mathn("GREATER_THAN", feld_gate.outputs["Fac"], v1=0.56)
+feld_on = mathn("MULTIPLY", feld_mask.outputs[0], fg.outputs[0])
+# 鉄粉の黒い点
+iron = nt.nodes.new("ShaderNodeTexVoronoi"); iron.inputs["Scale"].default_value = 420; iron.inputs["Randomness"].default_value = 1.0
+nt.links.new(coord.outputs["Object"], iron.inputs["Vector"])
+iron_mask = mathn("LESS_THAN", iron.outputs["Distance"], v1=0.07)
+iron_gate = noise(25, 2); ig = mathn("GREATER_THAN", iron_gate.outputs["Fac"], v1=0.50)
+iron_on = mathn("MULTIPLY", iron_mask.outputs[0], ig.outputs[0])
+mix_f = nt.nodes.new("ShaderNodeMix"); mix_f.data_type = "RGBA"; mix_f.inputs[7].default_value = (0.38, 0.35, 0.31, 1)
+nt.links.new(feld_on.outputs[0], mix_f.inputs["Factor"]); nt.links.new(mul.outputs[2], mix_f.inputs[6])
+mix_i = nt.nodes.new("ShaderNodeMix"); mix_i.data_type = "RGBA"; mix_i.inputs[7].default_value = (0.020, 0.015, 0.012, 1)
+nt.links.new(iron_on.outputs[0], mix_i.inputs["Factor"]); nt.links.new(mix_f.outputs[2], mix_i.inputs[6])
+# 灰釉の帯: 下半分〜中程、縁は流れて滲む
+sep = nt.nodes.new("ShaderNodeSeparateXYZ"); nt.links.new(coord.outputs["Object"], sep.inputs["Vector"])
+warp = noise(6, 4, 0.6)
+drip_map = nt.nodes.new("ShaderNodeMapping"); drip_map.inputs["Scale"].default_value = (14, 14, 2.5)
+nt.links.new(coord.outputs["Object"], drip_map.inputs["Vector"])
+drip = nt.nodes.new("ShaderNodeTexNoise"); drip.inputs["Scale"].default_value = 1.0; drip.inputs["Detail"].default_value = 3
+nt.links.new(drip_map.outputs["Vector"], drip.inputs["Vector"])
+dsub = mathn("SUBTRACT", drip.outputs["Fac"], v1=0.5)
+dmix = mathn("MULTIPLY_ADD", dsub.outputs[0], v1=0.025)
+wsub = mathn("SUBTRACT", warp.outputs["Fac"], v1=0.5)
+wmul = mathn("MULTIPLY", wsub.outputs[0], v1=0.030)
+nt.links.new(wmul.outputs[0], dmix.inputs[2])
+wz = mathn("ADD", dmix.outputs[0])
+nt.links.new(sep.outputs["Z"], wz.inputs[2])
+band = nt.nodes.new("ShaderNodeMapRange"); band.inputs["From Min"].default_value = 0.046; band.inputs["From Max"].default_value = 0.058
+band.inputs["To Min"].default_value = 1.0; band.inputs["To Max"].default_value = 0.0
+nt.links.new(wz.outputs[0], band.inputs["Value"])
+low = nt.nodes.new("ShaderNodeMapRange"); low.inputs["From Min"].default_value = 0.008; low.inputs["From Max"].default_value = 0.018
+nt.links.new(sep.outputs["Z"], low.inputs["Value"])
+glaze_mask = mathn("MULTIPLY", band.outputs["Result"], low.outputs["Result"])
+gtone = noise(20, 5, 0.6)
+gcol = nt.nodes.new("ShaderNodeValToRGB")
+gcol.color_ramp.elements[0].position = 0.35; gcol.color_ramp.elements[0].color = (0.13, 0.145, 0.12, 1)
+gcol.color_ramp.elements[1].position = 0.70; gcol.color_ramp.elements[1].color = (0.34, 0.35, 0.30, 1)
+nt.links.new(gtone.outputs["Fac"], gcol.inputs["Fac"])
+final = nt.nodes.new("ShaderNodeMix"); final.data_type = "RGBA"
+nt.links.new(glaze_mask.outputs[0], final.inputs["Factor"]); nt.links.new(mix_i.outputs[2], final.inputs[6]); nt.links.new(gcol.outputs["Color"], final.inputs[7])
+nt.links.new(final.outputs[2], bsdf.inputs["Base Color"])
+# 粗さ: 素地 0.85〜0.95、釉 0.30〜0.45
+r_clay = nt.nodes.new("ShaderNodeMapRange"); r_clay.inputs["To Min"].default_value = 0.82; r_clay.inputs["To Max"].default_value = 0.96
+nt.links.new(tone.outputs["Fac"], r_clay.inputs["Value"])
+r_gl = nt.nodes.new("ShaderNodeMapRange"); r_gl.inputs["To Min"].default_value = 0.28; r_gl.inputs["To Max"].default_value = 0.48
+nt.links.new(gtone.outputs["Fac"], r_gl.inputs["Value"])
+r_mix = nt.nodes.new("ShaderNodeMix"); r_mix.data_type = "FLOAT"
+nt.links.new(glaze_mask.outputs[0], r_mix.inputs["Factor"]); nt.links.new(r_clay.outputs["Result"], r_mix.inputs[2]); nt.links.new(r_gl.outputs["Result"], r_mix.inputs[3])
+nt.links.new(r_mix.outputs[0], bsdf.inputs["Roughness"])
+# 凹凸: 轆轤目（横の筋）＋粗い粒＋細かいザラつき
+rings = nt.nodes.new("ShaderNodeTexWave"); rings.inputs["Scale"].default_value = 90; rings.inputs["Distortion"].default_value = 3.0; rings.inputs["Detail"].default_value = 3
+rings.wave_type = "BANDS"; rings.bands_direction = "Z"
+nt.links.new(coord.outputs["Object"], rings.inputs["Vector"])
+g1 = noise(90, 5, 0.7); g2 = noise(900, 3, 0.6)
+bA = nt.nodes.new("ShaderNodeBump"); bA.inputs["Strength"].default_value = 0.10; bA.inputs["Distance"].default_value = 0.0010
+nt.links.new(rings.outputs["Fac"], bA.inputs["Height"])
+bB = nt.nodes.new("ShaderNodeBump"); bB.inputs["Strength"].default_value = 0.7; bB.inputs["Distance"].default_value = 0.0016
+nt.links.new(g1.outputs["Fac"], bB.inputs["Height"]); nt.links.new(bA.outputs["Normal"], bB.inputs["Normal"])
+bC = nt.nodes.new("ShaderNodeBump"); bC.inputs["Strength"].default_value = 0.45; bC.inputs["Distance"].default_value = 0.00025
+nt.links.new(g2.outputs["Fac"], bC.inputs["Height"]); nt.links.new(bB.outputs["Normal"], bC.inputs["Normal"])
+# 長石の粒は盛り上がる
+bD = nt.nodes.new("ShaderNodeBump"); bD.inputs["Strength"].default_value = 0.6; bD.inputs["Distance"].default_value = 0.0006
+nt.links.new(feld_on.outputs[0], bD.inputs["Height"]); nt.links.new(bC.outputs["Normal"], bD.inputs["Normal"])
+nt.links.new(bD.outputs["Normal"], bsdf.inputs["Normal"])
+set_input(bsdf, "Specular IOR Level", 0.35)
+coatw = mathn("MULTIPLY", glaze_mask.outputs[0], v1=0.35)
+if "Coat Weight" in bsdf.inputs: nt.links.new(coatw.outputs[0], bsdf.inputs["Coat Weight"])
+set_input(bsdf, "Coat Roughness", 0.3)
 bowl.data.materials.append(m)
 
 # ---------- 抹茶（液面と泡） ----------
@@ -431,12 +518,13 @@ if WHISK > 0.01:
             a = 2 * math.pi * i / count + random.uniform(-0.01, 0.01)
             s = 1 + random.uniform(-jitter, jitter)
             bend = random.uniform(-0.035, 0.035)
+            thick = random.uniform(0.85, 1.15)
             sp = cu.splines.new("NURBS")
             sp.points.add(len(prof) - 1)
             for k, (r, z) in enumerate(prof):
                 rr = r * s
                 # 先端ほど細く
-                rad = 1.0 - 0.45 * (k / (len(prof) - 1))
+                rad = (1.0 - 0.45 * (k / (len(prof) - 1))) * thick
                 ak = a + bend * (k / (len(prof) - 1)) ** 2
                 sp.points[k].co = (rr * math.cos(ak), rr * math.sin(ak), z, 1.0)
                 sp.points[k].radius = rad
@@ -460,12 +548,12 @@ cam = bpy.data.objects.new("Cam", cam_d)
 scene.collection.objects.link(cam)
 scene.camera = cam
 cam_d.sensor_width = 36
-cam_d.lens = 60
+cam_d.lens = 58
 cam_d.dof.use_dof = True
 cam_d.dof.aperture_fstop = 2.8
 cam_d.dof.focus_distance = 0.30
 if POSE == "cut04":
-    cam.location = (0.07, -0.26, 0.26)
+    cam.location = (0.09, -0.31, 0.31)
     look = Vector((0.0, 0.0, 0.055))
 else:
     cam.location = (0.10, -1.30, 0.42)
