@@ -55,7 +55,7 @@ scene.render.image_settings.color_depth = "16"
 scene.render.filepath = OUT
 scene.view_settings.view_transform = "AgX"
 scene.view_settings.look = "AgX - Medium High Contrast"
-scene.view_settings.exposure = -0.4
+scene.view_settings.exposure = 0.0
 scene.render.film_transparent = False
 
 # ---------- ヘルパ ----------
@@ -139,8 +139,8 @@ wout = wn.nodes.new("ShaderNodeOutputWorld")
 bg = wn.nodes.new("ShaderNodeBackground")
 # HDRI（comfy_cafe 等）は窓の輝度が高すぎて天板が全面明るくなるので使わない。
 # 暗い茶室: ほぼ黒の空に、ごく弱い暖色の返りだけ
-bg.inputs["Color"].default_value = (0.35, 0.28, 0.20, 1)
-bg.inputs["Strength"].default_value = 0.008
+bg.inputs["Color"].default_value = (0.55, 0.50, 0.60, 1)
+bg.inputs["Strength"].default_value = 0.06
 wn.links.new(bg.outputs["Background"], wout.inputs["Surface"])
 # カメラには HDRI を見せない（背景は暗い壁が受ける）
 lp = wn.nodes.new("ShaderNodeLightPath")
@@ -169,49 +169,117 @@ def area(name, loc, target, size, power, color, size_y=None):
     o.rotation_euler = d.to_track_quat("-Z", "Y").to_euler()
     return o
 
-# 大きく柔らかい主光源（左上）。参考写真の物撮りライティング
-key = area("Shoji", (-0.70, -0.55, 1.30), (0, 0, 0.04), 1.4, 42, (1.0, 0.93, 0.84), size_y=1.4)
-# 右からの弱い返し
-fill = area("Top", (0.75, 0.15, 0.55), (0, 0, 0.04), 0.8, 2.5, (0.90, 0.93, 1.0))
-# 奥からの弱い逆光。口縁と穂先の輪郭
-rm_ = area("Rim", (0.15, 0.70, 0.45), (0, 0, 0.08), 0.35, 3, (1.0, 0.96, 0.90)); rm_.data.spread = math.radians(25)
+# 窓の夕光（右手、青みがかったピンク）。大きく柔らかい
+key = area("Shoji", (1.1, -0.45, 0.75), (0, 0, 0.04), 1.6, 48, (0.86, 0.80, 0.90), size_y=1.4)
+# 天井のダウンライト（暖色、真上やや手前）
+dl = bpy.data.lights.new("Down", "SPOT"); dl.energy = 26; dl.color = (1.0, 0.80, 0.58); dl.spot_size = math.radians(48); dl.spot_blend = 0.6; dl.shadow_soft_size = 0.06
+dlo = bpy.data.objects.new("Top", dl); scene.collection.objects.link(dlo); dlo.location = (-0.25, -0.15, 1.35)
+dlo.rotation_euler = (Vector((0, 0, 0.04)) - dlo.location).to_track_quat("-Z", "Y").to_euler()
+dlo.hide_render = "Top" not in LIGHTS.split(",")
+# 枯山水の壁を照らすダウンライト（壁を見せるため）
+for wx in (-0.7, 0.5):
+    wl = bpy.data.lights.new("WallDown", "SPOT"); wl.energy = 40; wl.color = (1.0, 0.85, 0.66); wl.spot_size = math.radians(70); wl.spot_blend = 0.8
+    wlo = bpy.data.objects.new("Rim", wl); scene.collection.objects.link(wlo); wlo.location = (wx, 1.25, 2.3)
+    wlo.rotation_euler = (Vector((wx, 1.6, 0.9)) - wlo.location).to_track_quat("-Z", "Y").to_euler()
 
-# ---------- 台: 黒いスレートの板 ----------
-bpy.ops.mesh.primitive_plane_add(size=3.0, location=(0, 0.7, 0))
+# ---------- 台: 店の濃茶の木目テーブル（高台寺店の実物に合わせる） ----------
+bpy.ops.mesh.primitive_plane_add(size=1.6, location=(0, 0.25, 0))
 counter = bpy.context.active_object
-counter.name = "Counter"
-slate, nt, bsdf, out = new_material("Slate")
-coord = nt.nodes.new("ShaderNodeTexCoord")
-mottle = nt.nodes.new("ShaderNodeTexNoise"); mottle.inputs["Scale"].default_value = 9; mottle.inputs["Detail"].default_value = 8; mottle.inputs["Roughness"].default_value = 0.72
-grain = nt.nodes.new("ShaderNodeTexNoise"); grain.inputs["Scale"].default_value = 700; grain.inputs["Detail"].default_value = 4
-scratch = nt.nodes.new("ShaderNodeTexWave"); scratch.inputs["Scale"].default_value = 60; scratch.inputs["Distortion"].default_value = 18; scratch.inputs["Detail"].default_value = 3
-scratch.wave_type = "BANDS"; scratch.bands_direction = "DIAGONAL"
-for n in (mottle, grain, scratch):
-    nt.links.new(coord.outputs["Object"], n.inputs["Vector"])
-cr = nt.nodes.new("ShaderNodeValToRGB")
-cr.color_ramp.elements[0].position = 0.30; cr.color_ramp.elements[0].color = (0.0035, 0.0035, 0.004, 1)
-cr.color_ramp.elements[1].position = 0.80; cr.color_ramp.elements[1].color = (0.022, 0.022, 0.023, 1)
-nt.links.new(mottle.outputs["Fac"], cr.inputs["Fac"])
-nt.links.new(cr.outputs["Color"], bsdf.inputs["Base Color"])
-rr = nt.nodes.new("ShaderNodeMapRange"); rr.inputs["To Min"].default_value = 0.70; rr.inputs["To Max"].default_value = 0.95
-nt.links.new(mottle.outputs["Fac"], rr.inputs["Value"])
-nt.links.new(rr.outputs["Result"], bsdf.inputs["Roughness"])
-b1 = nt.nodes.new("ShaderNodeBump"); b1.inputs["Strength"].default_value = 0.45; b1.inputs["Distance"].default_value = 0.003
-nt.links.new(mottle.outputs["Fac"], b1.inputs["Height"])
-b2 = nt.nodes.new("ShaderNodeBump"); b2.inputs["Strength"].default_value = 0.25; b2.inputs["Distance"].default_value = 0.0003
-nt.links.new(grain.outputs["Fac"], b2.inputs["Height"]); nt.links.new(b1.outputs["Normal"], b2.inputs["Normal"])
-b3 = nt.nodes.new("ShaderNodeBump"); b3.inputs["Strength"].default_value = 0.08; b3.inputs["Distance"].default_value = 0.0004
-nt.links.new(scratch.outputs["Fac"], b3.inputs["Height"]); nt.links.new(b2.outputs["Normal"], b3.inputs["Normal"])
-nt.links.new(b3.outputs["Normal"], bsdf.inputs["Normal"])
-set_input(bsdf, "Specular IOR Level", 0.18)
-counter.data.materials.append(slate)
+counter.name = "Table"
+table_mat = pbr_material("TableWood", os.path.join(TEX, "black_oak_veneer"), "black_oak_veneer", scale=1.4, tint=(0.40, 0.31, 0.24, 1), rough_mul=0.80, bump=0.35)
+counter.data.materials.append(table_mat)
+# 天板の角（面取り）
+bpy.ops.mesh.primitive_cube_add(size=1.0, location=(0, 0.25, -0.02))
+slab = bpy.context.active_object; slab.name = "TableSlab"; slab.scale = (1.6, 1.6, 0.036)
+slab.data.materials.append(table_mat)
 
-# 奥の壁（土壁、ほぼ闇）
-bpy.ops.mesh.primitive_plane_add(size=6.0, location=(0, 2.2, 1.0), rotation=(math.radians(90), 0, 0))
-wall = bpy.context.active_object
-wall.name = "Wall"
-plaster = pbr_material("Plaster", os.path.join(TEX, "clay_plaster"), "clay_plaster", scale=0.6, tint=(0.35, 0.33, 0.30, 1), rough_mul=1.0, bump=0.4)
-wall.data.materials.append(plaster)
+# 奥の壁: 枯山水（砂紋に石が3つ）。この画角ではボケて見える
+bpy.ops.mesh.primitive_plane_add(size=1.0, location=(0.3, 1.6, 1.1), rotation=(math.radians(90), 0, 0))
+wall = bpy.context.active_object; wall.name = "KaresansuiWall"; wall.scale = (4.0, 2.4, 1)
+bpy.ops.object.transform_apply(scale=True)
+km, nt, bsdf, out = new_material("Karesansui")
+coord = nt.nodes.new("ShaderNodeTexCoord")
+# 砂粒
+sand = nt.nodes.new("ShaderNodeTexNoise"); sand.inputs["Scale"].default_value = 900; sand.inputs["Detail"].default_value = 3
+nt.links.new(coord.outputs["Object"], sand.inputs["Vector"])
+# 砂紋: 3つの石を中心にした同心円と、斜めの流れ
+sepw = nt.nodes.new("ShaderNodeSeparateXYZ"); nt.links.new(coord.outputs["Object"], sepw.inputs["Vector"])
+def rings_around(cx, cz, scale):
+    sub = nt.nodes.new("ShaderNodeVectorMath"); sub.operation = "SUBTRACT"; sub.inputs[1].default_value = (cx, cz, 0)
+    nt.links.new(coord.outputs["Object"], sub.inputs[0])
+    ln = nt.nodes.new("ShaderNodeVectorMath"); ln.operation = "LENGTH"; nt.links.new(sub.outputs[0], ln.inputs[0])
+    w = nt.nodes.new("ShaderNodeTexWave"); w.wave_type = "RINGS"; w.rings_direction = "SPHERICAL"; w.inputs["Scale"].default_value = scale; w.inputs["Distortion"].default_value = 0.15
+    nt.links.new(sub.outputs[0], w.inputs["Vector"])
+    return w, ln
+r1, l1 = rings_around(-0.9, 0.55, 38); r2, l2 = rings_around(0.55, 0.65, 38); r3, l3 = rings_around(-0.2, -0.45, 38)
+flow = nt.nodes.new("ShaderNodeTexWave"); flow.wave_type = "BANDS"; flow.bands_direction = "DIAGONAL"; flow.inputs["Scale"].default_value = 36; flow.inputs["Distortion"].default_value = 1.2
+nt.links.new(coord.outputs["Object"], flow.inputs["Vector"])
+def nearest(a, b):
+    m = nt.nodes.new("ShaderNodeMath"); m.operation = "MINIMUM"; nt.links.new(a, m.inputs[0]); nt.links.new(b, m.inputs[1]); return m
+dmin = nearest(nearest(l1.outputs["Value"], l2.outputs["Value"]).outputs[0], l3.outputs["Value"])
+# 石から 0.45m 以内は同心円、外は流れ
+mask = nt.nodes.new("ShaderNodeMapRange"); mask.inputs["From Min"].default_value = 0.40; mask.inputs["From Max"].default_value = 0.50
+nt.links.new(dmin.outputs[0], mask.inputs["Value"])
+def pick(l, r):
+    mm = nt.nodes.new("ShaderNodeMapRange"); mm.inputs["From Min"].default_value = 0.0; mm.inputs["From Max"].default_value = 0.42
+    mm.inputs["To Min"].default_value = 1.0; mm.inputs["To Max"].default_value = 0.0
+    nt.links.new(l, mm.inputs["Value"])
+    mul = nt.nodes.new("ShaderNodeMath"); mul.operation = "MULTIPLY"; nt.links.new(mm.outputs["Result"], mul.inputs[0]); nt.links.new(r, mul.inputs[1]); return mul
+ring_sum = nt.nodes.new("ShaderNodeMath"); ring_sum.operation = "ADD"
+nt.links.new(pick(l1.outputs["Value"], r1.outputs["Fac"]).outputs[0], ring_sum.inputs[0]); nt.links.new(pick(l2.outputs["Value"], r2.outputs["Fac"]).outputs[0], ring_sum.inputs[1])
+ring_sum2 = nt.nodes.new("ShaderNodeMath"); ring_sum2.operation = "ADD"
+nt.links.new(ring_sum.outputs[0], ring_sum2.inputs[0]); nt.links.new(pick(l3.outputs["Value"], r3.outputs["Fac"]).outputs[0], ring_sum2.inputs[1])
+pattern = nt.nodes.new("ShaderNodeMix"); pattern.data_type = "FLOAT"
+nt.links.new(mask.outputs["Result"], pattern.inputs["Factor"]); nt.links.new(ring_sum2.outputs[0], pattern.inputs[2]); nt.links.new(flow.outputs["Fac"], pattern.inputs[3])
+bsdf.inputs["Base Color"].default_value = (0.42, 0.40, 0.36, 1)
+bsdf.inputs["Roughness"].default_value = 0.95
+bk1 = nt.nodes.new("ShaderNodeBump"); bk1.inputs["Strength"].default_value = 0.55; bk1.inputs["Distance"].default_value = 0.004
+nt.links.new(pattern.outputs[0], bk1.inputs["Height"])
+bk2 = nt.nodes.new("ShaderNodeBump"); bk2.inputs["Strength"].default_value = 0.5; bk2.inputs["Distance"].default_value = 0.0015
+nt.links.new(sand.outputs["Fac"], bk2.inputs["Height"]); nt.links.new(bk1.outputs["Normal"], bk2.inputs["Normal"])
+nt.links.new(bk2.outputs["Normal"], bsdf.inputs["Normal"])
+set_input(bsdf, "Specular IOR Level", 0.2)
+wall.data.materials.append(km)
+# 石（灰緑）
+rock_mat, rn, rb, _ = new_material("Rock")
+rb.inputs["Base Color"].default_value = (0.20, 0.23, 0.19, 1); rb.inputs["Roughness"].default_value = 0.9
+rc = rn.nodes.new("ShaderNodeTexCoord"); rnz = rn.nodes.new("ShaderNodeTexNoise"); rnz.inputs["Scale"].default_value = 60; rnz.inputs["Detail"].default_value = 6
+rn.links.new(rc.outputs["Object"], rnz.inputs["Vector"])
+rbump = rn.nodes.new("ShaderNodeBump"); rbump.inputs["Strength"].default_value = 0.8; rbump.inputs["Distance"].default_value = 0.01
+rn.links.new(rnz.outputs["Fac"], rbump.inputs["Height"]); rn.links.new(rbump.outputs["Normal"], rb.inputs["Normal"])
+for (rx, rz, rs) in [(-0.6, 1.65, 0.22), (0.85, 1.75, 0.20), (0.1, 0.65, 0.19)]:
+    bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=3, radius=1.0, location=(rx, 1.55, rz))
+    rock = bpy.context.active_object; rock.scale = (rs, rs * 0.6, rs * 0.7)
+    rock.rotation_euler = (random.uniform(0, 1), random.uniform(0, 1), random.uniform(0, 3))
+    dsp = rock.modifiers.new("Disp", "DISPLACE"); tx = bpy.data.textures.new("rocktex", "CLOUDS"); tx.noise_scale = 0.35; dsp.texture = tx; dsp.strength = 0.35
+    smooth(rock); rock.data.materials.append(rock_mat)
+# ティールのベルベットのベンチ（壁の手前）。ボケの中の店の色
+bpy.ops.mesh.primitive_cube_add(size=1.0, location=(0.3, 1.38, 0.20))
+bench = bpy.context.active_object; bench.scale = (3.6, 0.42, 0.40)
+bv = bench.modifiers.new("Bevel", "BEVEL"); bv.width = 0.03; bv.segments = 4
+velvet, vn, vb, _ = new_material("Velvet"); vb.inputs["Base Color"].default_value = (0.008, 0.085, 0.080, 1); vb.inputs["Roughness"].default_value = 0.75
+set_input(vb, "Sheen Weight", 1.0); set_input(vb, "Sheen Roughness", 0.4); set_input(vb, "Sheen Tint", (0.6, 0.9, 0.85, 1))
+bench.data.materials.append(velvet)
+# 白い漆喰の壁（枯山水の壁の左右と天井側）
+bpy.ops.mesh.primitive_plane_add(size=1.0, location=(-2.6, 1.62, 1.2), rotation=(math.radians(90), 0, 0))
+w2 = bpy.context.active_object; w2.scale = (1.6, 2.6, 1)
+plaster, pn, pb, _ = new_material("Plaster"); pb.inputs["Base Color"].default_value = (0.72, 0.70, 0.66, 1); pb.inputs["Roughness"].default_value = 0.9
+w2.data.materials.append(plaster)
+# 縦格子（濃い木）: 右奥に少しだけ、ボケの縦線として
+lat_mat, ln_, lb, _ = new_material("Lattice"); lb.inputs["Base Color"].default_value = (0.045, 0.028, 0.018, 1); lb.inputs["Roughness"].default_value = 0.55
+for i in range(9):
+    bpy.ops.mesh.primitive_cube_add(size=1.0, location=(0.75 + i * 0.075, 0.95, 0.9))
+    sl = bpy.context.active_object; sl.scale = (0.018, 0.035, 2.2); sl.data.materials.append(lat_mat)
+# 橙色のガラスのペンダントライト: 奥に3つ。ボケの光点になる
+pend_mat = bpy.data.materials.new("Pendant"); pend_mat.use_nodes = True
+pnt = pend_mat.node_tree; pnt.nodes.clear()
+po = pnt.nodes.new("ShaderNodeOutputMaterial"); pe = pnt.nodes.new("ShaderNodeEmission")
+pe.inputs["Color"].default_value = (1.0, 0.42, 0.10, 1); pe.inputs["Strength"].default_value = 60
+pnt.links.new(pe.outputs["Emission"], po.inputs["Surface"])
+for (px, py, pz) in [(-0.55, 1.15, 0.62), (0.05, 1.35, 0.70), (0.55, 1.05, 0.66)]:
+    bpy.ops.mesh.primitive_cube_add(size=0.055, location=(px, py, pz))
+    pd = bpy.context.active_object; pd.data.materials.append(pend_mat)
+    bv = pd.modifiers.new("Bevel", "BEVEL"); bv.width = 0.006; bv.segments = 3
 
 # ---------- 茶碗（黒楽） ----------
 BOWL_PROFILE = [  # (r, z) 外→口→内→底。筒茶碗。壁厚 5〜6mm、高台つき
@@ -304,7 +372,7 @@ nt.links.new(clay.outputs["Color"], mul.inputs[6]); nt.links.new(sc.outputs["Col
 feld = nt.nodes.new("ShaderNodeTexVoronoi"); feld.inputs["Scale"].default_value = 190; feld.inputs["Randomness"].default_value = 1.0
 nt.links.new(coord.outputs["Object"], feld.inputs["Vector"])
 feld_mask = mathn("LESS_THAN", feld.outputs["Distance"], v1=0.11)
-feld_gate = noise(40, 2); fg = mathn("GREATER_THAN", feld_gate.outputs["Fac"], v1=0.56)
+feld_gate = noise(40, 2); fg = mathn("GREATER_THAN", feld_gate.outputs["Fac"], v1=0.63)
 feld_on = mathn("MULTIPLY", feld_mask.outputs[0], fg.outputs[0])
 # 鉄粉の黒い点
 iron = nt.nodes.new("ShaderNodeTexVoronoi"); iron.inputs["Scale"].default_value = 420; iron.inputs["Randomness"].default_value = 1.0
@@ -312,7 +380,7 @@ nt.links.new(coord.outputs["Object"], iron.inputs["Vector"])
 iron_mask = mathn("LESS_THAN", iron.outputs["Distance"], v1=0.07)
 iron_gate = noise(25, 2); ig = mathn("GREATER_THAN", iron_gate.outputs["Fac"], v1=0.50)
 iron_on = mathn("MULTIPLY", iron_mask.outputs[0], ig.outputs[0])
-mix_f = nt.nodes.new("ShaderNodeMix"); mix_f.data_type = "RGBA"; mix_f.inputs[7].default_value = (0.38, 0.35, 0.31, 1)
+mix_f = nt.nodes.new("ShaderNodeMix"); mix_f.data_type = "RGBA"; mix_f.inputs[7].default_value = (0.30, 0.28, 0.25, 1)
 nt.links.new(feld_on.outputs[0], mix_f.inputs["Factor"]); nt.links.new(mul.outputs[2], mix_f.inputs[6])
 mix_i = nt.nodes.new("ShaderNodeMix"); mix_i.data_type = "RGBA"; mix_i.inputs[7].default_value = (0.020, 0.015, 0.012, 1)
 nt.links.new(iron_on.outputs[0], mix_i.inputs["Factor"]); nt.links.new(mix_f.outputs[2], mix_i.inputs[6])
@@ -388,7 +456,7 @@ if WHISK > 0.01:
         v.co.z = (1 - d * d) * 0.055 + random.uniform(-0.004, 0.004) * (1 - d)
     bm.to_mesh(foam.data); bm.free()
     foam.scale = (foam_r, foam_r, foam_r)
-    foam.location = (0, 0, LIQ_Z + 0.0015)
+    foam.location = (0, 0, LIQ_Z - 0.0005)
     smooth(foam)
     sub = foam.modifiers.new("Subsurf", "SUBSURF"); sub.levels = sub.render_levels = 3
 
@@ -553,11 +621,11 @@ cam_d.dof.use_dof = True
 cam_d.dof.aperture_fstop = 2.8
 cam_d.dof.focus_distance = 0.30
 if POSE == "cut04":
-    cam.location = (0.09, -0.31, 0.31)
-    look = Vector((0.0, 0.0, 0.055))
+    cam.location = (0.09, -0.33, 0.27)
+    look = Vector((0.0, 0.0, 0.058))
 else:
-    cam.location = (0.10, -1.30, 0.42)
-    look = Vector((0.0, 0.2, 0.14))
+    cam.location = (0.10, -1.40, 0.62)
+    look = Vector((0.1, 0.6, 0.55))
 cam.rotation_euler = (look - cam.location).to_track_quat("-Z", "Y").to_euler()
 cam_d.dof.focus_distance = (look - cam.location).length
 
