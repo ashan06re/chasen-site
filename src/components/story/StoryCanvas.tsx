@@ -30,24 +30,22 @@ const FRAG = /* glsl */ `
   uniform sampler2D uImgB; uniform sampler2D uDepB; uniform vec2 uCoverB; uniform float uTB;
   uniform float uMix;
   uniform vec2  uPointer;
-  uniform float uTime;
   uniform float uMobile;
   varying vec2 vUv;
 
   // 1コマぶん: 寄り＋視差。深度も返す（溶けの順番に使う）
   vec4 layer(sampler2D img, sampler2D dep, vec2 cover, float t, float lead) {
-    // ゆっくり寄る（コマの終わりで 6% 大きく）。次のコマは少し引いた所から始まる
-    float zoom = 1.0 / (1.0 + 0.06 * t - 0.02 * lead);
+    // ゆっくり寄る（コマの終わりで 2.5% 大きく）。次のコマは少し引いた所から始まる
+    float zoom = 1.0 / (1.0 + 0.025 * t - 0.01 * lead);
     vec2 uv = (vUv - 0.5) * cover * 0.92 * zoom + 0.5;
 
     float d = texture2D(dep, uv).r - 0.45;   // 手前 +, 奥 -
 
-    // 常時ゆっくり漂う成分。マウスは目標へ追従済み
-    vec2 drift = vec2(sin(uTime * 0.06) * 0.5, cos(uTime * 0.047) * 0.35);
-    vec2 off = (uPointer * (1.0 - uMobile) + drift) * d * 0.022;
+    // ポインタ操作時のみ、ごく控えめな視差を付ける
+    vec2 off = uPointer * (1.0 - uMobile) * d * 0.008;
     // スクロールで奥と手前が逆向きに流れる（カメラが寄る時の視差）
-    off.y += (t - 0.5) * d * 0.028;
-    off.x += (t - 0.5) * d * 0.010;
+    off.y += (t - 0.5) * d * 0.012;
+    off.x += (t - 0.5) * d * 0.004;
 
     vec2 s = clamp(uv + off, 0.002, 0.998);
     return vec4(texture2D(img, s).rgb, d + 0.45);
@@ -65,9 +63,6 @@ const FRAG = /* glsl */ `
       float dip = 1.0 - 0.08 * sin(m * 3.14159);
       col = mix(a.rgb, b.rgb, m) * dip;
     }
-    // 微かな粒子（バンディング防止も兼ねる）
-    float g = fract(sin(dot(gl_FragCoord.xy + uTime, vec2(12.9898, 78.233))) * 43758.5453);
-    col += (g - 0.5) * 0.014;
     gl_FragColor = vec4(col, 1.0);
   }
 `;
@@ -81,6 +76,10 @@ export default function StoryCanvas({ progress, onReady, onFail }: Props) {
     if (!canvas) return;
     let disposed = false;
     let cleanup: (() => void) | undefined;
+    const fail = () => { if (!disposed) onFail?.(); };
+    const textures = new Set<{ dispose: () => void }>();
+    const contextLost = (event: Event) => { event.preventDefault(); fail(); };
+    canvas.addEventListener("webglcontextlost", contextLost);
 
     (async () => {
       const THREE = await import("three");
@@ -108,7 +107,10 @@ export default function StoryCanvas({ progress, onReady, onFail }: Props) {
         return t;
       };
       const load = (src: string, color: boolean) =>
-        new Promise<Tex>((resolve, reject) => loader.load(src, (t) => resolve(prep(t, color)), undefined, reject));
+        new Promise<Tex>((resolve, reject) => loader.load(src, (t) => {
+          if (disposed) { t.dispose(); reject(new Error("Disposed")); return; }
+          textures.add(t); resolve(prep(t, color));
+        }, undefined, reject));
 
       // コマごとの写真と深度。今と次と、その次だけ読んでおく
       const cache = new Map<number, Promise<{ img: Tex; dep: Tex }>>();
@@ -127,10 +129,11 @@ export default function StoryCanvas({ progress, onReady, onFail }: Props) {
       let first: { img: Tex; dep: Tex };
       try {
         first = await get(0);
-        void get(1);
+        void get(1).catch(fail);
       } catch {
         renderer.dispose();
-        onFail?.();
+        textures.forEach((t) => t.dispose());
+        fail();
         return;
       }
       if (disposed) { renderer.dispose(); return; }
@@ -140,7 +143,6 @@ export default function StoryCanvas({ progress, onReady, onFail }: Props) {
         uImgB: { value: first.img }, uDepB: { value: first.dep }, uCoverB: { value: new THREE.Vector2(1, 1) }, uTB: { value: 0 },
         uMix: { value: 0 },
         uPointer: { value: new THREE.Vector2(0, 0) },
-        uTime: { value: 0 },
         uMobile: { value: mobile ? 1 : 0 },
       };
       const scene = new THREE.Scene();
@@ -179,15 +181,16 @@ export default function StoryCanvas({ progress, onReady, onFail }: Props) {
 
       const stateNow: CutState = { a: 0, b: 0, mix: 0, ta: 0, tb: 0 };
       let shownA = 0, shownB = 0;
+      let pendingA = -1, pendingB = -1;
       let smoothed = 0;
       const clock = new THREE.Clock();
       let frame = 0;
+      let lastRender = "";
 
       const tick = () => {
         frame = requestAnimationFrame(tick);
-        if (!onScreen) return;
+        if (!onScreen || document.hidden) return;
         const dt = Math.min(0.05, clock.getDelta());
-        uniforms.uTime.value = clock.elapsedTime;
 
         // スクロールの段差を1フレームぶんならす
         const p = progress.current ?? 0;
@@ -195,24 +198,27 @@ export default function StoryCanvas({ progress, onReady, onFail }: Props) {
         cutState(smoothed, stateNow);
 
         // 表示するコマが変わったらテクスチャを差し替える（読めていなければ前のまま）
-        if (stateNow.a !== shownA) {
+        if (stateNow.a !== shownA && stateNow.a !== pendingA) {
           const i = stateNow.a;
-          get(i).then((t) => { if (stateNow.a === i) { uniforms.uImgA.value = t.img; uniforms.uDepA.value = t.dep; shownA = i; cover(CUTS[i].aspect, uniforms.uCoverA.value); } });
+          pendingA = i;
+          get(i).then((t) => { if (!disposed && stateNow.a === i) { uniforms.uImgA.value = t.img; uniforms.uDepA.value = t.dep; shownA = i; cover(CUTS[i].aspect, uniforms.uCoverA.value); } }).catch(fail).finally(() => { if (pendingA === i) pendingA = -1; });
         }
-        if (stateNow.b !== shownB) {
+        if (stateNow.b !== shownB && stateNow.b !== pendingB) {
           const i = stateNow.b;
-          get(i).then((t) => { if (stateNow.b === i) { uniforms.uImgB.value = t.img; uniforms.uDepB.value = t.dep; shownB = i; cover(CUTS[i].aspect, uniforms.uCoverB.value); } });
-          void get(Math.min(CUTS.length - 1, i + 1));
+          pendingB = i;
+          get(i).then((t) => { if (!disposed && stateNow.b === i) { uniforms.uImgB.value = t.img; uniforms.uDepB.value = t.dep; shownB = i; cover(CUTS[i].aspect, uniforms.uCoverB.value); } }).catch(fail).finally(() => { if (pendingB === i) pendingB = -1; });
+          void get(Math.min(CUTS.length - 1, i + 1)).catch(fail);
         }
         uniforms.uTA.value = stateNow.ta;
         uniforms.uTB.value = stateNow.tb;
-        uniforms.uMix.value = shownB === stateNow.b ? stateNow.mix : 0;
+        uniforms.uMix.value = shownA === stateNow.a && shownB === stateNow.b ? stateNow.mix : 0;
 
         const pt = uniforms.uPointer.value;
         pt.x += (target.x - pt.x) * 0.04;
         pt.y += (target.y - pt.y) * 0.04;
 
-        renderer.render(scene, camera);
+        const renderKey = `${smoothed.toFixed(5)}:${pt.x.toFixed(4)}:${pt.y.toFixed(4)}:${shownA}:${shownB}:${canvas.width}:${canvas.height}`;
+        if (renderKey !== lastRender) { renderer.render(scene, camera); lastRender = renderKey; }
       };
 
       resize();
@@ -231,16 +237,16 @@ export default function StoryCanvas({ progress, onReady, onFail }: Props) {
         cache.forEach((p) => p.then((t) => { t.img.dispose(); t.dep.dispose(); }).catch(() => {}));
         renderer.dispose();
       };
-    })();
+    })().catch(fail);
 
-    return () => { disposed = true; cleanup?.(); };
+    return () => { disposed = true; canvas.removeEventListener("webglcontextlost", contextLost); cleanup?.(); textures.forEach((t) => t.dispose()); };
   }, [progress, onReady, onFail]);
 
   return (
     <canvas
       ref={canvasRef}
       aria-hidden
-      className="absolute inset-0 h-full w-full transition-opacity duration-[900ms] ease-out"
+      className="absolute inset-0 h-full w-full"
       style={{ opacity: visible ? 1 : 0 }}
     />
   );

@@ -21,6 +21,25 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 88px;
+}
+
+:focus-visible { outline: 2px solid #B8A882; outline-offset: 5px; }
+html[lang="en"] { overflow-wrap: break-word; }
+/* Small screens keep the scene readable as a photographic frame, not a narrow crop. */
+@media (max-width: 767px) {
+  .story-picture { inset: auto 16px; top: 50%; height: auto; aspect-ratio: 4 / 3; transform: translateY(-50%); }
+  .story-title { writing-mode: horizontal-tb !important; text-orientation: mixed !important; top: 116px; bottom: auto; left: 24px; right: 24px; transform: none; translate: none; flex-direction: column; gap: 18px; }
+  .story-title p { line-height: 1.8; letter-spacing: .15em; }
+}
+@media (max-width: 767px) and (max-height: 650px) {
+  .story-title { top: 94px; gap: 10px; }
+  .story-title h1 { font-size: 1.5rem; }
+  .story-picture { top: 55%; max-height: 40svh; }
+}
+@media (max-width: 380px) {
+  section[aria-label="Story"] .sticky > a,
+  section[aria-label="Story"] .sticky > button { font-size: 10px; padding-inline: 10px; }
 }
 
 body {
@@ -32,11 +51,12 @@ body {
 
 /* Scroll animation */
 .fade-up {
-  opacity: 0;
-  transform: translateY(40px);
+  opacity: 1;
+  transform: none;
   transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
               transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
 }
+.fade-up[data-animate="true"]:not(.visible) { opacity: 0; transform: translateY(40px); }
 .fade-up.visible {
   opacity: 1;
   transform: translateY(0);
@@ -60,6 +80,9 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  .fade-up, .fade-up[data-animate="true"]:not(.visible) { opacity: 1; transform: none; }
   .hero-drift {
     animation: none;
   }

@@ -1,0 +1,38 @@
+import assert from 'node:assert/strict';
+
+// Run against a production build: node scripts/check-routes.mjs http://localhost:3100
+const base = process.argv[2] || 'http://localhost:3100';
+const paths = ['', '/news', '/stores/kyoto', '/stores/kyoto/menu', '/stores/kumamoto', '/stores/kumamoto/menu', '/privacy', '/terms'];
+const routes = ['', '/en'].flatMap(prefix => paths.map(path => `${prefix}${path}` || '/'));
+const known = new Set(routes);
+let checkedLinks = 0;
+for (const route of routes) {
+  const response = await fetch(new URL(route, base));
+  assert.equal(response.status, 200, route);
+  const html = await response.text();
+  assert.match(html, new RegExp(`<html[^>]+lang="${route.startsWith('/en') ? 'en' : 'ja'}"`), route);
+  assert.equal([...html.matchAll(/<h1\b/g)].length, 1, `${route}: one h1`);
+  assert.match(html, /rel="canonical"/, `${route}: canonical`);
+  assert.match(html, /hrefLang="en"/i, `${route}: English alternate`);
+  assert.match(html, /hrefLang="ja"/i, `${route}: Japanese alternate`);
+  for (const match of html.matchAll(/<a\b[^>]*href="([^"]+)"/g)) {
+    const href = match[1].replaceAll('&amp;', '&');
+    if (!href.startsWith('/') && !href.startsWith('#')) continue;
+    const url = new URL(href, new URL(route, base));
+    if (url.origin !== new URL(base).origin) continue;
+    assert.ok(known.has(url.pathname), `${route}: unknown internal route ${href}`);
+    if (url.pathname === route && url.hash) {
+      assert.ok(html.includes(`id="${decodeURIComponent(url.hash.slice(1))}"`), `${route}: missing anchor ${href}`);
+    }
+    checkedLinks++;
+  }
+  console.log(`PASS ${route}`);
+}
+for (const id of ['01','02','03','04','05','06','07','08']) {
+  for (const suffix of ['', '-m', '-depth']) {
+    const response = await fetch(new URL(`/story/${id}${suffix}.webp`, base));
+    assert.equal(response.status, 200, `${id}${suffix}`);
+    assert.match(response.headers.get('content-type') || '', /image\/webp/);
+  }
+}
+console.log(`PASS ${routes.length} routes, ${checkedLinks} internal links, 24 story images`);

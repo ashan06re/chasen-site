@@ -15,6 +15,7 @@ interface Props {
 }
 
 function RoundedImage({ src, alt, className = "" }: { src?: string; alt: string; className?: string }) {
+  if (!src) return null;
   return (
     <ParallaxFrame className={`rounded-[2rem] bg-[#1A1E14] ${className}`} amount={0.07}>
       {src && (
@@ -91,9 +92,9 @@ export default function YoshidaSection({ settings, features, settingsEn, feature
             <AnimateIn key={i} delay={450 + i * 130}>
               <div>
                 {/* 数字 + 画像（右側） */}
-                <div className="flex items-start gap-4 mb-5">
+                <div className="flex items-start gap-4 mb-5 min-h-24 md:min-h-28">
                   <p
-                    className="font-[var(--font-cormorant)] text-[#3D6B35] font-light leading-none flex-shrink-0"
+                    className="font-[var(--font-cormorant)] text-chasen-gold font-light leading-none flex-shrink-0"
                     style={{ fontSize: "clamp(3rem, 6vw, 4rem)" }}
                   >
                     {feature.icon}

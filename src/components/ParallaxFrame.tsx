@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, type ReactNode } from "react";
-import { onScrollFrame, prefersReducedMotion, viewportProgress } from "@/lib/motion";
+import { onScrollFrame, useReducedMotion, viewportProgress } from "@/lib/motion";
 
 /**
  * 枠の中で写真だけをゆっくり動かす、スクロール視差の枠。
@@ -18,6 +18,7 @@ interface Props {
 }
 
 export default function ParallaxFrame({ children, className = "", amount = 0.08 }: Props) {
+  const reduce = useReducedMotion();
   const frameRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
 
@@ -25,7 +26,7 @@ export default function ParallaxFrame({ children, className = "", amount = 0.08 
     const frame = frameRef.current;
     const inner = innerRef.current;
     if (!frame || !inner) return;
-    if (prefersReducedMotion()) return;
+    if (reduce) return;
 
     // 上下にずらしても隙間が出ないよう、写真を枠より少し大きくしておく
     const overscan = 1 + amount * 2;
@@ -50,8 +51,11 @@ export default function ParallaxFrame({ children, className = "", amount = 0.08 
     return () => {
       observer.disconnect();
       unsubscribe();
+      inner.style.transform = "";
+      inner.style.height = "";
+      inner.style.top = "";
     };
-  }, [amount]);
+  }, [amount, reduce]);
 
   return (
     <div ref={frameRef} className={`relative overflow-hidden ${className}`}>

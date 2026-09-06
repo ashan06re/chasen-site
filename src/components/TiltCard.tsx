@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
-import { hasFinePointer, prefersReducedMotion } from "@/lib/motion";
+import { hasFinePointer, useReducedMotion } from "@/lib/motion";
 
 /**
  * カードにポインタ追従の奥行きを与える。
@@ -19,6 +19,7 @@ interface Props {
 }
 
 export default function TiltCard({ children, className = "", style, maxTilt = 5 }: Props) {
+  const reduce = useReducedMotion();
   const outerRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
   const sheenRef = useRef<HTMLDivElement>(null);
@@ -28,7 +29,7 @@ export default function TiltCard({ children, className = "", style, maxTilt = 5 
     const inner = innerRef.current;
     const sheen = sheenRef.current;
     if (!outer || !inner || !sheen) return;
-    if (prefersReducedMotion() || !hasFinePointer()) return;
+    if (reduce || !hasFinePointer()) return;
 
     let frame = 0;
     let target = { x: 0, y: 0, on: 0 };
@@ -86,8 +87,9 @@ export default function TiltCard({ children, className = "", style, maxTilt = 5 
       outer.removeEventListener("pointermove", onMove);
       outer.removeEventListener("pointerleave", onLeave);
       if (frame) cancelAnimationFrame(frame);
+      inner.style.transform = ""; inner.style.boxShadow = ""; sheen.style.opacity = "0";
     };
-  }, [maxTilt]);
+  }, [maxTilt, reduce]);
 
   return (
     <div ref={outerRef} className={className} style={{ ...style, perspective: "900px" }}>

@@ -7,7 +7,6 @@ import YoshidaSection from "@/components/YoshidaSection";
 import StoreSection from "@/components/StoreSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
-import FloatingButtons from "@/components/FloatingButtons";
 import {
   storeContent,
   defaultBrandStory,
@@ -111,10 +110,6 @@ export default async function HomePage() {
         />
       </main>
       <Footer />
-      <FloatingButtons
-        reservationUrl={reservationResult.ja !== "#" ? reservationResult.ja : undefined}
-        reservationUrlEn={reservationResult.en !== "#" ? reservationResult.en : undefined}
-      />
     </>
   );
 }

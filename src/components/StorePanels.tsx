@@ -17,8 +17,8 @@ interface Props {
 }
 
 const t = {
-  ja: { label: "二つの店", chapter: "09", enter: "店舗サイトへ" },
-  en: { label: "Two Shops", chapter: "09", enter: "Visit" },
+  ja: { label: "二つの店", chapter: "04", enter: "店舗サイトへ" },
+  en: { label: "Two Shops", chapter: "04", enter: "Visit" },
 };
 
 export default function StorePanels({ kyoto, kumamoto }: Props) {
@@ -30,7 +30,7 @@ export default function StorePanels({ kyoto, kumamoto }: Props) {
   ];
 
   return (
-    <section id="stores" className="bg-[#050605] py-24 md:py-36 px-6 relative">
+    <section id="stores" tabIndex={-1} className="bg-[#0B0C0A] py-24 md:py-36 px-6 relative">
       <div className="max-w-7xl mx-auto">
         <AnimateIn>
           <div className="flex items-center gap-4 mb-12 md:mb-16">

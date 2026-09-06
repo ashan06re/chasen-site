@@ -1,6 +1,6 @@
 "use client";
 import { useEffect } from "react";
-import { prefersReducedMotion } from "@/lib/motion";
+import { useReducedMotion } from "@/lib/motion";
 
 /**
  * なめらかスクロール
@@ -9,14 +9,15 @@ import { prefersReducedMotion } from "@/lib/motion";
  * カメラの段差になる。Lenis で1フレームぶんならす。タッチは既定で素通し。
  */
 export default function SmoothScroll() {
+  const reduce = useReducedMotion();
   useEffect(() => {
-    if (prefersReducedMotion()) return;
+    if (reduce) return;
     let stop = () => {};
     let cancelled = false;
 
     import("lenis").then(({ default: Lenis }) => {
       if (cancelled) return;
-      const lenis = new Lenis({ lerp: 0.12, wheelMultiplier: 1, smoothWheel: true });
+      const lenis = new Lenis({ lerp: 0.12, wheelMultiplier: 1, smoothWheel: true, anchors: true });
       // 検証スクリプト（ヘッドレスの連続スクショ）から任意の位置へ飛ばすための取っ手
       (window as unknown as { __lenis?: unknown }).__lenis = lenis;
       let raf = 0;
@@ -28,6 +29,7 @@ export default function SmoothScroll() {
       stop = () => {
         cancelAnimationFrame(raf);
         lenis.destroy();
+        delete (window as unknown as { __lenis?: unknown }).__lenis;
       };
     });
 
@@ -35,7 +37,7 @@ export default function SmoothScroll() {
       cancelled = true;
       stop();
     };
-  }, []);
+  }, [reduce]);
 
   return null;
 }

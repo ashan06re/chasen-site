@@ -1,7 +1,7 @@
 /**
  * 物語「一杯が、点てられるまで」の台本
  *
- * スクロール量を 0→1 の進行度に変換し、10コマの写真へ割り振る。
+ * スクロール量を 0→1 の進行度に変換し、承認済み8コマの写真へ割り振る。
  * three.js を import しないこと（Story.tsx は初期バンドルに乗る）。
  * 写真の書き出しは chasen_project/tools/export_web.py（コマの順番はそこと揃える）。
  */
@@ -10,7 +10,7 @@ export interface Cut {
   /** public/story/<id>.webp */
   id: string;
   /** 章番号を出すコマだけ */
-  chapter?: "01" | "05" | "09";
+  chapter?: "01" | "02" | "03";
   ja: string;
   en: string;
   /** 3:2 以外の写真は視差の余白が違うので比率を持たせる */
@@ -18,13 +18,14 @@ export interface Cut {
 }
 
 export const CUTS: Cut[] = [
-  { id: "01", chapter: "01", ja: "一杯が、点てられるまで。", en: "Until a bowl is whisked.", aspect: 1672 / 941 },
-  { id: "03", ja: "湯を落とす。", en: "Hot water meets the matcha.", aspect: 1672 / 941 },
-  { id: "04", ja: "点てる。", en: "Whisk.", aspect: 1672 / 941 },
-  { id: "06", chapter: "05", ja: "一杯が、立つ。茶葉のふるさとへ。", en: "A bowl stands ready. To where the leaves grow.", aspect: 1672 / 941 },
-  { id: "07", ja: "宇治、覆下の茶園。", en: "Uji. A shaded tea garden.", aspect: 1920 / 816 },
-  { id: "08", ja: "葉から、粉へ。", en: "From leaf to powder.", aspect: 1672 / 941 },
-  { id: "09", ja: "そして、高台寺の店へ。", en: "Back to the shop in Kodaiji.", aspect: 1672 / 941 },
+  { id: "01", chapter: "01", ja: "一杯が、点てられるまで。", en: "The story of a bowl of matcha.", aspect: 1672 / 941 },
+  { id: "02", ja: "湯を落とす。", en: "Hot water meets matcha.", aspect: 1672 / 941 },
+  { id: "03", ja: "点てる。", en: "Whisked by hand.", aspect: 1672 / 941 },
+  { id: "04", ja: "一杯から、茶葉のふるさとへ。", en: "Back to where the leaves grow.", aspect: 1672 / 941 },
+  { id: "05", chapter: "02", ja: "宇治、覆下の茶園。", en: "Uji. Tea gardens beneath the shade.", aspect: 3840 / 2160 },
+  { id: "06", ja: "葉から、粉へ。", en: "From leaf to powder.", aspect: 1672 / 941 },
+  { id: "07", chapter: "03", ja: "そして、高台寺の店へ。", en: "And back to Kodaiji.", aspect: 1672 / 941 },
+  { id: "08", ja: "一服に、心ほどける。", en: "A moment to savour.", aspect: 1672 / 941 },
 ];
 
 /** 1コマあたりのスクロール量（画面高の倍数）。最後に少し余白 */

@@ -27,7 +27,7 @@ export default function StoreSection({ store, menuCardsEn, dark = true }: Props)
     : store.menuCards;
   const bgColor   = dark ? "#0B0C0A" : "#F7F5F0";
   const textColor = dark ? "#F7F5F0" : "#1A1A18";
-  const storePath = localize(`/stores/`);
+  const storePath = localize(`/stores/${info.slug}`);
 
   return (
     <section
@@ -68,7 +68,10 @@ export default function StoreSection({ store, menuCardsEn, dark = true }: Props)
         {/* カードスクロール */}
         <AnimateIn delay={300}>
           <div
-            className="flex gap-4 overflow-x-auto px-6 md:px-12 pb-6"
+            role="region"
+            aria-label={lang === "en" ? "Featured menu — scroll for more" : "おすすめメニュー・横スクロールで続き"}
+            tabIndex={0}
+            className="flex gap-4 overflow-x-auto snap-x snap-proximity px-6 md:px-12 pb-6"
             style={{ scrollbarWidth: "thin", scrollbarColor: "#B8A882 transparent" }}
           >
             {menuCards.map((card, i) => {
@@ -78,11 +81,11 @@ export default function StoreSection({ store, menuCardsEn, dark = true }: Props)
               return (
               <TiltCard
                 key={i}
-                className="flex-shrink-0"
+                className="flex-shrink-0 snap-start"
                 maxTilt={4.5}
                 style={{
                   width: "calc(min(100vw - 6rem, 80rem - 6rem) / 3.6)",
-                  minWidth: "180px",
+                  minWidth: "min(76vw, 280px)",
                 }}
               >
               <article
@@ -129,7 +132,7 @@ export default function StoreSection({ store, menuCardsEn, dark = true }: Props)
 
                   <h3
                     className="font-[var(--font-noto-serif-jp)] text-sm tracking-wider mb-2 leading-snug"
-                    style={{ color: "#1A1A18" }}
+                    style={{ color: readableOn("#1A1A18", card.bg) }}
                   >
                     {cardTitle}
                   </h3>
@@ -169,7 +172,8 @@ export default function StoreSection({ store, menuCardsEn, dark = true }: Props)
 
         {/* 詳しく見るリンク */}
         <AnimateIn delay={400}>
-          <div className="px-6 md:px-12 mt-8">
+          <div className="px-6 md:px-12 mt-8 flex flex-wrap items-center gap-x-10 gap-y-3">
+            <Link href={localize(`/stores/${info.slug}/menu`)} className="inline-flex min-h-11 items-center px-5 border border-chasen-gold/60 text-chasen-gold text-sm tracking-wider hover:bg-chasen-gold/10 transition-colors">{lang === "en" ? "Full menu" : "すべてのメニュー"}<span aria-hidden className="ml-5">↗</span></Link>
             <Link
               href={storePath}
               className={`inline-flex items-center gap-3 py-3 font-[var(--font-cormorant)] text-sm tracking-[0.3em] uppercase hover:opacity-60 transition-opacity ${dark ? "text-chasen-gold" : "text-chasen-gold-deep"}`}

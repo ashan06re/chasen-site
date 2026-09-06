@@ -13,22 +13,23 @@ export default function AnimateIn({ children, className = "", delay = 0 }: Props
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    el.dataset.animate = "true";
+    let timer: ReturnType<typeof setTimeout> | undefined;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          const timer = setTimeout(() => {
+          timer = setTimeout(() => {
             el.classList.add("visible");
           }, delay);
           observer.unobserve(el);
-          return () => clearTimeout(timer);
         }
       },
       { threshold: 0.12 }
     );
 
     observer.observe(el);
-    return () => observer.disconnect();
+    return () => { observer.disconnect(); clearTimeout(timer); };
   }, [delay]);
 
   return (

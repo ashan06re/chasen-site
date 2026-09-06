@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @next/next/no-img-element -- Responsive WebGL fallback shares the exported textures. */
 import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { useLang } from "@/lib/langContext";
@@ -12,12 +13,12 @@ const StoryCanvas = dynamic(() => import("./StoryCanvas"), { ssr: false });
  * 物語「一杯が、点てられるまで」
  *
  * 高さ STORY_SCROLL_SVH の枠を sticky にし、スクロール量を進行度 0→1 に変えて
- * 10コマの写真へ割り振る。写真は WebGL（StoryCanvas）で寄り・視差・溶けを付けて描き、
+ * 8コマの写真へ割り振る。写真は WebGL（StoryCanvas）で寄り・視差・溶けを付けて描き、
  * WebGL が無い時は同じコマを <img> の不透明度で切り替える。
  * 文字は動かさない。出入りの不透明度だけ変え、DOM に直接書く（React の再描画を挟まない）。
  */
 export default function Story() {
-  const { lang } = useLang();
+  const { lang, localize } = useLang();
   const sectionRef = useRef<HTMLElement>(null);
   const progress = useRef(0);
   const imgRefs = useRef<(HTMLImageElement | null)[]>([]);
@@ -25,6 +26,7 @@ export default function Story() {
   const hintRef = useRef<HTMLDivElement>(null);
 
   const [reduce, setReduce] = useState(false); // SSR は sticky 版。reduced-motion は判定後に切り替える
+  const [staticMode, setStaticMode] = useState(false);
   const [webgl, setWebgl] = useState(true);
   const [ready, setReady] = useState(false);
   const onReady = useCallback(() => setReady(true), []);
@@ -39,14 +41,14 @@ export default function Story() {
   }, []);
 
   useEffect(() => {
-    if (reduce) return;
+    if (reduce || staticMode) return;
     const el = sectionRef.current;
     if (!el) return;
     const st: CutState = { a: 0, b: 0, mix: 0, ta: 0, tb: 0 };
 
     return onScrollFrame(() => {
       const rect = el.getBoundingClientRect();
-      const travel = rect.height - window.innerHeight;
+      const travel = rect.height - (el.firstElementChild?.clientHeight ?? window.innerHeight);
       const p = travel > 0 ? clamp01(-rect.top / travel) : 0;
       progress.current = p;
       cutState(p, st);
@@ -68,21 +70,28 @@ export default function Story() {
       } else {
         imgRefs.current.forEach((im, i) => {
           if (!im) return;
+          if ((i === st.a || i === st.b) && !im.getAttribute("src")) {
+            im.srcset = im.dataset.srcset ?? "";
+            im.src = im.dataset.src ?? "";
+          }
           const o = i === st.a ? 1 : i === st.b ? st.mix : 0;
           im.style.opacity = String(o);
-          im.style.transform = `scale(${1 + 0.06 * (i === st.a ? st.ta : st.tb)})`;
+          im.style.transform = `scale(${1 + 0.025 * (i === st.a ? st.ta : st.tb)})`;
         });
       }
     });
-  }, [reduce, ready, webgl]);
+  }, [reduce, staticMode, ready, webgl]);
 
   // reduced-motion: 普通に縦に並べる（動かない）
-  if (reduce) {
+  if (reduce || staticMode) {
     return (
-      <section className="bg-[#050605]" aria-label={lang === "en" ? "Story" : "物語"}>
+      <section className="bg-[#050605] pt-20" aria-label={lang === "en" ? "Story" : "物語"}>
+        <h1 className="sr-only">{lang === "en" ? "Chasen — The story of a bowl of matcha" : "茶筅 — 一杯が、点てられるまで。"}</h1>
+        <a href={localize("/#stores")} className="inline-flex min-h-11 items-center px-6 text-chasen-light underline underline-offset-8">{lang === "en" ? "Explore our shops" : "店舗・メニューを見る"}</a>
+        {!reduce && <button onClick={() => { setReady(false); setStaticMode(false); window.scrollTo({top:0,behavior:"instant"}); }} className="inline-flex min-h-11 items-center px-6 text-chasen-light underline underline-offset-8">{lang === "en" ? "Resume motion" : "動きを戻す"}</button>}
         {CUTS.map((c) => (
           <figure key={c.id} className="relative">
-            <img src={`/story/${c.id}.webp`} alt="" className="w-full h-auto block" loading={c.id === "01" ? "eager" : "lazy"} />
+            <img src={`/story/${c.id}.webp`} srcSet={`/story/${c.id}-m.webp 960w, /story/${c.id}.webp 1600w`} sizes="100vw" width={1600} height={Math.round(1600 / c.aspect)} alt="" className="w-full h-auto block" loading={c.id === "01" ? "eager" : "lazy"} />
             <figcaption className="px-6 py-6 font-[var(--font-noto-serif-jp)] font-light text-[#D8D5CC] text-sm tracking-[0.25em]">
               {lang === "en" ? c.en : c.ja}
             </figcaption>
@@ -100,13 +109,16 @@ export default function Story() {
       aria-label={lang === "en" ? "Story" : "物語"}
     >
       <div className="sticky top-0 h-svh w-full overflow-hidden">
+        <div className="story-picture absolute inset-0 overflow-hidden">
         {/* 写真（フォールバック兼 最初の1枚 = LCP） */}
         {CUTS.map((c, i) => (
           <img
             key={c.id}
             ref={(n) => { imgRefs.current[i] = n; }}
-            src={`/story/${c.id}.webp`}
-            srcSet={`/story/${c.id}-m.webp 960w, /story/${c.id}.webp 1600w`}
+            src={i < 2 ? `/story/${c.id}.webp` : undefined}
+            srcSet={i < 2 ? `/story/${c.id}-m.webp 960w, /story/${c.id}.webp 1600w` : undefined}
+            data-src={`/story/${c.id}.webp`}
+            data-srcset={`/story/${c.id}-m.webp 960w, /story/${c.id}.webp 1600w`}
             sizes="100vw"
             alt=""
             // 3枚目以降は必要になるまで読まない
@@ -118,6 +130,11 @@ export default function Story() {
         ))}
 
         {webgl && <StoryCanvas progress={progress} onReady={onReady} onFail={onFail} />}
+        </div>
+
+        <div aria-hidden className="absolute inset-0 pointer-events-none bg-[linear-gradient(180deg,rgba(5,6,5,0.65),transparent_25%,transparent_55%,rgba(5,6,5,0.78))]" />
+        <a href={localize("/#stores")} className="absolute right-6 bottom-6 md:right-10 md:bottom-8 z-20 inline-flex items-center gap-4 min-h-11 px-4 border border-[#B8A882]/60 bg-[#050605]/80 text-[#F7F5F0] text-xs tracking-wider hover:bg-[#1A1A18] transition-colors">{lang === "en" ? "Explore our shops" : "店舗・メニューを見る"}<span aria-hidden>↗</span></a>
+        <button onClick={() => { setStaticMode(true); window.scrollTo({top:0,behavior:"instant"}); }} className="absolute left-6 bottom-6 md:left-10 md:bottom-8 z-20 min-h-11 text-xs text-[#F7F5F0] bg-[#050605]/80 px-3 underline underline-offset-4">{lang === "en" ? "Still images" : "静止画で見る"}</button>
 
         {/* 文字。動かさない */}
         <div className="absolute inset-0 z-10 pointer-events-none">
@@ -131,12 +148,12 @@ export default function Story() {
               )}
               {i === 0 ? (
                 <div
-                  className="absolute right-6 top-1/2 -translate-y-1/2 md:right-14 flex items-start gap-5 md:gap-7"
-                  style={{ writingMode: "vertical-rl", textOrientation: "upright" }}
+                  className={lang === "en" ? "story-title absolute left-6 right-6 bottom-36 md:left-14 md:bottom-40 flex flex-col items-start gap-6 max-w-xl" : "story-title absolute right-6 top-1/2 md:-translate-y-1/2 md:right-14 flex items-start gap-5 md:gap-7 before:absolute before:-inset-x-6 before:-inset-y-14 before:-z-10 before:bg-[#050605]/55 before:blur-2xl"}
+                  style={lang === "ja" ? { writingMode: "vertical-rl", textOrientation: "upright" } : undefined}
                 >
                   <h1 className="font-[var(--font-noto-serif-jp)] font-light text-[#F7F5F0] text-[1.85rem] md:text-[2.4rem] tracking-[0.35em] leading-none drop-shadow-[0_1px_12px_rgba(0,0,0,0.6)]">
-                    茶筅
-                    <span className="sr-only">（Chasen）— 日本茶スタンド</span>
+                    {lang === "en" ? "Chasen" : "茶筅"}
+                    <span className="sr-only">{lang === "en" ? " — Japanese tea" : "（Chasen）— 日本茶スタンド"}</span>
                   </h1>
                   <p
                     className="font-[var(--font-noto-serif-jp)] font-light text-[#E8E5DC] text-[0.9rem] md:text-[1.05rem] tracking-[0.3em] leading-none drop-shadow-[0_1px_10px_rgba(0,0,0,0.6)]"
@@ -146,18 +163,14 @@ export default function Story() {
                   </p>
                 </div>
               ) : (
-                <p className="absolute left-6 bottom-16 md:left-10 md:bottom-20 font-[var(--font-noto-serif-jp)] font-light text-[#F1EEE6] text-[1.05rem] md:text-[1.35rem] tracking-[0.3em] leading-none drop-shadow-[0_1px_10px_rgba(0,0,0,0.7)]">
+                <p className="absolute left-6 right-6 bottom-28 md:left-10 md:bottom-28 max-w-2xl font-[var(--font-noto-serif-jp)] font-light text-[#F1EEE6] text-[1.05rem] md:text-[1.35rem] tracking-[0.15em] leading-relaxed drop-shadow-[0_1px_10px_rgba(0,0,0,0.7)]">
                   {lang === "en" ? c.en : c.ja}
                 </p>
               )}
             </div>
           ))}
 
-          <div className="absolute left-6 bottom-8 md:left-10 md:bottom-10">
-            <span className="font-[var(--font-cormorant)] text-[#C9C6BC] text-[0.7rem] tracking-[0.45em] uppercase">Chasen</span>
-          </div>
-
-          <div ref={hintRef} className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3">
+          <div ref={hintRef} className={`absolute bottom-24 md:bottom-8 left-1/2 -translate-x-1/2 ${lang === "en" ? "hidden md:flex" : "flex"} flex-col items-center gap-3`}>
             <span className="font-[var(--font-cormorant)] text-[#C9C6BC] text-[0.65rem] tracking-[0.45em] uppercase">Scroll</span>
             <span className="block w-px h-12 bg-gradient-to-b from-[#F7F5F0]/45 to-transparent" />
           </div>

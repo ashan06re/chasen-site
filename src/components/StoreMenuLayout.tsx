@@ -40,8 +40,8 @@ export default function StoreMenuLayout({ info, fullMenu, fullMenuEn }: Props) {
             <p className="font-[var(--font-cormorant)] text-sm tracking-[0.5em] uppercase mb-4" style={{ color: readableOn("#B8A882", info.accentColor) }}>
               {info.area} — Menu
             </p>
-            <h1 className="font-[var(--font-cormorant)] text-6xl md:text-8xl font-light text-[#F7F5F0] tracking-wider leading-tight">
-              {info.name}
+            <h1 className="font-[var(--font-cormorant)] text-4xl sm:text-6xl md:text-8xl font-light text-[#F7F5F0] tracking-wider leading-tight">
+              {lang === "en" ? (info.nameEn ?? info.name) : info.name}
             </h1>
             <p className="mt-3 font-[var(--font-noto-serif-jp)] text-[#F7F5F0]/60 text-lg tracking-wider font-light">
               {tx.menuList}
@@ -57,7 +57,7 @@ export default function StoreMenuLayout({ info, fullMenu, fullMenuEn }: Props) {
         </section>
 
         {/* カテゴリ ナビゲーション */}
-        <nav className="sticky top-0 z-30 bg-[#F7F5F0] border-b border-[#E8E0D0] shadow-sm">
+        <nav aria-label={lang === "en" ? "Menu categories" : "メニューカテゴリー"} className="sticky top-[68px] md:top-[76px] z-30 bg-[#F7F5F0] border-b border-[#E8E0D0] shadow-sm">
           <div className="max-w-5xl mx-auto px-6 flex gap-8 overflow-x-auto py-1 no-scrollbar">
             {sections.map((section) => (
               <a
@@ -83,14 +83,14 @@ export default function StoreMenuLayout({ info, fullMenu, fullMenuEn }: Props) {
             <section
               id={section.id}
               key={section.id}
-              className="py-20 px-6"
+              className="py-20 px-6 scroll-mt-14"
               style={{ backgroundColor: bg }}
             >
               <div className="max-w-5xl mx-auto">
                 <AnimateIn>
                   <div className="flex items-center gap-6 mb-14">
                     <h2
-                      className="font-[var(--font-cormorant)] text-5xl md:text-6xl font-light tracking-wide flex-shrink-0"
+                      className="font-[var(--font-cormorant)] text-3xl sm:text-5xl md:text-6xl font-light tracking-wide min-w-0 break-words"
                       style={{ color: accentLarge }}
                     >
                       {section.labelEn}
@@ -215,14 +215,14 @@ export default function StoreMenuLayout({ info, fullMenu, fullMenuEn }: Props) {
         <section className="bg-[#F7F5F0] py-16 px-6">
           <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
             <Link
-              href={localize(`/stores/`)}
+              href={localize(`/stores/${info.slug}`)}
               className="inline-flex items-center gap-3 py-3 font-[var(--font-cormorant)] text-sm tracking-[0.3em] uppercase text-chasen-gold-deep hover:opacity-60 transition-opacity"
             >
               <span className="w-8 h-px bg-current inline-block" />
-              <span>Back to {info.name}</span>
+              <span>{lang === "en" ? `Back to ${info.nameEn ?? info.name}` : `${info.name}の店舗情報へ`}</span>
             </Link>
             <a
-              href="#contact"
+              href={localize("/#contact")}
               className="inline-flex items-center gap-3 bg-[#3D6B35] text-[#F7F5F0] font-[var(--font-noto-serif-jp)] text-sm tracking-[0.2em] px-8 py-4 hover:bg-[#2A4D25] transition-colors"
             >
               {tx.reserve}

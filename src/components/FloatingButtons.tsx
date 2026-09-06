@@ -9,7 +9,7 @@ export default function FloatingButtons({
   reservationUrl?: string;
   reservationUrlEn?: string;
 }) {
-  const { lang } = useLang();
+  const { lang, localize } = useLang();
   const url = lang === "en" ? (reservationUrlEn || reservationUrl) : reservationUrl;
   const [visible, setVisible] = useState(false);
 
@@ -21,12 +21,13 @@ export default function FloatingButtons({
 
   return (
     <div
+      inert={!visible}
       className={`fixed right-5 bottom-8 z-40 flex flex-col gap-3 transition-all duration-500 ${
         visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
       }`}
     >
       <a
-        href={url || "#contact"}
+        href={url || localize("/#contact")}
         target={url ? "_blank" : undefined}
         rel={url ? "noopener noreferrer" : undefined}
         className="flex flex-col items-center justify-center gap-1 bg-[#3D6B35] text-[#F7F5F0] w-14 h-14 rounded-full shadow-lg hover:bg-[#2A4D25] transition-colors"

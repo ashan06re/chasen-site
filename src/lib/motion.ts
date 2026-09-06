@@ -1,4 +1,12 @@
 "use client";
+import { useSyncExternalStore } from "react";
+
+const subscribeMotion = (notify: () => void) => {
+  const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+  query.addEventListener("change", notify);
+  return () => query.removeEventListener("change", notify);
+};
+export const useReducedMotion = () => useSyncExternalStore(subscribeMotion, prefersReducedMotion, () => false);
 
 /**
  * サイト共通のモーション基盤

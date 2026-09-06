@@ -184,15 +184,15 @@ npm run build  # 本番ビルド確認
 
 | ファイル | 役割 |
 |---------|------|
-| `src/lib/storyScript.ts` | 台本。10コマの一覧（id・章番号・一行の文字・比率）、スクロール量→コマの状態。**three.js を import しないこと** |
-| `Story.tsx` | 1140svh の枠と sticky。進行度を出し、文字の不透明度と CSS フォールバックの `<img>` を DOM に直接書く |
+| `src/lib/storyScript.ts` | 台本。承認済み8コマ（01〜08）の一覧（id・章番号・一行の文字・比率）、スクロール量→コマの状態。**three.js を import しないこと** |
+| `Story.tsx` | 920svh の枠と sticky。進行度を出し、文字の不透明度と CSS フォールバックの `<img>` を DOM に直接書く。店舗へスキップ・静止画切替付き |
 | `StoryCanvas.tsx` | WebGL。今のコマと次のコマの写真＋深度マップを1枚の平面に渡し、寄り・視差・溶けをシェーダで作る。three.js は動的 import |
 | `public/story/NN.webp` `NN-m.webp` `NN-depth.webp` | 写真（1600px／960px）と深度（800px、白=手前） |
 
 **素材の作り方（リポジトリ外 `chasen_project/`）**: 写真は ChatGPT(GPT-5.6) の image_gen で店の写真を参照させて生成 →
 `承認待ち/` でユーザーが承認 → `tools/grade.py` で写真の仕上げ（粒子・ハレーション・色収差・周辺減光）→
 `tools/depth.py`（Depth Anything V2、`tools/.venv`）で深度 → `tools/export_web.py` で `public/story/` に書き出し。
-**コマの順番は `tools/export_web.py` の CUTS と `storyScript.ts` の CUTS を揃える。** 06 茶畑だけ実写（`素材_選定/posters/07_覆下園_全景.jpg`）。
+**コマの順番は `tools/export_web.py` の CUTS と `storyScript.ts` の CUTS を揃える。** 2026-09-06：茶畑は承認された夕暮れ復元 v2b（3840×2160、Web ID 05）。葉から粉へはv2継続、宝箱を08に採用。熊本パネルは提供素材の実写・抹茶宝箱。
 
 **注意点**
 - 写真テクスチャは `NoColorSpace` で読む。`SRGBColorSpace` にすると ShaderMaterial の出力で暗く沈む

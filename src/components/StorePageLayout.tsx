@@ -81,7 +81,7 @@ export default function StorePageLayout({
 
   return (
     <>
-      <Header initialDark />
+      <Header initialDark reservationUrl={reservationUrl} reservationUrlEn={reservationUrlEn} />
 
       <main>
         {/* Hero */}
@@ -93,7 +93,7 @@ export default function StorePageLayout({
             <p className="font-[var(--font-cormorant)] text-sm tracking-[0.5em] uppercase mb-4" style={{ color: readableOn("#B8A882", info.accentColor) }}>
               {info.area}
             </p>
-            <h1 className="font-[var(--font-cormorant)] text-6xl md:text-8xl font-light text-[#F7F5F0] tracking-wider leading-tight">
+            <h1 className="font-[var(--font-cormorant)] text-4xl sm:text-6xl md:text-8xl font-light text-[#F7F5F0] tracking-wider leading-tight">
               {lang === "en" ? (infoEn?.nameEn ?? info.nameEn ?? info.name) : info.name}
             </h1>
             <p className="mt-3 font-[var(--font-noto-serif-jp)] text-[#F7F5F0]/60 text-lg tracking-wider font-light">
@@ -156,13 +156,13 @@ export default function StorePageLayout({
                 </p>
                 <div className="mt-8 flex flex-wrap gap-4">
                   <Link
-                    href={localize(`/stores//menu`)}
+                    href={localize(`/stores/${info.slug}/menu`)}
                     className="inline-flex items-center gap-3 border border-[#3D6B35] text-[#3D6B35] font-[var(--font-noto-serif-jp)] text-sm tracking-[0.2em] px-8 py-4 hover:bg-[#3D6B35] hover:text-[#F7F5F0] transition-colors"
                   >
                     {tx.viewMenu}
                   </Link>
                   <a
-                    href={resolvedReservationUrl || "#contact"}
+                    href={resolvedReservationUrl || localize("/#contact")}
                     target={resolvedReservationUrl ? "_blank" : undefined}
                     rel={resolvedReservationUrl ? "noopener noreferrer" : undefined}
                     className="inline-flex items-center gap-3 bg-[#3D6B35] text-[#F7F5F0] font-[var(--font-noto-serif-jp)] text-sm tracking-[0.2em] px-8 py-4 hover:bg-[#2A4D25] transition-colors"

@@ -61,6 +61,7 @@ function Dropdown({
         </svg>
       </button>
       <div
+        inert={!open}
         className={`absolute top-full left-1/2 -translate-x-1/2 mt-4 z-50 transition-all duration-300 ease-out ${
           open ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-2 pointer-events-none"
         }`}
@@ -100,7 +101,7 @@ export default function Header({ initialDark = false, reservationUrl, reservatio
 
   const t = nav[lang];
   const list = stores[lang];
-  const reserveHref = (lang === "en" ? reservationUrlEn : reservationUrl) ?? localize("/#contact");
+  const reserveHref = (lang === "en" ? (reservationUrlEn || reservationUrl) : reservationUrl) || localize("/#contact");
   const reserveExternal = reserveHref.startsWith("http");
 
   useEffect(() => {
@@ -109,6 +110,17 @@ export default function Header({ initialDark = false, reservationUrl, reservatio
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, [initialDark]);
+
+  useEffect(() => {
+    const escape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        document.querySelector<HTMLButtonElement>('header button[aria-expanded="true"]')?.focus();
+        setOpenDrop(null); setMenuOpen(false);
+      }
+    };
+    document.addEventListener("keydown", escape);
+    return () => document.removeEventListener("keydown", escape);
+  }, []);
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
@@ -131,9 +143,9 @@ export default function Header({ initialDark = false, reservationUrl, reservatio
 
   const langSwitch = (extra = "") => (
     <div className={`flex items-center text-[#F7F5F0]/60 text-xs tracking-widest font-[var(--font-cormorant)] ${extra}`}>
-      <button onClick={() => setLang("ja")} className={`inline-flex items-center justify-center min-w-10 min-h-11 transition-colors ${lang === "ja" ? "text-[#F7F5F0]" : "hover:text-[#F7F5F0]"}`}>JP</button>
+      <button onClick={() => setLang("ja")} aria-label="日本語" aria-pressed={lang === "ja"} className={`inline-flex items-center justify-center min-w-11 min-h-11 transition-colors ${lang === "ja" ? "text-[#F7F5F0]" : "hover:text-[#F7F5F0]"}`}>JP</button>
       <span>/</span>
-      <button onClick={() => setLang("en")} className={`inline-flex items-center justify-center min-w-10 min-h-11 transition-colors ${lang === "en" ? "text-[#F7F5F0]" : "hover:text-[#F7F5F0]"}`}>EN</button>
+      <button onClick={() => setLang("en")} aria-label="English" aria-pressed={lang === "en"} className={`inline-flex items-center justify-center min-w-11 min-h-11 transition-colors ${lang === "en" ? "text-[#F7F5F0]" : "hover:text-[#F7F5F0]"}`}>EN</button>
     </div>
   );
 
@@ -148,7 +160,7 @@ export default function Header({ initialDark = false, reservationUrl, reservatio
           <div className="w-9 h-9 rounded-full overflow-hidden bg-[#F7F5F0] ring-1 ring-white/30 flex-shrink-0 p-[5px]">
             <Image src="/logo-mark.png" alt="茶筅 Chasen" width={36} height={36} className="object-contain w-full h-full" priority />
           </div>
-          <span className="font-[var(--font-cormorant)] text-[#F7F5F0] text-xl tracking-[0.3em] font-light">Chasen</span>
+          <span className="max-[380px]:hidden font-[var(--font-cormorant)] text-[#F7F5F0] text-xl tracking-[0.3em] font-light">Chasen</span>
         </Link>
 
         {/* Desktop */}
@@ -194,7 +206,7 @@ export default function Header({ initialDark = false, reservationUrl, reservatio
       </div>
 
       {/* Mobile menu */}
-      <div className={`md:hidden overflow-hidden transition-all duration-500 ${menuOpen ? "max-h-[36rem] opacity-100" : "max-h-0 opacity-0"} bg-[#1A1A18]/98`}>
+      <div inert={!menuOpen} className={`md:hidden overflow-y-auto transition-all duration-500 ${menuOpen ? "max-h-[calc(100svh-72px)] opacity-100" : "max-h-0 opacity-0"} bg-[#1A1A18]/98`}>
         <nav className="px-6 py-4 flex flex-col gap-1">
           <p className="py-2 text-[#F7F5F0]/80 text-lg tracking-widest font-[var(--font-noto-serif-jp)]">{t.menu}</p>
           <div className="pl-4 flex flex-col border-l border-[#F7F5F0]/10 mb-2">
