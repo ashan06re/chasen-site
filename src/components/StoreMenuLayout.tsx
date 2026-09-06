@@ -1,11 +1,12 @@
 "use client";
-import { useRef, useState } from "react";
+import { useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Header from "./Header";
 import type { FullMenuSection, StoreInfo } from "@/data/storeContent";
 import { useLang } from "@/lib/langContext";
 import DepthPanel from "./DepthPanel";
+import { DEFAULT_APPEARANCE, defaultExperience, imageControls, type Appearance, type Experience } from '@/lib/experience';
 
 interface Props {
   info: StoreInfo;
@@ -13,9 +14,11 @@ interface Props {
   fullMenuEn?: FullMenuSection[];
   reservationUrl?: string;
   reservationUrlEn?: string;
+  appearance?: Appearance;
+  experience?: Experience;
 }
 
-export default function StoreMenuLayout({ info, fullMenu, fullMenuEn, reservationUrl, reservationUrlEn }: Props) {
+export default function StoreMenuLayout({ info, fullMenu, fullMenuEn, reservationUrl, reservationUrlEn, appearance = DEFAULT_APPEARANCE, experience = defaultExperience() }: Props) {
   const { lang, localize } = useLang();
   const en = lang === "en";
   const [category, setCategory] = useState("all");
@@ -40,10 +43,11 @@ export default function StoreMenuLayout({ info, fullMenu, fullMenuEn, reservatio
   const name = en ? info.nameEn || info.name : info.name;
   const reserve = (en ? reservationUrlEn || reservationUrl : reservationUrl) || localize("/#contact");
   const reset = () => { setQuery(""); selectCategory("all"); };
+  const artwork = info.slug === 'kyoto' ? experience.scenes[4] : experience.kumamoto;
 
   return <>
     <Header initialDark reservationUrl={reservationUrl} reservationUrlEn={reservationUrlEn} />
-    <main className="editorial-page">
+    <main className="editorial-page" style={{'--menu-image-aspect':appearance.menuAspect} as CSSProperties}>
       <div className="editorial-wrap">
         <nav className="menu-breadcrumb" aria-label={en ? "Breadcrumb" : "パンくずリスト"}>
           <Link href={localize("/")}>Chasen</Link><span aria-hidden>/</span>
@@ -51,7 +55,7 @@ export default function StoreMenuLayout({ info, fullMenu, fullMenuEn, reservatio
         </nav>
         <section className="menu-intro">
           <div><p className="eyebrow">{info.area.toUpperCase()} / MENU</p><h1>{en ? "A taste of Chasen." : "お品書き"}<small>{name}</small></h1><p>{en ? "Find your next favourite. Browse by category or search the menu." : "気になる一品を、ゆっくりと。\nカテゴリーや品名から、お好きな味をお探しください。"}</p></div>
-          <div className="editorial-photo menu-painted-intro"><DepthPanel src={`/story-art/${info.slug === "kyoto" ? "05" : "06"}.webp`} depthSrc={`/story-art/${info.slug === "kyoto" ? "05" : "06"}-depth.webp`} alt={en ? "An illustration of Chasen's matcha treasure box" : "茶筅の抹茶の宝箱を描いた背景画"} /></div>
+          <div className="editorial-photo menu-painted-intro"><DepthPanel src={artwork.src} depthSrc={artwork.depth} motion={artwork.motion} alt={en ? artwork.altEn : artwork.alt} fit="contain" /></div>
         </section>
       </div>
 
@@ -70,13 +74,13 @@ export default function StoreMenuLayout({ info, fullMenu, fullMenuEn, reservatio
         {visibleSections.map(section => <section id={section.id} className="menu-category" key={section.id}>
           <div className="menu-category-heading"><h2>{en ? section.labelEn : section.label}</h2>{!en && <p>{section.labelEn}</p>}</div>
           <div className="menu-items">
-            {section.items.map((item, index) => <article className={`menu-item ${item.photoUrl ? "" : "no-photo"}`} key={`${item.name}-${index}`}>
-              {item.photoUrl && <div className="menu-item-photo"><Image src={item.photoUrl} alt={en ? item.nameEn || item.name : item.name} fill sizes="(max-width: 359px) 90vw, (max-width: 767px) 43vw, 30vw" /></div>}
+            {section.items.map((item, index) => { const crop=imageControls(item.photoZoom,item.photoX,item.photoY); return <article className={`menu-item ${item.photoUrl ? "" : "no-photo"}`} key={`${item.name}-${index}`}>
+              {item.photoUrl && <div className="menu-item-photo"><Image src={item.photoUrl} alt={en ? item.nameEn || item.name : item.name} fill sizes="(max-width: 767px) 45vw, (max-width: 1279px) 23vw, 280px" style={{objectFit:'cover',objectPosition:`${crop.x}% ${crop.y}%`,transform:`scale(${crop.zoom})`,transformOrigin:`${crop.x}% ${crop.y}%`}} /></div>}
               {item.note && <p className="menu-item-note">{en ? item.noteEn || item.note : item.note}</p>}
               <h3>{en ? item.nameEn || item.name : item.name}</h3>
               {item.description && <p className="menu-item-description">{en ? item.descriptionEn || item.description : item.description}</p>}
-              {item.price && <p className="menu-price">{item.price}<small>{en ? "excl. tax" : "税抜"}</small></p>}
-            </article>)}
+              {item.price && <p className="menu-price">{item.price}{appearance.priceNote && <small>{en ? appearance.priceNote==='税込'?'incl. tax':'excl. tax' : appearance.priceNote}</small>}</p>}
+            </article>})}
           </div>
         </section>)}
         {count === 0 && <div className="menu-empty"><p>{en ? "No items match your search. Try a different word or category." : "該当するメニューがありません。\nキーワードやカテゴリーを変えてお探しください。"}</p><button type="button" className="editorial-button" onClick={reset}>{en ? "Show all items" : "すべてのメニューを表示"}</button></div>}

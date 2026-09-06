@@ -18,6 +18,7 @@ function InstagramIcon({ className }: { className?: string }) {
 }
 
 interface Props {
+  operator?: string;
   kyoto: StoreInfo;
   kumamoto: StoreInfo;
   kyotoEn?: StoreInfo;
@@ -26,7 +27,7 @@ interface Props {
   settingsEn?: SiteSettings;
 }
 
-export default function FooterContent({ kyoto, kumamoto, kyotoEn, kumamotoEn, settings, settingsEn }: Props) {
+export default function FooterContent({ kyoto, kumamoto, kyotoEn, kumamotoEn, settings, settingsEn, operator = '茶筅 Chasen' }: Props) {
   const { lang, localize } = useLang();
   const currentYear = new Date().getFullYear();
 
@@ -35,9 +36,7 @@ export default function FooterContent({ kyoto, kumamoto, kyotoEn, kumamotoEn, se
   const tagline = lang === "en"
     ? (settingsEn?.footerTagline ?? "Japanese Tea Stand")
     : settings.footerTagline;
-  const copyright = lang === "en"
-    ? `© ${currentYear} Chasen Co., Ltd. All rights reserved.`
-    : `© ${currentYear} 株式会社チャセン. All rights reserved.`;
+  const copyright = `© ${currentYear} ${operator}. All rights reserved.`;
 
   return (
     <footer className="bg-[#1A1A18] py-16 px-6">

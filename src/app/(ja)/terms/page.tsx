@@ -1,9 +1,11 @@
+import { cmsMetadata } from "@/lib/cmsMetadata";
 import type { Metadata } from "next";
 import { pageAlternates } from "@/lib/i18n";
 import LegalPageContent, { type LegalDocument } from "@/components/LegalPageContent";
 import Footer from "@/components/Footer";
 
-export const metadata: Metadata = {
+export async function generateMetadata() { return cmsMetadata("/terms", "ja", defaultMetadata); }
+const defaultMetadata: Metadata = {
   title: "サイトのご利用について",
   description: "茶筅 Chasen ウェブサイトのご利用条件・免責事項・著作権について。",
   alternates: pageAlternates("/terms", "ja"),
@@ -138,3 +140,4 @@ export default function TermsPage() {
     </>
   );
 }
+export const revalidate = 60;

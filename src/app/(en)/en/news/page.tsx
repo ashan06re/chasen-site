@@ -1,3 +1,4 @@
+import { cmsMetadata } from "@/lib/cmsMetadata";
 import type { Metadata } from "next";
 import { OG_IMAGE } from "@/lib/site";
 import NewsPage from "@/app/(ja)/news/page";
@@ -7,7 +8,8 @@ export const revalidate = 60;
 
 const description = "News, events and announcements from Chasen, a Japanese tea stand in Kyoto and Kumamoto.";
 
-export const metadata: Metadata = {
+export async function generateMetadata() { return cmsMetadata("/news", "en", defaultMetadata); }
+const defaultMetadata: Metadata = {
   title: "News",
   description,
   alternates: pageAlternates("/news", "en"),

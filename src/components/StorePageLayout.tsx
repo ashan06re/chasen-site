@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { StoreContent } from "@/data/storeContent";
 import { useLang } from "@/lib/langContext";
 import { INSTAGRAM } from "@/lib/site";
+import { defaultExperience, type Experience } from '@/lib/experience';
 
 /** "https://www.instagram.com/chasen_cafe_kumamoto/" → "@chasen_cafe_kumamoto" */
 const instagramHandle = (url: string) => {
@@ -49,12 +50,14 @@ export default function StorePageLayout({
   infoEn,
   reservationUrl,
   reservationUrlEn,
+  experience = defaultExperience(),
 }: {
   store: StoreContent;
   newsEn?: import("@/data/storeContent").NewsItem[];
   infoEn?: import("@/data/storeContent").StoreInfo;
   reservationUrl?: string;
   reservationUrlEn?: string;
+  experience?: Experience;
 }) {
   const { lang, localize } = useLang();
   const resolvedReservationUrl = lang === "en" ? (reservationUrlEn || reservationUrl) : reservationUrl;
@@ -80,6 +83,7 @@ export default function StorePageLayout({
 
   const name = lang === "en" ? infoEn?.nameEn || info.nameEn || info.name : info.name;
   const isKyoto = info.slug === "kyoto";
+  const art = isKyoto ? experience.kyoto : experience.kumamoto;
   return <>
     <Header initialDark reservationUrl={reservationUrl} reservationUrlEn={reservationUrlEn} />
     <main className="editorial-page">
@@ -89,9 +93,9 @@ export default function StorePageLayout({
           <div><p className="eyebrow">{info.area.toUpperCase()} / OUR SHOP</p><h1>{name}</h1></div>
           <Link href={localize(`/stores/${info.slug}/menu`)} className="editorial-button">{tx.viewMenu}<span aria-hidden>↗</span></Link>
         </div>
-        <div className="editorial-photo store-intro-image"><DepthPanel src={`/story-art/${isKyoto ? "03" : "06"}.webp`} depthSrc={`/story-art/${isKyoto ? "03" : "06"}-depth.webp`} alt={isKyoto ? (lang === "en" ? "An illustrated view of the counter seats at Chasen Kodaiji" : "高台寺店の窓辺のカウンター席を描いた背景画") : (lang === "en" ? "An illustration of Chasen Kumamoto's matcha treasure box" : "熊本店の抹茶の宝箱を描いた背景画")} /></div>
+        <div className="editorial-photo store-intro-image"><DepthPanel src={art.src} depthSrc={art.depth} motion={art.motion} alt={lang==='en'?art.altEn:art.alt} fit="contain" /></div>
         <div className="store-information-grid">
-          <div><p className="eyebrow">{tx.about}</p><p className="editorial-body">{description}</p><div className="editorial-actions"><a href={resolvedReservationUrl || localize("/#contact")} target={resolvedReservationUrl ? "_blank" : undefined} rel={resolvedReservationUrl ? "noopener noreferrer" : undefined} className="editorial-button">{tx.reserve}<span aria-hidden>↗</span></a></div></div>
+          <div><p className="eyebrow">{tx.about}</p><p className="editorial-body">{description}</p><div className="editorial-actions"><a href={resolvedReservationUrl ? `${resolvedReservationUrl}#${info.slug}` : localize('/reserve')} className="editorial-button">{tx.reserve}<span aria-hidden>↗</span></a></div></div>
           <div><p className="eyebrow">{tx.storeInfo}</p><dl className="store-information">
             {infoRows.filter(row => row.value).map(({ label, value, href, external }) => <div key={label}><dt>{label}</dt><dd>{href ? <a href={href} target={external ? "_blank" : undefined} rel={external ? "noopener noreferrer" : undefined}>{value}</a> : value}</dd></div>)}
           </dl></div>

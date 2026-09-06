@@ -1,3 +1,4 @@
+import { cmsMetadata } from "@/lib/cmsMetadata";
 import type { Metadata } from "next";
 import { OG_IMAGE } from "@/lib/site";
 import { pageAlternates } from "@/lib/i18n";
@@ -8,7 +9,8 @@ import { brandNewsFallback, type BrandNewsItem } from "@/data/storeContent";
 
 export const revalidate = 60;
 
-export const metadata: Metadata = {
+export async function generateMetadata() { return cmsMetadata("/news", "ja", defaultMetadata); }
+const defaultMetadata: Metadata = {
   title: "お知らせ",
   description: "茶筅 Chasen のブランド全体のお知らせ・イベント情報をご覧いただけます。",
   alternates: pageAlternates("/news", "ja"),

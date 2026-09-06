@@ -1,3 +1,4 @@
+import { cmsMetadata } from "@/lib/cmsMetadata";
 import type { Metadata } from "next";
 import { OG_IMAGE } from "@/lib/site";
 import { pageAlternates } from "@/lib/i18n";
@@ -7,11 +8,12 @@ import FloatingButtons from "@/components/FloatingButtons";
 import { storeContent } from "@/data/storeContent";
 import JsonLd from "@/components/JsonLd";
 import { storeSchema } from "@/lib/structuredData";
-import { getNewsItems, getStoreInfo, getReservationUrls } from "@/lib/notion";
+import { getNewsItems, getStoreInfo, getReservationUrls, getExperience } from "@/lib/notion";
 
 export const revalidate = 60;
 
-export const metadata: Metadata = {
+export async function generateMetadata() { return cmsMetadata("/stores/kyoto", "ja", defaultMetadata); }
+const defaultMetadata: Metadata = {
   title: "Chasen 高台寺店",
   description: "京都・高台寺近くに佇む日本茶スタンド。厳選茶葉で一杯一杯を丁寧に。",
   alternates: pageAlternates("/stores/kyoto", "ja"),
@@ -24,10 +26,11 @@ export const metadata: Metadata = {
 };
 
 export default async function KyotoStorePage() {
-  const [newsResult, infoResult, reservationResult] = await Promise.all([
+  const [newsResult, infoResult, reservationResult, experience] = await Promise.all([
     getNewsItems("高台寺店").catch(() => ({ ja: storeContent.kyoto.news, en: storeContent.kyoto.news })),
     getStoreInfo("高台寺店").catch(()  => ({ ja: storeContent.kyoto.info, en: storeContent.kyoto.info })),
     getReservationUrls().catch(()      => ({ ja: "#", en: "#" })),
+    getExperience(),
   ]);
 
   const newsEn = newsResult.en.length > 0 ? newsResult.en : storeContent.kyoto.news;
@@ -38,6 +41,7 @@ export default async function KyotoStorePage() {
     <>
       <JsonLd data={storeSchema(infoResult.ja)} />
       <StorePageLayout
+        experience={experience}
         store={{ ...storeContent.kyoto, info: infoResult.ja, news: newsResult.ja }}
         newsEn={newsEn}
         infoEn={infoResult.en}

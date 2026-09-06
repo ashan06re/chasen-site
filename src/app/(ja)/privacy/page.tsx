@@ -1,9 +1,11 @@
+import { cmsMetadata } from "@/lib/cmsMetadata";
 import type { Metadata } from "next";
 import { pageAlternates } from "@/lib/i18n";
 import LegalPageContent, { type LegalDocument } from "@/components/LegalPageContent";
 import Footer from "@/components/Footer";
 
-export const metadata: Metadata = {
+export async function generateMetadata() { return cmsMetadata("/privacy", "ja", defaultMetadata); }
+const defaultMetadata: Metadata = {
   title: "プライバシーポリシー",
   description: "茶筅 Chasen における個人情報の取り扱いについて。",
   alternates: pageAlternates("/privacy", "ja"),
@@ -153,3 +155,4 @@ export default function PrivacyPage() {
     </>
   );
 }
+export const revalidate = 60;

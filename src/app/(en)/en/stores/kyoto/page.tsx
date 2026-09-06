@@ -1,3 +1,4 @@
+import { cmsMetadata } from "@/lib/cmsMetadata";
 import type { Metadata } from "next";
 import { OG_IMAGE } from "@/lib/site";
 import KyotoStorePage from "@/app/(ja)/stores/kyoto/page";
@@ -7,7 +8,8 @@ export const revalidate = 60;
 
 const description = "A Japanese tea stand near Kodaiji Temple in Kyoto's Higashiyama. Carefully selected tea leaves, brewed one cup at a time.";
 
-export const metadata: Metadata = {
+export async function generateMetadata() { return cmsMetadata("/stores/kyoto", "en", defaultMetadata); }
+const defaultMetadata: Metadata = {
   title: "Chasen Kodaiji, Kyoto",
   description,
   alternates: pageAlternates("/stores/kyoto", "en"),

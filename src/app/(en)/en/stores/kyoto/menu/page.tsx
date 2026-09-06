@@ -1,3 +1,4 @@
+import { cmsMetadata } from "@/lib/cmsMetadata";
 import type { Metadata } from "next";
 import { OG_IMAGE } from "@/lib/site";
 import KyotoMenuPage from "@/app/(ja)/stores/kyoto/menu/page";
@@ -7,7 +8,8 @@ export const revalidate = 60;
 
 const description = "Full menu of Chasen Kodaiji, Kyoto: matcha and hojicha drinks, Japanese sweets, light meals and sets.";
 
-export const metadata: Metadata = {
+export async function generateMetadata() { return cmsMetadata("/stores/kyoto/menu", "en", defaultMetadata); }
+const defaultMetadata: Metadata = {
   title: "Menu — Chasen Kodaiji, Kyoto",
   description,
   alternates: pageAlternates("/stores/kyoto/menu", "en"),

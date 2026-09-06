@@ -1,3 +1,4 @@
+import { cmsMetadata } from "@/lib/cmsMetadata";
 import type { Metadata } from "next";
 import { OG_IMAGE } from "@/lib/site";
 import KumamotoStorePage from "@/app/(ja)/stores/kumamoto/page";
@@ -7,7 +8,8 @@ export const revalidate = 60;
 
 const description = "Visit Chasen at SAKURA MACHI Kumamoto for Japanese tea and matcha sweets. Explore the menu, opening hours and directions.";
 
-export const metadata: Metadata = {
+export async function generateMetadata() { return cmsMetadata("/stores/kumamoto", "en", defaultMetadata); }
+const defaultMetadata: Metadata = {
   title: "Chasen Kumamoto",
   description,
   alternates: pageAlternates("/stores/kumamoto", "en"),

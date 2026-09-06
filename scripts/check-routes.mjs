@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 
 // Run against a production build: node scripts/check-routes.mjs http://localhost:3100
 const base = process.argv[2] || 'http://localhost:3100';
-const paths = ['', '/news', '/stores/kyoto', '/stores/kyoto/menu', '/stores/kumamoto', '/stores/kumamoto/menu', '/privacy', '/terms'];
+const paths = ['', '/news', '/reserve', '/stores/kyoto', '/stores/kyoto/menu', '/stores/kumamoto', '/stores/kumamoto/menu', '/privacy', '/terms'];
 const routes = ['', '/en'].flatMap(prefix => paths.map(path => `${prefix}${path}` || '/'));
 const known = new Set(routes);
 let checkedLinks = 0;

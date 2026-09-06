@@ -6,10 +6,10 @@ import { createStorySignal } from "@/lib/storyScript";
 
 const DepthCanvas = dynamic(() => import("./story/DepthCanvas"), { ssr: false });
 
-export default function DepthPanel({ src, depthSrc, alt, className = "" }: { src: string; depthSrc: string; alt: string; className?: string }) {
+export default function DepthPanel({ src, depthSrc, alt, className = "", motion = true, fit = 'cover', aspect = 1.5, priority = false }: { src: string; depthSrc?: string; alt: string; className?: string; motion?: boolean; fit?: 'cover'|'contain'; aspect?: number; priority?: boolean }) {
   const root = useRef<HTMLDivElement>(null);
   const [signal] = useState(createStorySignal);
-  const frames = useMemo(() => [{ src, depth: depthSrc, aspect: 1.5 }], [src, depthSrc]);
+  const frames = useMemo(() => [{ src, depth: depthSrc, aspect, motion }], [src, depthSrc, aspect, motion]);
   const reduce = useReducedMotion();
   useEffect(() => {
     if (reduce || !root.current) return;
@@ -22,7 +22,7 @@ export default function DepthPanel({ src, depthSrc, alt, className = "" }: { src
   }, [reduce, signal]);
   return <div ref={root} className={`depth-panel ${className}`}>
     {/* eslint-disable-next-line @next/next/no-img-element -- The same artwork is used by the progressive WebGL layer. */}
-    <img src={src} alt={alt} width={1536} height={1024} loading="lazy" />
-    {!reduce && <DepthCanvas frames={frames} signal={signal} />}
+    <img src={src} alt={alt} width={1536} height={1024} loading={priority?'eager':'lazy'} fetchPriority={priority?'high':'auto'} style={{objectFit:fit}} />
+    {!reduce && motion && <DepthCanvas frames={frames} signal={signal} fit={fit} />}
   </div>;
 }

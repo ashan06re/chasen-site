@@ -1,0 +1,38 @@
+name: Published SEO check
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Site to verify
+        type: choice
+        options: [preview, production]
+        default: preview
+      canonical:
+        description: Canonical origin (change only after domain cutover)
+        default: https://chasen-site-eight.vercel.app
+        required: true
+permissions:
+  contents: read
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24'
+      - name: Verify all public pages and SEO
+        env:
+          QA_TARGET: ${{ inputs.target }}
+          NEXT_PUBLIC_SITE_URL: ${{ inputs.canonical }}
+        run: |
+          if [ "$QA_TARGET" = preview ]; then
+            node scripts/check-routes.mjs https://chasen-site-git-redesign-ashan06re-2847s-projects.vercel.app
+            node scripts/check-seo.mjs https://chasen-site-git-redesign-ashan06re-2847s-projects.vercel.app --preview
+          else
+            node scripts/check-routes.mjs "$NEXT_PUBLIC_SITE_URL"
+            node scripts/check-seo.mjs "$NEXT_PUBLIC_SITE_URL"
+          fi

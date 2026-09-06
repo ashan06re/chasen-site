@@ -1,3 +1,4 @@
+import { cmsMetadata } from "@/lib/cmsMetadata";
 import type { Metadata } from "next";
 import { OG_IMAGE } from "@/lib/site";
 import KumamotoMenuPage from "@/app/(ja)/stores/kumamoto/menu/page";
@@ -7,7 +8,8 @@ export const revalidate = 60;
 
 const description = "Full menu of Chasen Kumamoto: matcha and hojicha drinks, shaved ice, Japanese sweets, meals and sets.";
 
-export const metadata: Metadata = {
+export async function generateMetadata() { return cmsMetadata("/stores/kumamoto/menu", "en", defaultMetadata); }
+const defaultMetadata: Metadata = {
   title: "Menu — Chasen Kumamoto",
   description,
   alternates: pageAlternates("/stores/kumamoto/menu", "en"),

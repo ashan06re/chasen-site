@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 const base = new URL(process.argv[2] || 'http://localhost:3102');
 const preview = process.argv.includes('--preview');
 const site = (process.env.NEXT_PUBLIC_SITE_URL || 'https://chasen-site-eight.vercel.app').replace(/\/$/, '');
-const paths = ['', '/news', '/stores/kyoto', '/stores/kyoto/menu', '/stores/kumamoto', '/stores/kumamoto/menu', '/privacy', '/terms'];
+const paths = ['', '/news', '/reserve', '/stores/kyoto', '/stores/kyoto/menu', '/stores/kumamoto', '/stores/kumamoto/menu', '/privacy', '/terms'];
 const routes = ['', '/en'].flatMap(prefix => paths.map(path => `${prefix}${path}` || '/'));
 for (const route of routes) {
   const res = await fetch(new URL(route, base));
@@ -29,7 +29,7 @@ for (const route of routes) {
 }
 const sitemap = await (await fetch(new URL('/sitemap.xml', base))).text();
 const locations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
-assert.equal(locations.length, 16, 'sitemap covers every ja/en route');
+assert.equal(locations.length, 18, 'sitemap covers every ja/en route');
 assert.ok(locations.every(url => url.startsWith(site)));
 assert.ok(!sitemap.includes('/qa-depth'), 'QA is not discoverable in sitemap');
 assert.ok(!sitemap.includes('<lastmod>'), 'no fabricated modification dates');
@@ -41,4 +41,4 @@ if (preview) {
   assert.equal(qa.status, 404, 'local fault-injection route blocked on Vercel');
   await qa.text();
 }
-console.log(`PASS SEO: 16 canonicals, ja/en/x-default, metadata, JSON-LD, sitemap, ${preview ? 'preview noindex' : 'production indexability'}`);
+console.log(`PASS SEO: ${routes.length} canonicals, ja/en/x-default, metadata, JSON-LD, sitemap, ${preview ? 'preview noindex' : 'production indexability'}`);

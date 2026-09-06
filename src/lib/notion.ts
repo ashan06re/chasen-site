@@ -1,4 +1,9 @@
-import { Client } from "@notionhq/client";
+import { notion, queryNotion } from './notionClient';
+import { createHash } from "node:crypto";
+import { cache } from "react";
+import { EXPERIENCE_DB, APPEARANCE_DB, BOOKING_DB } from "./cmsIds";
+import { DEFAULT_BOOKING, safeBookingUrl, type BookingSetting } from './booking';
+import { defaultExperience, DEFAULT_APPEARANCE, PLACEMENTS, registeredArt, type Artwork, type Appearance } from "./experience";
 import type {
   MenuCard,
   NewsItem,
@@ -22,17 +27,12 @@ import {
   storeContent,
 } from "@/data/storeContent";
 
-const notion = new Client({
-  auth: process.env.NOTION_TOKEN,
-  notionVersion: "2022-06-28",
-});
-
 /** Notion API は1回100件までしか返さないので、続きページも全部読む（メニューは日英で100行を超える） */
 async function queryAll(params: Parameters<typeof notion.databases.query>[0]) {
   const results: Awaited<ReturnType<typeof notion.databases.query>>["results"] = [];
   let cursor: string | undefined;
   do {
-    const res = await notion.databases.query({ ...params, start_cursor: cursor, page_size: 100 });
+    const res = await queryNotion({ ...params, start_cursor: cursor, page_size: 100 });
     results.push(...res.results);
     cursor = res.has_more && res.next_cursor ? res.next_cursor : undefined;
   } while (cursor);
@@ -51,13 +51,63 @@ const YOSHIDA_SETTINGS_DB_ID = process.env.NOTION_YOSHIDA_SETTINGS_DB_ID;
 const RESERVATION_DB_ID        = process.env.NOTION_RESERVATION_DB_ID;
 const YOSHIDA_IMAGES_DB_ID     = process.env.NOTION_YOSHIDA_IMAGES_DB_ID;
 
-function text(prop: Record<string, unknown>): string {
-  const rt = (prop as { rich_text?: Array<{ plain_text: string }> }).rich_text;
-  return rt?.[0]?.plain_text ?? "";
+/** Human-readable Notion fields, with safe defaults and no editable technical keys. */
+export const getExperience = cache(async () => {
+  const result = defaultExperience();
+  try {
+    const data = await queryAll({ database_id: EXPERIENCE_DB, sorts: [{ property: '表示順', direction: 'ascending' }] });
+    for (const page of data.results) {
+      const row = page as { id: string; properties: Record<string, Record<string, unknown>> };
+      const p = row.properties;
+      const place = selectName(p['掲載場所']);
+      const index = PLACEMENTS.indexOf(place as typeof PLACEMENTS[number]);
+      if (index < 0) continue;
+      if (index === 8) {
+        result.shopHeading = { ja:text(p['見出し'])||result.shopHeading.ja, en:text(p['見出し（英語）'])||result.shopHeading.en, detail:text(p['説明文'])||result.shopHeading.detail, detailEn:text(p['説明文（英語）'])||result.shopHeading.detailEn };
+        continue;
+      }
+      const base: Artwork = index < 5 ? result.scenes[index] : index === 5 ? result.kyoto : index === 6 ? result.kumamoto : result.brand;
+      const src = imageUrl(row.id, p['画像'], '画像');
+      let art = { ...base };
+      if (src) {
+        // Only our exact, precomputed painting/depth pairs can use displacement.
+        // A new upload never inherits the previous picture's unrelated depth map.
+        const known = /^https:\/\/chasen-site(?:-git-redesign-ashan06re-2847s-projects|-eight)?\.vercel\.app\/story-art\/(0[1-6])\.webp$/.exec(src);
+        art = known ? { ...base, ...registeredArt(known[1]) } : { ...base, src, mobileSrc:undefined, depth:undefined };
+        if (src.endsWith('/editorial/kyoto-detail.webp') && src.startsWith('https://chasen-site-')) art.src='/editorial/kyoto-detail.webp';
+      }
+      art.alt = text(p['画像の説明']) || base.alt;
+      art.altEn = text(p['画像の説明（英語）']) || base.altEn;
+      art.motion = selectName(p['動き']) !== 'なし';
+      if (index < 5) result.scenes[index] = { ...result.scenes[index], ...art, ja:text(p['見出し'])||result.scenes[index].ja, en:text(p['見出し（英語）'])||result.scenes[index].en, detail:text(p['説明文'])||result.scenes[index].detail, detailEn:text(p['説明文（英語）'])||result.scenes[index].detailEn };
+      else if(index===5) result.kyoto=art;
+      else if(index===6) result.kumamoto=art;
+      else result.brand=art;
+    }
+  } catch { console.warn('CMS experience unavailable; using safe published defaults.'); }
+  return result;
+});
+
+export const getAppearance = cache(async (): Promise<Appearance> => {
+  try {
+    const data = await queryAll({ database_id: APPEARANCE_DB });
+    const p = (data.results[0] as { properties?: Record<string, Record<string, unknown>> })?.properties;
+    if (!p) return DEFAULT_APPEARANCE;
+    const ratio=selectName(p['メニュー画像の比率']);
+    const note=selectName(p['価格の注記']);
+    return { menuAspect:({'7:5':'7 / 5','4:3':'4 / 3','3:2':'3 / 2','1:1':'1 / 1'} as Record<string,string>)[ratio]||DEFAULT_APPEARANCE.menuAspect,
+      priceNote:note==='税込'||note==='税抜'?note:'', operator:text(p['運営者の表示名'])||DEFAULT_APPEARANCE.operator,
+      compact:selectName(p['物語の長さ'])!=='標準', artNote:text(p['画像の注記'])||DEFAULT_APPEARANCE.artNote,artNoteEn:text(p['画像の注記（英語）'])||DEFAULT_APPEARANCE.artNoteEn };
+  } catch { console.warn('CMS appearance unavailable; using safe published defaults.'); return DEFAULT_APPEARANCE; }
+});
+
+function text(prop: Record<string, unknown> | undefined): string {
+  const rt = (prop as { rich_text?: Array<{ plain_text: string }> } | undefined)?.rich_text;
+  return rt?.map(part => part.plain_text).join("") ?? "";
 }
 
-function selectName(prop: Record<string, unknown>): string {
-  const s = (prop as { select?: { name: string } }).select;
+function selectName(prop: Record<string, unknown> | undefined): string {
+  const s = (prop as { select?: { name: string } } | undefined)?.select;
   return s?.name ?? "";
 }
 
@@ -81,7 +131,9 @@ function imageUrl(
   if (!target) return undefined;
   if (target.external?.url) return target.external.url;
   if (!target.file?.url) return undefined;
-  return `/api/notion-image/${pageId}/${index}/${encodeURIComponent(propName)}`;
+  // A replacement gets a new immutable URL; changing hourly signatures does not.
+  const revision = createHash("sha256").update(target.file.url.split("?")[0]).digest("hex").slice(0, 12);
+  return `/api/notion-image/${pageId}/${index}/${encodeURIComponent(propName)}/${revision}`;
 }
 
 // ── メニュー取得（ホームSwiperカード用）──────────────────
@@ -152,6 +204,8 @@ export async function getFullMenuSections(
 
   const jaMap = new Map<string, FullMenuSection>();
   const enMap = new Map<string, FullMenuSection>();
+  const photoSources = new Map<string, import('@/data/storeContent').FullMenuItem>();
+  const photoReferences = new WeakMap<import('@/data/storeContent').FullMenuItem,string>();
 
   for (const page of res.results) {
     const p = (page as { properties: Record<string, Record<string, unknown>> }).properties;
@@ -166,7 +220,14 @@ export async function getFullMenuSections(
       price:       text(p["価格"]),
       note:        text(p["備考"]) || undefined,
       photoUrl,
+      photoZoom: (p["写真の拡大率"] as { number?: number })?.number,
+      photoMatchOrder: (p['表示順'] as { number?: number })?.number,
+      photoX: (p["写真の左右位置"] as { number?: number })?.number,
+      photoY: (p["写真の上下位置"] as { number?: number })?.number,
     };
+    if(lang!=='英語')photoSources.set(page.id,item);
+    const reference=(p['対応する日本語商品'] as {relation?:{id:string}[]})?.relation;
+    if(reference?.length===1)photoReferences.set(item,reference[0].id);
 
     const targetMap = lang === "英語" ? enMap : jaMap;
 
@@ -182,11 +243,18 @@ export async function getFullMenuSections(
     targetMap.get(categoryId)!.items.push(item);
   }
 
-  // 英語行に写真が無ければ、同じカテゴリ・同じ順番の日本語行の写真を使う
+  // Match explicit display order, not array position (hiding one row must not
+  // silently attach the following product's photo to a different translation).
   for (const [categoryId, enSection] of enMap) {
     const jaItems = jaMap.get(categoryId)?.items ?? [];
-    enSection.items.forEach((item, i) => {
-      if (!item.photoUrl && jaItems[i]?.photoUrl) item.photoUrl = jaItems[i].photoUrl;
+    enSection.items.forEach(item => {
+      const matches = typeof item.photoMatchOrder==='number' ? jaItems.filter(ja=>ja.photoMatchOrder===item.photoMatchOrder) : [];
+      const linkedId=photoReferences.get(item);
+      const match=linkedId?photoSources.get(linkedId):matches.length===1?matches[0]:undefined;
+      if (!item.photoUrl && match?.photoUrl) {
+        item.photoUrl = match.photoUrl;
+        item.photoZoom ??= match.photoZoom; item.photoX ??= match.photoX; item.photoY ??= match.photoY;
+      }
     });
   }
 
@@ -383,6 +451,23 @@ export async function getSiteSettings(): Promise<{ ja: SiteSettings; en: SiteSet
 
 // ── 予約フォームURL取得（予約用Google Form DB）───────────
 export async function getReservationUrls(): Promise<{ ja: string; en: string }> {
+  return { ja: '/reserve', en: '/en/reserve' };
+}
+
+export const getBookingSettings = cache(async (): Promise<BookingSetting[]> => {
+  try {
+    const {results}=await queryAll({database_id:BOOKING_DB});
+    return DEFAULT_BOOKING.map(fallback=>{
+      const row=results.find(page=>'properties' in page && selectName(page.properties['店舗'] as Record<string,unknown>)===fallback.store);
+      if(!row||!('properties' in row))return fallback;
+      const p=row.properties as Record<string,Record<string,unknown>>;
+      const mode=selectName(p['受付方法']);
+      return {...fallback,mode:mode==='受付停止'||mode==='外部予約サイト'?mode:'電話・お問い合わせ',url:safeBookingUrl(p['予約ページ']?.url),urlEn:safeBookingUrl(p['予約ページ（英語）']?.url),note:text(p['ご案内'])||fallback.note,noteEn:text(p['ご案内（英語）'])||fallback.noteEn};
+    });
+  } catch { return DEFAULT_BOOKING; }
+});
+
+export async function getLegacyReservationUrls(): Promise<{ ja: string; en: string }> {
   if (!RESERVATION_DB_ID) return { ja: "#", en: "#" };
 
   try {

@@ -1,3 +1,4 @@
+import { cmsMetadata } from "@/lib/cmsMetadata";
 import type { Metadata } from "next";
 import { OG_IMAGE } from "@/lib/site";
 import { pageAlternates } from "@/lib/i18n";
@@ -7,11 +8,12 @@ import FloatingButtons from "@/components/FloatingButtons";
 import { storeContent } from "@/data/storeContent";
 import JsonLd from "@/components/JsonLd";
 import { storeSchema } from "@/lib/structuredData";
-import { getNewsItems, getStoreInfo, getReservationUrls } from "@/lib/notion";
+import { getNewsItems, getStoreInfo, getReservationUrls, getExperience } from "@/lib/notion";
 
 export const revalidate = 60;
 
-export const metadata: Metadata = {
+export async function generateMetadata() { return cmsMetadata("/stores/kumamoto", "ja", defaultMetadata); }
+const defaultMetadata: Metadata = {
   title: "Chasen 熊本店",
   description: "熊本・SAKURA MACHI Kumamotoの日本茶スタンド、茶筅。抹茶スイーツや日本茶を楽しめる熊本店の店舗情報・アクセス・お品書き。",
   alternates: pageAlternates("/stores/kumamoto", "ja"),
@@ -24,10 +26,11 @@ export const metadata: Metadata = {
 };
 
 export default async function KumamotoStorePage() {
-  const [newsResult, infoResult, reservationResult] = await Promise.all([
+  const [newsResult, infoResult, reservationResult, experience] = await Promise.all([
     getNewsItems("熊本店").catch(() => ({ ja: storeContent.kumamoto.news, en: storeContent.kumamoto.news })),
     getStoreInfo("熊本店").catch(()  => ({ ja: storeContent.kumamoto.info, en: storeContent.kumamoto.info })),
     getReservationUrls().catch(()     => ({ ja: "#", en: "#" })),
+    getExperience(),
   ]);
 
   const newsEn = newsResult.en.length > 0 ? newsResult.en : storeContent.kumamoto.news;
@@ -38,6 +41,7 @@ export default async function KumamotoStorePage() {
     <>
       <JsonLd data={storeSchema(infoResult.ja)} />
       <StorePageLayout
+        experience={experience}
         store={{ ...storeContent.kumamoto, info: infoResult.ja, news: newsResult.ja }}
         newsEn={newsEn}
         infoEn={infoResult.en}

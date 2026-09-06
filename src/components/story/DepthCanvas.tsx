@@ -3,8 +3,8 @@
 import { useEffect, useRef } from "react";
 import { cutState, type StorySignal } from "@/lib/storyScript";
 
-export interface DepthFrame { src: string; mobileSrc?: string; depth: string; aspect: number }
-interface Props { frames: readonly DepthFrame[]; signal: StorySignal; className?: string }
+export interface DepthFrame { src: string; mobileSrc?: string; depth?: string; aspect: number; motion?: boolean }
+interface Props { frames: readonly DepthFrame[]; signal: StorySignal; className?: string; fit?: 'cover' | 'contain' }
 
 const vertexShader = `varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position, 1.0); }`;
 const fragmentShader = `
@@ -16,9 +16,10 @@ const fragmentShader = `
   vec3 layer(sampler2D colorMap, sampler2D depthMap, vec2 cover, float t) {
     // Overscan contains the edges. A small iterative parallax lookup preserves
     // perspective without the large rubber-sheet deformation of the old scene.
-    vec2 base = (vUv - .5) * cover * (.94 - .035 * t) + .5;
-    vec2 camera = vec2(pointer.x * .024 + (t - .5) * .012,
-                       pointer.y * .018 - (t - .5) * .033) * strength;
+    vec2 base = (vUv - .5) * cover * (1.0 - .009 * t * strength) + .5;
+    if (base.x < 0.0 || base.x > 1.0 || base.y < 0.0 || base.y > 1.0) return vec3(.043,.047,.039);
+    vec2 camera = vec2(pointer.x * .008 + (t - .5) * .005,
+                       pointer.y * .006 - (t - .5) * .010) * strength;
     vec2 uv = base;
     for (int i = 0; i < 3; i++) {
       float depth = texture2D(depthMap, uv).r - .45;
@@ -35,7 +36,7 @@ const fragmentShader = `
 `;
 
 /** Progressive enhancement only: the HTML painting always remains underneath. */
-export default function DepthCanvas({ frames, signal, className = "" }: Props) {
+export default function DepthCanvas({ frames, signal, className = "", fit = 'cover' }: Props) {
   const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const canvas = ref.current;
@@ -92,7 +93,11 @@ export default function DepthCanvas({ frames, signal, className = "" }: Props) {
         pending.add(index);
         const frame = frames[index];
         const src = window.innerWidth < 768 ? frame.mobileSrc || frame.src : frame.src;
-        void Promise.allSettled([load(src), load(frame.depth)]).then(results => {
+        const neutral = () => {
+          const texture = new THREE.DataTexture(new Uint8Array([128,128,128,255]),1,1);
+          texture.needsUpdate=true; textures.add(texture); return texture;
+        };
+        void Promise.allSettled([load(src), frame.depth ? load(frame.depth) : Promise.resolve(neutral())]).then(results => {
           pending.delete(index);
           if (disposed) return;
           const [image, depth] = results;
@@ -106,7 +111,8 @@ export default function DepthCanvas({ frames, signal, className = "" }: Props) {
       };
       const cover = (value: InstanceType<typeof THREE.Vector2>, aspect: number) => {
         const viewport = canvas!.clientWidth / Math.max(1, canvas!.clientHeight);
-        value.set(Math.min(1, viewport / aspect), Math.min(1, aspect / viewport));
+        const fitAxis = fit === 'contain' ? Math.max : Math.min;
+        value.set(fitAxis(1, viewport / aspect), fitAxis(1, aspect / viewport));
       };
       function render() {
         raf = 0;
@@ -123,10 +129,14 @@ export default function DepthCanvas({ frames, signal, className = "" }: Props) {
         uniforms.imageB.value = second.image; uniforms.depthB.value = second.depth;
         uniforms.phaseA.value = t; uniforms.phaseB.value = 0;
         uniforms.blend.value = mix;
-        cover(uniforms.coverA.value, frames[a].aspect);
-        cover(uniforms.coverB.value, frames[b].aspect);
+        const aspectOf = (texture: InstanceType<typeof THREE.Texture>, fallback: number) => {
+          const size = texture.image as { width?: number; height?: number };
+          return size?.width && size?.height ? size.width / size.height : fallback;
+        };
+        cover(uniforms.coverA.value, aspectOf(first.image, frames[a].aspect));
+        cover(uniforms.coverB.value, aspectOf(second.image, frames[b].aspect));
         pointer.lerp(target, .14);
-        uniforms.strength.value = window.innerWidth < 768 ? .7 : 1;
+        uniforms.strength.value = frames[a].motion === false ? 0 : window.innerWidth < 768 ? .7 : 1;
         renderer.render(scene, camera);
         canvas!.style.opacity = "1";
         canvas!.dataset.renderer = "webgl";
@@ -175,6 +185,6 @@ export default function DepthCanvas({ frames, signal, className = "" }: Props) {
       disposed = true; observer.disconnect(); cleanup();
       canvas.removeEventListener("webglcontextlost", lost); canvas.removeEventListener("webglcontextrestored", restore);
     };
-  }, [frames, signal]);
+  }, [frames, signal, fit]);
   return <canvas ref={ref} aria-hidden="true" data-renderer="fallback" className={`depth-canvas ${className}`} />;
 }

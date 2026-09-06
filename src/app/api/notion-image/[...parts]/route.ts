@@ -1,4 +1,5 @@
-import { Client } from "@notionhq/client";
+import { notion } from '@/lib/notionClient';
+import { EXPERIENCE_DB } from '@/lib/cmsIds';
 
 /**
  * Notion画像プロキシ
@@ -15,14 +16,11 @@ import { Client } from "@notionhq/client";
  * （next/image の localPatterns がクエリ文字列のワイルドカードに対応しないためパス形式）
  */
 
-const notion = new Client({
-  auth: process.env.NOTION_TOKEN,
-  notionVersion: "2022-06-28",
-});
-
 // SSRF防止: Notionの配信元以外は中継しない
 const ALLOWED_HOST = /(^|\.)(amazonaws\.com|notion\.so|notion-static\.com)$/i;
 const PAGE_ID = /^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$/i;
+const normalize = (id: string) => id.replace(/-/g, '').toLowerCase();
+const PUBLIC_DATABASES = new Set([EXPERIENCE_DB, ...Object.entries(process.env).filter(([key]) => /^NOTION_(MENU|KYOTO_MENU|KUMAMOTO_MENU|YOSHIDA_IMAGES)_DB_ID$/.test(key)).map(([,id]) => id || '')].filter(Boolean).map(normalize));
 
 // CDNには長めに持たせ、失効の心配が無い形で配信する
 const CACHE_OK = "public, max-age=0, s-maxage=86400, stale-while-revalidate=604800";
@@ -40,28 +38,37 @@ export async function GET(
   const { parts } = await params;
   const [pageId, rawIndex, rawProp] = parts;
   const index = Number(rawIndex);
-  const propName = rawProp ? decodeURIComponent(rawProp) : "";
+  let propName = '';
+  try { propName = rawProp ? decodeURIComponent(rawProp) : ''; } catch { return fail(400, 'Bad Request'); }
 
-  if (!pageId || !PAGE_ID.test(pageId) || !propName || !Number.isInteger(index) || index < 0) {
+  if (!pageId || !PAGE_ID.test(pageId) || !propName || propName.length > 100 || !Number.isInteger(index) || index < 0 || index > 20 || parts.length > 4) {
     return fail(400, "Bad Request");
   }
 
   try {
     const page = await notion.pages.retrieve({ page_id: pageId });
+    const parent = (page as { parent?: { database_id?: string } }).parent;
+    if (!parent?.database_id || !PUBLIC_DATABASES.has(normalize(parent.database_id))) return fail(404, 'Not Found');
     const props = (page as { properties?: Record<string, Record<string, unknown>> }).properties ?? {};
+    if (!['写真','画像','メイン画像','特徴1画像','特徴2画像','特徴3画像'].includes(propName)) return fail(404, 'Not Found');
+    if (props['表示する']?.checkbox === false) return fail(404, 'Not Found');
     const files = (props[propName] as { files?: NotionFile[] } | undefined)?.files ?? [];
     const fresh = files[index]?.file?.url ?? files[index]?.external?.url;
 
     if (!fresh) return fail(404, "Not Found");
-    if (!ALLOWED_HOST.test(new URL(fresh).hostname)) return fail(403, "Forbidden");
+    const source = new URL(fresh);
+    if (source.protocol !== 'https:' || !ALLOWED_HOST.test(source.hostname)) return fail(403, "Forbidden");
 
-    const upstream = await fetch(fresh, { cache: "no-store" });
+    const upstream = await fetch(fresh, { cache: "no-store", redirect: 'error', signal: AbortSignal.timeout(15000) });
     if (!upstream.ok || !upstream.body) return fail(502, "Upstream Error");
+    const contentType = upstream.headers.get('content-type') || '';
+    if (!/^image\/(jpeg|png|webp|avif|gif)(;|$)/i.test(contentType)) return fail(415, 'Unsupported Image');
 
     return new Response(upstream.body, {
       status: 200,
       headers: {
-        "Content-Type": upstream.headers.get("content-type") ?? "image/jpeg",
+        "Content-Type": contentType,
+        "X-Content-Type-Options": "nosniff",
         "Cache-Control": CACHE_OK,
       },
     });

@@ -78,6 +78,10 @@ export interface FullMenuItem {
   note?: string;      // 例: "hot / ice", "夏季限定", "平日限定"
   noteEn?: string;
   photoUrl?: string;
+  photoZoom?: number;
+  photoMatchOrder?: number;
+  photoX?: number;
+  photoY?: number;
 }
 
 export interface FullMenuSection {

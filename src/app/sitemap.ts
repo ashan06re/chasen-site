@@ -12,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/stores/kumamoto",        priority: 0.9, changeFrequency: "weekly"  },
     { path: "/stores/kumamoto/menu",   priority: 0.8, changeFrequency: "weekly"  },
     { path: "/news",                   priority: 0.7, changeFrequency: "daily"   },
+    { path: "/reserve",                priority: 0.7, changeFrequency: "weekly"  },
     { path: "/privacy",                priority: 0.2, changeFrequency: "monthly" },
     { path: "/terms",                  priority: 0.2, changeFrequency: "monthly" },
   ];

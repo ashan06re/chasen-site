@@ -63,8 +63,8 @@ export default function ContactSection({ settings, settingsEn, reservationUrl, r
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
               href={resolvedReservationUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+              target={resolvedReservationUrl.startsWith('https:')?'_blank':undefined}
+              rel={resolvedReservationUrl.startsWith('https:')?'noopener noreferrer':undefined}
               className="inline-flex items-center gap-3 bg-[#F7F5F0] text-[#1A1A18] font-[var(--font-noto-serif-jp)] text-sm tracking-[0.25em] px-12 py-5 hover:bg-[#E8E0D0] transition-colors w-full sm:w-auto justify-center"
             >
               <span className="text-[#3D6B35] text-base" aria-hidden>◎</span>

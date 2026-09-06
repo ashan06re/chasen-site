@@ -28,8 +28,8 @@ export default function FloatingButtons({
     >
       <a
         href={url || localize("/#contact")}
-        target={url ? "_blank" : undefined}
-        rel={url ? "noopener noreferrer" : undefined}
+        target={url?.startsWith('https:') ? "_blank" : undefined}
+        rel={url?.startsWith('https:') ? "noopener noreferrer" : undefined}
         className="flex flex-col items-center justify-center gap-1 bg-[#3D6B35] text-[#F7F5F0] w-14 h-14 rounded-full shadow-lg hover:bg-[#2A4D25] transition-colors"
         aria-label={lang === "en" ? "Reservation" : "ご予約"}
       >
@@ -39,7 +39,7 @@ export default function FloatingButtons({
         </span>
       </a>
       <a
-        href="mailto:chasen.ky01@gmail.com"
+        href={localize('/#contact')}
         className="flex flex-col items-center justify-center gap-1 bg-[#1A1A18] text-[#F7F5F0] w-14 h-14 rounded-full shadow-lg hover:bg-[#333330] transition-colors border border-[#F7F5F0]/10"
         aria-label={lang === "en" ? "Contact" : "お問い合わせ"}
       >
