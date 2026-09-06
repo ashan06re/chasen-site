@@ -33,15 +33,7 @@ export default function YoshidaSection({ settings, features, settingsEn, feature
   const featureImages = [images?.feature1, images?.feature2, images?.feature3];
 
   return (
-    <section className="bg-[#0D1209] py-32 md:py-48 px-6 overflow-hidden relative">
-      <div
-        className="absolute right-[-4rem] top-1/2 -translate-y-1/2 font-[var(--font-noto-serif-jp)] pointer-events-none select-none leading-none"
-        style={{ fontSize: "clamp(20rem, 40vw, 36rem)", color: "rgba(255,255,255,0.015)" }}
-        aria-hidden
-      >
-        茶
-      </div>
-
+    <section className="bg-[#0B0C0A] py-32 md:py-48 px-6 overflow-hidden relative">
       <div className="max-w-6xl mx-auto relative z-10">
 
         {/* Section label */}

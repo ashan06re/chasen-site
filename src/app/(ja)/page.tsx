@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Story from "@/components/story/Story";
+import StorePanels from "@/components/StorePanels";
 import SmoothScroll from "@/components/SmoothScroll";
 import BrandStorySection from "@/components/BrandStorySection";
 import YoshidaSection from "@/components/YoshidaSection";
@@ -82,6 +83,15 @@ export default async function HomePage() {
       />
       <main>
         <Story />
+        <StorePanels kyoto={kyotoInfo} kumamoto={kumamotoInfo} />
+        <StoreSection
+          store={{ ...storeContent.kyoto, info: kyotoInfo, menuCards: kyotoResult.ja }}
+          menuCardsEn={kyotoCardsEn}
+        />
+        <StoreSection
+          store={{ ...storeContent.kumamoto, info: kumamotoInfo, menuCards: kumamotoResult.ja }}
+          menuCardsEn={kumamotoCardsEn}
+        />
         <BrandStorySection
           content={brandStoryResult.ja}
           contentEn={brandStoryResult.en}
@@ -92,15 +102,6 @@ export default async function HomePage() {
           settingsEn={yoshidaSettingsResult.en}
           featuresEn={yoshidaFeaturesResult.en}
           images={yoshidaImagesResult}
-        />
-        <StoreSection
-          store={{ ...storeContent.kyoto, info: kyotoInfo, menuCards: kyotoResult.ja }}
-          menuCardsEn={kyotoCardsEn}
-        />
-        <StoreSection
-          store={{ ...storeContent.kumamoto, info: kumamotoInfo, menuCards: kumamotoResult.ja }}
-          menuCardsEn={kumamotoCardsEn}
-          dark
         />
         <ContactSection
           settings={siteSettingsResult.ja}

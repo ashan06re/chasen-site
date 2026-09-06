@@ -14,11 +14,11 @@ export default function BrandStorySection({ content = defaultBrandStory, content
   const c = lang === "en" ? (contentEn ?? defaultBrandStoryEn) : content;
 
   return (
-    <section id="brand" className="bg-[#F7F5F0] py-28 md:py-40 px-6">
+    <section id="brand" className="bg-[#050605] py-28 md:py-40 px-6">
       <div className="max-w-6xl mx-auto">
         {/* Section label */}
         <AnimateIn>
-          <p className="font-[var(--font-cormorant)] text-chasen-gold-deep text-sm tracking-[0.5em] uppercase mb-16">
+          <p className="font-[var(--font-cormorant)] text-chasen-gold text-sm tracking-[0.5em] uppercase mb-16">
             Brand Story
           </p>
         </AnimateIn>
@@ -28,9 +28,9 @@ export default function BrandStorySection({ content = defaultBrandStory, content
           {/* Left: large heading */}
           <AnimateIn delay={100}>
             <div>
-              <h2 className="font-[var(--font-noto-serif-jp)] text-5xl md:text-6xl lg:text-7xl font-light text-[#1A1A18] leading-tight tracking-wide">
+              <h2 className="font-[var(--font-noto-serif-jp)] text-5xl md:text-6xl lg:text-7xl font-light text-[#F7F5F0] leading-tight tracking-wide">
                 {c.catchphrase}<br />
-                <span className="text-[#3D6B35]">{c.catchphraseHighlight}</span>
+                <span className="text-[#B8A882]">{c.catchphraseHighlight}</span>
               </h2>
               <div className="mt-10 w-12 h-px bg-[#B8A882]" />
             </div>
@@ -39,13 +39,13 @@ export default function BrandStorySection({ content = defaultBrandStory, content
           {/* Right: body text */}
           <AnimateIn delay={250}>
             <div className="space-y-6">
-              <p className="font-[var(--font-noto-serif-jp)] text-[#6B6B5E] text-base md:text-lg leading-[2.2] tracking-wide font-light">
+              <p className="font-[var(--font-noto-serif-jp)] text-chasen-muted-light text-base md:text-lg leading-[2.2] tracking-wide font-light">
                 {c.body1}
               </p>
-              <p className="font-[var(--font-noto-serif-jp)] text-[#6B6B5E] text-base md:text-lg leading-[2.2] tracking-wide font-light">
+              <p className="font-[var(--font-noto-serif-jp)] text-chasen-muted-light text-base md:text-lg leading-[2.2] tracking-wide font-light">
                 {c.body2}
               </p>
-              <p className="font-[var(--font-noto-serif-jp)] text-[#6B6B5E] text-base md:text-lg leading-[2.2] tracking-wide font-light">
+              <p className="font-[var(--font-noto-serif-jp)] text-chasen-muted-light text-base md:text-lg leading-[2.2] tracking-wide font-light">
                 {c.body3}
               </p>
             </div>

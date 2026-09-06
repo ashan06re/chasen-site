@@ -18,37 +18,23 @@ const t = {
   en: { taxNote: "excl. tax", viewStore: "View Store Details" },
 };
 
-export default function StoreSection({ store, menuCardsEn, dark = false }: Props) {
+export default function StoreSection({ store, menuCardsEn, dark = true }: Props) {
   const { lang, localize } = useLang();
   const tx = t[lang];
   const { info } = store;
   const menuCards = lang === "en" && menuCardsEn && menuCardsEn.length > 0
     ? menuCardsEn
     : store.menuCards;
-  const bgColor   = dark ? "#1A1A18" : "#F7F5F0";
+  const bgColor   = dark ? "#0B0C0A" : "#F7F5F0";
   const textColor = dark ? "#F7F5F0" : "#1A1A18";
   const storePath = localize(`/stores/`);
 
-  const bgText = info.slug === "kyoto" ? "京都" : info.slug === "kumamoto" ? "熊本" : null;
-  const bgTextColor = dark ? "rgba(255,255,255,0.015)" : "rgba(0,0,0,0.04)";
-
   return (
     <section
-      id={info.slug === "kyoto" ? "stores" : undefined}
+      id={`menu-${info.slug}`}
       className="py-24 md:py-36 relative overflow-hidden"
       style={{ backgroundColor: bgColor }}
     >
-      {bgText && (
-        <div
-          className="absolute right-[-2rem] top-1/2 -translate-y-1/2 font-[var(--font-noto-serif-jp)] pointer-events-none select-none flex flex-col items-center"
-          style={{ fontSize: "clamp(12rem, 22vw, 20rem)", lineHeight: 1, color: bgTextColor }}
-          aria-hidden
-        >
-          {bgText.split("").map((char, i) => (
-            <span key={i} style={{ display: "block" }}>{char}</span>
-          ))}
-        </div>
-      )}
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Header */}
         <div className="px-6 md:px-12 mb-12">
