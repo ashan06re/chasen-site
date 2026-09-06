@@ -174,39 +174,31 @@ npm run build  # 本番ビルド確認
 
 小さいサイズでは「Chasen」の細い文字が潰れるため、アイコンはマークのみにしてある。
 
-## 序幕「点てる」（redesign ブランチ）
+## 物語「一杯が、点てられるまで」（redesign ブランチ）
 
-トップの `HeroSection` を置き換えた、スクロール＝時間の3D序幕。`src/components/opening/`。
+トップの `HeroSection` を置き換えた、スクロール＝時間の写真の物語。`src/components/story/`。
+3D（three.js で形を作る方式）は 2026-09-05 に**廃止**した。写実の絵は生成静止画、動きは深度視差で作る。
 
 | ファイル | 役割 |
 |---------|------|
-| `src/lib/openingScript.ts` | 台本。進行度→各演出の値、カメラの通り道。**three.js を import しないこと**（初期バンドルに乗る） |
-| `Opening.tsx` | 420svh の枠と sticky。`onScrollFrame()` で進行度を出し、文字の不透明度は DOM に直接書く |
-| `OpeningCanvas.tsx` | R3F の Canvas。動的 import。カメラ・光・後処理 |
-| `environment.ts` | 環境マップ（IBL）を小さなシーンから PMREM で焼く。HDRI 画像は読まない |
-| `textures.ts` | 手続き生成の法線／粗さ／木目／泡マップ |
-| `Room.tsx` `TeaBowl.tsx` `Chasen3D.tsx` `Foam.tsx` `Steam.tsx` `Pour.tsx` | 物語に出てくる物だけ |
+| `src/lib/storyScript.ts` | 台本。10コマの一覧（id・章番号・一行の文字・比率）、スクロール量→コマの状態。**three.js を import しないこと** |
+| `Story.tsx` | 1140svh の枠と sticky。進行度を出し、文字の不透明度と CSS フォールバックの `<img>` を DOM に直接書く |
+| `StoryCanvas.tsx` | WebGL。今のコマと次のコマの写真＋深度マップを1枚の平面に渡し、寄り・視差・溶けをシェーダで作る。three.js は動的 import |
+| `public/story/NN.webp` `NN-m.webp` `NN-depth.webp` | 写真（1600px／960px）と深度（800px、白=手前） |
 
-**進行度の渡し方**: 毎フレーム setState すると 60fps で再描画が走る。`OpeningState`（可変オブジェクト）
-を共有し、各コンポーネントが自分の `useFrame` の中で読む。`Rig` が priority `-10` で先に書き換える。
+**素材の作り方（リポジトリ外 `chasen_project/`）**: 写真は ChatGPT(GPT-5.6) の image_gen で店の写真を参照させて生成 →
+`承認待ち/` でユーザーが承認 → `tools/grade.py` で写真の仕上げ（粒子・ハレーション・色収差・周辺減光）→
+`tools/depth.py`（Depth Anything V2、`tools/.venv`）で深度 → `tools/export_web.py` で `public/story/` に書き出し。
+**コマの順番は `tools/export_web.py` の CUTS と `storyScript.ts` の CUTS を揃える。** 06 茶畑だけ実写（`素材_選定/posters/07_覆下園_全景.jpg`）。
 
-**3Dが安っぽく見えたときに疑う順番**（実際にこの順で直した）:
+**注意点**
+- 写真テクスチャは `NoColorSpace` で読む。`SRGBColorSpace` にすると ShaderMaterial の出力で暗く沈む
+- SSR は sticky 版を出す（`reduce` の初期値 false）。reduced-motion は判定後に縦並びの静止版へ切り替える
+- WebGL が無い時は `onFail` → 同じ `<img>` を不透明度で溶かす CSS 版になる
+- 動画生成（Sora 等）は使わない方針。「点てる」の動作は静止画の連続で表現する
 
-1. **環境マップが無い** — ライトだけだと陶器がプラスチックに見える。`environment.ts`
-2. **被写界深度が無い** — マクロで全部にピントが合っているとCGに見える。`DepthOfField`
-3. **形が完璧すぎる** — 回転体の茶碗に手びねりの歪みを足す
-4. **法線マップの周波数が高すぎる** — ちらついて面が白茶ける。`normalScale` と repeat を下げ、`anisotropy` を上げる
-5. **回転体の継ぎ目** — 最終列の法線を先頭列で上書きする（`TeaBowl.tsx`）。ノイズも整数周期にしてタイル可能にする
-6. **泡を球のインスタンスで並べる** — 必ず「粒」に見える。微泡は法線マップを貼ったドーム面、粗い泡だけインスタンス
-7. **湯気・湯を出しすぎ** — 煙幕・蛍光灯に見える。薄く短く
-
-**フォールバック3段階**: WebGL → `public/opening/opening-still.jpg`（3Dの1コマ目をそのまま書き出したもの）
-→ `prefers-reduced-motion` で 100svh の静止画。静止画は演出を変えたら撮り直す。
-
-**性能**: `(pointer: coarse)` / コア数 / 画面幅で後処理と影を落とす（`heavy`）。縦長画面では横画角を
-保つよう垂直画角を広げる（これが無いとスマホで茶碗がはみ出す）。
-
-**素材**: 2019年の実写動画は全クリップ不採用（2026-09-03 ユーザー判断）。`素材_選定/posters/` の静止画は使用可。
+**確認の仕方**: `npm run build && npx next start -p 3100` → ヘッドレス Chrome を CDP で動かし、
+`window.__lenis.scrollTo(y, {immediate:true})` で位置を送ってから `Page.captureScreenshot`（10点）。
 
 ## モーション（3D演出）
 
@@ -214,30 +206,17 @@ npm run build  # 本番ビルド確認
 
 | 対象 | 実装 | 中身 |
 |-----|------|------|
-| ヒーロー | `HeroCanvas.tsx`（three.js） | 深度マップで2.5Dパララックス |
+| 物語（トップ） | `story/StoryCanvas.tsx`（three.js） | 写真＋深度マップで寄り・視差・溶け（上の節） |
 | メニューカード | `TiltCard.tsx` | ポインタ追従の傾き＋光沢。タッチ端末では無効 |
 | 写真枠 | `ParallaxFrame.tsx` | 枠の中で写真だけ遅れて動くスクロール視差 |
 
 `src/lib/motion.ts` がスクロール購読を1つのrAFループにまとめている。
 **スクロール連動の演出を足すときは、個別にリスナーを張らず `onScrollFrame()` を使うこと。**
 
-### ヒーローの構成
+### 深度マップ
 
-| ファイル | 役割 |
-|---------|------|
-| `public/hero-kyoto.jpg` | 八坂の塔の写真。`next/image` で最初に表示される（LCP用） |
-| `public/hero-kyoto-depth.jpg` | 深度マップ（白=手前 / 黒=奥）。写真から生成した推定値 |
-| `src/components/HeroCanvas.tsx` | three.js。深度に応じて画素の動く量を変える |
-
-three.js は**動的import**で初期バンドルから外してある。読み込み完了までは `<Image>` が
-見えていて、準備できたらcanvasがフェードインする。段階的に品質が下がる作り：
-
-1. WebGLあり → 深度パララックス（マウス・スクロール・自動ドリフト）
-2. WebGLなし → CSSのパースペクティブ視差
-3. `prefers-reduced-motion` → 完全に静止
-
-写真を差し替えるときは深度マップも作り直すこと（明るさ・彩度・ディテール・縦位置から
-推定する簡易生成）。
+写真を差し替えるときは深度マップも作り直す（`chasen_project/tools/depth.py`、Depth Anything V2。白=手前 / 黒=奥）。
+旧ヒーローの `public/hero-kyoto.jpg` / `hero-kyoto-depth.jpg` は店舗ページ等で使う可能性があるので残してある。
 
 ## 予約フォームURL管理
 

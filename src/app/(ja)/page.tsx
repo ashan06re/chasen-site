@@ -1,5 +1,5 @@
 import Header from "@/components/Header";
-import Opening from "@/components/opening/Opening";
+import Story from "@/components/story/Story";
 import SmoothScroll from "@/components/SmoothScroll";
 import BrandStorySection from "@/components/BrandStorySection";
 import YoshidaSection from "@/components/YoshidaSection";
@@ -78,7 +78,7 @@ export default async function HomePage() {
       <SmoothScroll />
       <Header />
       <main>
-        <Opening />
+        <Story />
         <BrandStorySection
           content={brandStoryResult.ja}
           contentEn={brandStoryResult.en}
