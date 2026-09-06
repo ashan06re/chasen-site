@@ -29,8 +29,7 @@ npx eslint src   # 手元の保存ページ由来のノイズを避けるため 
 
 ## 注意点
 
-- `src/components/story/StoryCanvas.tsx` は three.js を**動的 import のみ**。
-  `src/lib/storyScript.ts` に three を import しない（初期バンドルに乗る）
-- 写真テクスチャは `NoColorSpace`（`SRGBColorSpace` だと暗くなる）
-- 物語のコマ順は `src/lib/storyScript.ts` の `CUTS` と `../tools/export_web.py` の `CUTS` の**両方**を揃える
+- 2026-09-06：スクロール物語と深度演出は廃止。トップは `EditorialHome.tsx`、画像は `public/editorial/`。
+- 提供実写と店内風景画の写真を使用。旧画像はローカル `引き継ぎ/旧スクロール物語_20260906/` に退避済み。承認撤回された画像を復活させない。
+- 画像書き出しは `../tools/export_editorial.py`。`承認済み/実写_選定/` に存在する画像だけを書き出す。
 - Notion の画像は必ずプロキシ経由（詳細は `CLAUDE.md`）

@@ -177,49 +177,20 @@ npm run build  # 本番ビルド確認
 
 小さいサイズでは「Chasen」の細い文字が潰れるため、アイコンはマークのみにしてある。
 
-## 物語「一杯が、点てられるまで」（redesign ブランチ）
+## 現行リデザイン（2026-09-06・承認撤回後）
 
-トップの `HeroSection` を置き換えた、スクロール＝時間の写真の物語。`src/components/story/`。
-3D（three.js で形を作る方式）は 2026-09-05 に**廃止**した。写実の絵は生成静止画、動きは深度視差で作る。
+トップは `EditorialHome.tsx`。店内に飾られた京都風景画（IMG_6983）の写真と提供実写で構成する。
+「入口 → 店別のお品書き → 店舗 → ブランド → 予約」の通常スクロール。
+吉田銘茶園の紹介はブランドのdetails内に統合。Notionから本文を取得し続ける。
 
-| ファイル | 役割 |
-|---------|------|
-| `src/lib/storyScript.ts` | 台本。承認済み8コマ（01〜08）の一覧（id・章番号・一行の文字・比率）、スクロール量→コマの状態。**three.js を import しないこと** |
-| `Story.tsx` | 920svh の枠と sticky。進行度を出し、文字の不透明度と CSS フォールバックの `<img>` を DOM に直接書く。店舗へスキップ・静止画切替付き |
-| `StoryCanvas.tsx` | WebGL。今のコマと次のコマの写真＋深度マップを1枚の平面に渡し、寄り・視差・溶けをシェーダで作る。three.js は動的 import |
-| `public/story/NN.webp` `NN-m.webp` `NN-depth.webp` | 写真（1600px／960px）と深度（800px、白=手前） |
-
-**素材の作り方（リポジトリ外 `chasen_project/`）**: 写真は ChatGPT(GPT-5.6) の image_gen で店の写真を参照させて生成 →
-`承認待ち/` でユーザーが承認 → `tools/grade.py` で写真の仕上げ（粒子・ハレーション・色収差・周辺減光）→
-`tools/depth.py`（Depth Anything V2、`tools/.venv`）で深度 → `tools/export_web.py` で `public/story/` に書き出し。
-**コマの順番は `tools/export_web.py` の CUTS と `storyScript.ts` の CUTS を揃える。** 2026-09-06：茶畑は承認された夕暮れ復元 v2b（3840×2160、Web ID 05）。葉から粉へはv2継続、宝箱を08に採用。熊本パネルは提供素材の実写・抹茶宝箱。
-
-**注意点**
-- 写真テクスチャは `NoColorSpace` で読む。`SRGBColorSpace` にすると ShaderMaterial の出力で暗く沈む
-- SSR は sticky 版を出す（`reduce` の初期値 false）。reduced-motion は判定後に縦並びの静止版へ切り替える
-- WebGL が無い時は `onFail` → 同じ `<img>` を不透明度で溶かす CSS 版になる
-- 動画生成（Sora 等）は使わない方針。「点てる」の動作は静止画の連続で表現する
-
-**確認の仕方**: `npm run build && npx next start -p 3100` → ヘッドレス Chrome を CDP で動かし、
-`window.__lenis.scrollTo(y, {immediate:true})` で位置を送ってから `Page.captureScreenshot`（10点）。
-
-## モーション（3D演出）
-
-演出は3種類に統一してある。すべて `prefers-reduced-motion` で無効化される。
-
-| 対象 | 実装 | 中身 |
-|-----|------|------|
-| 物語（トップ） | `story/StoryCanvas.tsx`（three.js） | 写真＋深度マップで寄り・視差・溶け（上の節） |
-| メニューカード | `TiltCard.tsx` | ポインタ追従の傾き＋光沢。タッチ端末では無効 |
-| 写真枠 | `ParallaxFrame.tsx` | 枠の中で写真だけ遅れて動くスクロール視差 |
-
-`src/lib/motion.ts` がスクロール購読を1つのrAFループにまとめている。
-**スクロール連動の演出を足すときは、個別にリスナーを張らず `onScrollFrame()` を使うこと。**
-
-### 深度マップ
-
-写真を差し替えるときは深度マップも作り直す（`chasen_project/tools/depth.py`、Depth Anything V2。白=手前 / 黒=奥）。
-旧ヒーローの `public/hero-kyoto.jpg` / `hero-kyoto-depth.jpg` は店舗ページ等で使う可能性があるので残してある。
+- 旧スクロール物語・WebGL・深度パネル・Lenisを現行ページから除去。旧ソースとpublic/storyは親フォルダの `引き継ぎ/旧スクロール物語_20260906/` へ退避。
+- 現在の写真：`public/editorial/` の6枚。元画像は `承認済み/実写_選定/`。書き出しは `tools/export_editorial.py`（サイズと形式の変換のみ）。
+- `tools/export_web.py` は旧承認素材の復活を防ぐため停止。元画像の承認が取り消された調整済み・深度は `承認待ち/承認撤回_派生素材/` に退避。
+- 新たな画像生成は行っていない。絵画と商品写真の役割を分け、商品・店内の実態を保つ。
+- `StoreMenuLayout.tsx` は墨黒・写真グリッド、カテゴリーの絞り込みと文字検索。価格なしなら価格欄なし、写真なしなら空枠なし。
+- メニュー・店舗・予約データの取得先は従来のNotion CMSを維持。
+- `scripts/check-routes.mjs` は日英16ルート、内部リンク、6画像、撤回画像の404を検査。
+- 仮サイトはVercelログイン不要。redesignにのみpushし、本番mainの切替は行わない。
 
 ## 予約フォームURL管理
 

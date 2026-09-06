@@ -38,7 +38,7 @@ export default function ContactSection({ settings, settingsEn, reservationUrl, r
     : (reservationUrl || settings.contactReservationUrl);
 
   return (
-    <section id="contact" className="bg-[#050605] py-28 md:py-40 px-6 border-t border-[#B8A882]/15">
+    <section id="contact" className="bg-[#0B0C0A] py-16 md:py-24 px-6 border-t border-[#B8A882]/15">
       <div className="max-w-4xl mx-auto text-center">
         <AnimateIn>
           <p className="font-[var(--font-cormorant)] text-chasen-gold text-sm tracking-[0.5em] uppercase mb-8">
@@ -47,7 +47,7 @@ export default function ContactSection({ settings, settingsEn, reservationUrl, r
         </AnimateIn>
 
         <AnimateIn delay={100}>
-          <h2 className="font-[var(--font-noto-serif-jp)] text-4xl md:text-5xl lg:text-6xl font-light text-[#F7F5F0] tracking-wider leading-tight mb-8">
+          <h2 className="font-[var(--font-noto-serif-jp)] text-3xl md:text-4xl font-light text-[#F7F5F0] tracking-wider leading-relaxed mb-6">
             {tx.heading[0]}<br className="md:hidden" />
             {tx.heading[1]}
           </h2>

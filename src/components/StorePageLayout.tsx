@@ -1,10 +1,9 @@
 "use client";
 import Header from "./Header";
-import AnimateIn from "./AnimateIn";
+import Image from "next/image";
 import Link from "next/link";
 import type { StoreContent } from "@/data/storeContent";
 import { useLang } from "@/lib/langContext";
-import { readableOn, mix } from "@/lib/color";
 import { INSTAGRAM } from "@/lib/site";
 
 /** "https://www.instagram.com/chasen_cafe_kumamoto/" → "@chasen_cafe_kumamoto" */
@@ -79,156 +78,30 @@ export default function StorePageLayout({
     ? (infoEn?.description ?? info.descriptionEn ?? info.description)
     : info.description;
 
-  return (
-    <>
-      <Header initialDark reservationUrl={reservationUrl} reservationUrlEn={reservationUrlEn} />
-
-      <main>
-        {/* Hero */}
-        <section
-          className="relative pt-40 pb-28 px-6"
-          style={{ backgroundColor: info.accentColor }}
-        >
-          <div className="max-w-5xl mx-auto">
-            <p className="font-[var(--font-cormorant)] text-sm tracking-[0.5em] uppercase mb-4" style={{ color: readableOn("#B8A882", info.accentColor) }}>
-              {info.area}
-            </p>
-            <h1 className="font-[var(--font-cormorant)] text-4xl sm:text-6xl md:text-8xl font-light text-[#F7F5F0] tracking-wider leading-tight">
-              {lang === "en" ? (infoEn?.nameEn ?? info.nameEn ?? info.name) : info.name}
-            </h1>
-            <p className="mt-3 font-[var(--font-noto-serif-jp)] text-[#F7F5F0]/60 text-lg tracking-wider font-light">
-              {info.nameJa}
-            </p>
-            <div className="mt-8 w-12 h-px bg-[#B8A882]" />
-          </div>
-          <div
-            className="absolute bottom-0 left-0 right-0 h-12"
-            style={{
-              background: "linear-gradient(to bottom right, transparent 49%, #F7F5F0 50%)",
-            }}
-          />
-        </section>
-
-        {/* 店舗情報 */}
-        <section className="bg-[#F7F5F0] py-20 px-6">
-          <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-14">
-            <AnimateIn>
-              <div>
-                <p className="font-[var(--font-cormorant)] text-chasen-gold-deep text-xs tracking-[0.5em] uppercase mb-6">
-                  {tx.storeInfo}
-                </p>
-                <dl className="space-y-5">
-                  {infoRows.map(({ label, value, href, external }) => (
-                    <div
-                      key={label}
-                      className="flex gap-6 border-b border-[#E8E0D0] pb-5"
-                    >
-                      <dt className="font-[var(--font-noto-serif-jp)] text-xs tracking-wider text-chasen-gold-deep w-20 flex-shrink-0 pt-0.5">
-                        {label}
-                      </dt>
-                      <dd className="font-[var(--font-noto-serif-jp)] text-sm text-[#1A1A18] leading-relaxed tracking-wide">
-                        {href ? (
-                          <a
-                            href={href}
-                            target={external ? "_blank" : undefined}
-                            rel={external ? "noopener noreferrer" : undefined}
-                            className="inline-block py-3 -my-3 hover:text-[#3D6B35] transition-colors"
-                          >
-                            {value}
-                          </a>
-                        ) : (
-                          value
-                        )}
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
-              </div>
-            </AnimateIn>
-
-            <AnimateIn delay={150}>
-              <div>
-                <p className="font-[var(--font-cormorant)] text-chasen-gold-deep text-xs tracking-[0.5em] uppercase mb-6">
-                  {tx.about}
-                </p>
-                <p className="font-[var(--font-noto-serif-jp)] text-chasen-muted text-base leading-[2.2] tracking-wide font-light">
-                  {description}
-                </p>
-                <div className="mt-8 flex flex-wrap gap-4">
-                  <Link
-                    href={localize(`/stores/${info.slug}/menu`)}
-                    className="inline-flex items-center gap-3 border border-[#3D6B35] text-[#3D6B35] font-[var(--font-noto-serif-jp)] text-sm tracking-[0.2em] px-8 py-4 hover:bg-[#3D6B35] hover:text-[#F7F5F0] transition-colors"
-                  >
-                    {tx.viewMenu}
-                  </Link>
-                  <a
-                    href={resolvedReservationUrl || localize("/#contact")}
-                    target={resolvedReservationUrl ? "_blank" : undefined}
-                    rel={resolvedReservationUrl ? "noopener noreferrer" : undefined}
-                    className="inline-flex items-center gap-3 bg-[#3D6B35] text-[#F7F5F0] font-[var(--font-noto-serif-jp)] text-sm tracking-[0.2em] px-8 py-4 hover:bg-[#2A4D25] transition-colors"
-                  >
-                    {tx.reserve}
-                  </a>
-                </div>
-              </div>
-            </AnimateIn>
-          </div>
-        </section>
-
-        {/* 月替わりニュース */}
-        <section className="bg-[#1A1A18] py-24 px-6">
-          <div className="max-w-5xl mx-auto">
-            <AnimateIn>
-              <p className="font-[var(--font-cormorant)] text-[#B8A882] text-sm tracking-[0.5em] uppercase mb-4">
-                {tx.monthlyNewsLabel}
-              </p>
-              <h2 className="font-[var(--font-noto-serif-jp)] text-3xl md:text-4xl font-light text-[#F7F5F0] tracking-wider mb-12">
-                {tx.monthlyNews}
-              </h2>
-            </AnimateIn>
-
-            <div className="grid md:grid-cols-2 gap-6">
-              {news.map((item, i) => (
-                <AnimateIn key={i} delay={i * 100}>
-                  <article className="border border-[#F7F5F0]/10 p-8 hover:border-[#B8A882]/40 transition-colors">
-                    <div className="flex items-center gap-3 mb-4">
-                      <span
-                        className="font-[var(--font-cormorant)] text-xs tracking-[0.3em] uppercase px-3 py-1 rounded-full"
-                        style={{
-                          backgroundColor: `${item.badgeColor}25`,
-                          color: readableOn(item.badgeColor, mix(item.badgeColor, "#1A1A18", 0.15)),
-                        }}
-                      >
-                        {item.badge}
-                      </span>
-                      <span className="font-[var(--font-cormorant)] text-chasen-muted-light text-xs tracking-wider">
-                        {item.date}
-                      </span>
-                    </div>
-                    <h3 className="font-[var(--font-noto-serif-jp)] text-lg text-[#F7F5F0] tracking-wider mb-3">
-                      {item.title}
-                    </h3>
-                    <p className="font-[var(--font-noto-serif-jp)] text-sm text-chasen-muted-light leading-[1.9] tracking-wide font-light">
-                      {item.body}
-                    </p>
-                  </article>
-                </AnimateIn>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* 戻るリンク */}
-        <section className="bg-[#F7F5F0] py-16 px-6 text-center">
-          <Link
-            href={localize("/#stores")}
-            className="inline-flex items-center gap-3 py-3 font-[var(--font-cormorant)] text-sm tracking-[0.3em] uppercase text-chasen-gold-deep hover:opacity-60 transition-opacity"
-          >
-            <span className="w-8 h-px bg-current inline-block" />
-            <span>{tx.backToStores}</span>
-          </Link>
-        </section>
-      </main>
-    </>
-  );
+  const name = lang === "en" ? infoEn?.nameEn || info.nameEn || info.name : info.name;
+  const isKyoto = info.slug === "kyoto";
+  return <>
+    <Header initialDark reservationUrl={reservationUrl} reservationUrlEn={reservationUrlEn} />
+    <main className="editorial-page">
+      <section className="editorial-wrap store-intro">
+        <nav className="menu-breadcrumb" aria-label={lang === "en" ? "Breadcrumb" : "パンくずリスト"}><Link href={localize("/")}>Chasen</Link><span aria-hidden>/</span><span>{name}</span></nav>
+        <div className="store-intro-top">
+          <div><p className="eyebrow">{info.area.toUpperCase()} / OUR SHOP</p><h1>{name}</h1></div>
+          <Link href={localize(`/stores/${info.slug}/menu`)} className="editorial-button">{tx.viewMenu}<span aria-hidden>↗</span></Link>
+        </div>
+        <div className="editorial-photo store-intro-image"><Image src={isKyoto ? "/editorial/kyoto-interior.webp" : "/editorial/kumamoto-treasure.webp"} alt={isKyoto ? (lang === "en" ? "Window-side seats at Chasen Kodaiji" : "高台寺店の窓辺のカウンター席") : (lang === "en" ? "Matcha sweets served at Chasen Kumamoto" : "熊本店の抹茶スイーツ")} fill sizes="(max-width: 767px) 90vw, 1200px" preload className={isKyoto ? "object-cover" : "object-contain"} /></div>
+        <div className="store-information-grid">
+          <div><p className="eyebrow">{tx.about}</p><p className="editorial-body">{description}</p><div className="editorial-actions"><a href={resolvedReservationUrl || localize("/#contact")} target={resolvedReservationUrl ? "_blank" : undefined} rel={resolvedReservationUrl ? "noopener noreferrer" : undefined} className="editorial-button">{tx.reserve}<span aria-hidden>↗</span></a></div></div>
+          <div><p className="eyebrow">{tx.storeInfo}</p><dl className="store-information">
+            {infoRows.filter(row => row.value).map(({ label, value, href, external }) => <div key={label}><dt>{label}</dt><dd>{href ? <a href={href} target={external ? "_blank" : undefined} rel={external ? "noopener noreferrer" : undefined}>{value}</a> : value}</dd></div>)}
+          </dl></div>
+        </div>
+      </section>
+      {news.length > 0 && <section className="editorial-wrap editorial-section">
+        <div className="editorial-heading"><div><p className="eyebrow">FROM OUR SHOP</p><h2>{tx.monthlyNews}</h2></div></div>
+        <div className="store-news-list">{news.map((item, i) => <article key={i}><div><time>{item.date}</time><span>{item.badge}</span></div><h3>{item.title}</h3><p>{item.body}</p></article>)}</div>
+      </section>}
+      <div className="editorial-wrap menu-bottom"><Link href={localize("/#stores")} className="editorial-text-link">{lang === "en" ? "All shops" : "店舗一覧へ"}<span aria-hidden>↗</span></Link><Link href={localize(`/stores/${info.slug}/menu`)} className="editorial-text-link">{tx.viewMenu}<span aria-hidden>↗</span></Link></div>
+    </main>
+  </>;
 }

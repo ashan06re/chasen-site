@@ -3,7 +3,7 @@ import { pageAlternates } from "@/lib/i18n";
 import StoreMenuLayout from "@/components/StoreMenuLayout";
 import Footer from "@/components/Footer";
 import { storeContent } from "@/data/storeContent";
-import { getFullMenuSections } from "@/lib/notion";
+import { getFullMenuSections, getAllStoreInfo, getReservationUrls } from "@/lib/notion";
 
 export const revalidate = 60;
 
@@ -21,14 +21,19 @@ export const metadata: Metadata = {
 
 export default async function KyotoMenuPage() {
   const { info, fullMenu: fallback } = storeContent.kyoto;
-  const result = await getFullMenuSections("高台寺店").catch(() => ({ ja: fallback, en: [] as typeof fallback }));
+  const [result, stores, reservation] = await Promise.all([
+    getFullMenuSections("高台寺店").catch(() => ({ ja: fallback, en: [] as typeof fallback })),
+    getAllStoreInfo().catch(() => null),
+    getReservationUrls().catch(() => ({ ja: "#", en: "#" })),
+  ]);
+  const currentInfo = stores?.ja["高台寺店"] || info;
 
   const jaMenu = result.ja.length > 0 ? result.ja : fallback;
   const enMenu = result.en.length > 0 ? result.en : fallback;
 
   return (
     <>
-      <StoreMenuLayout info={info} fullMenu={jaMenu} fullMenuEn={enMenu} />
+      <StoreMenuLayout info={currentInfo} fullMenu={jaMenu} fullMenuEn={enMenu} reservationUrl={reservation.ja !== "#" ? reservation.ja : undefined} reservationUrlEn={reservation.en !== "#" ? reservation.en : undefined} />
       <Footer />
     </>
   );

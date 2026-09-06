@@ -28,11 +28,14 @@ for (const route of routes) {
   }
   console.log(`PASS ${route}`);
 }
-for (const id of ['01','02','03','04','05','06','07','08']) {
-  for (const suffix of ['', '-m', '-depth']) {
-    const response = await fetch(new URL(`/story/${id}${suffix}.webp`, base));
-    assert.equal(response.status, 200, `${id}${suffix}`);
-    assert.match(response.headers.get('content-type') || '', /image\/webp/);
-  }
+for (const id of ['kyoto-artwork', 'kyoto-treasure', 'kyoto-sweets', 'kyoto-interior', 'kyoto-detail', 'kumamoto-treasure']) {
+  const response = await fetch(new URL(`/editorial/${id}.webp`, base));
+  assert.equal(response.status, 200, id);
+  assert.match(response.headers.get('content-type') || '', /image\/webp/);
 }
-console.log(`PASS ${routes.length} routes, ${checkedLinks} internal links, 24 story images`);
+// Withdrawn imagery must not remain publicly accessible on the current deployment.
+for (const id of ['01', '02', '03', '04', '06', '08']) {
+  const response = await fetch(new URL(`/story/${id}.webp`, base));
+  assert.equal(response.status, 404, `withdrawn image ${id}`);
+}
+console.log(`PASS ${routes.length} routes, ${checkedLinks} internal links, 6 editorial photos, withdrawn images absent`);
