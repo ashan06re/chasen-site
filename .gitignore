@@ -43,3 +43,6 @@ next-env.d.ts
 # large video files (host separately)
 *.mp4
 *.MP4
+
+# Local browser export: contains historical signed Notion image URLs.
+/茶筅 Chasen _ 日本茶スタンド.html
