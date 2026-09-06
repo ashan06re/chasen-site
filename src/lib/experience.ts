@@ -17,14 +17,15 @@ export const DEFAULT_APPEARANCE: Appearance = {
   artNoteEn: 'Story illustrations are inspired by our shops and sweets. See each shop’s menu for product details.',
 };
 export function registeredArt(id: string): Artwork {
+  if (id === 'brand-v1') return { src:'/story-art/brand-v1.webp',aspect:1500/1049,alt:'茶筅の印が入った木枡を描いた絵',altEn:'A painting of Chasen’s wooden masu boxes',motion:false };
   return { src: `/story-art/${id}.webp`, mobileSrc: `/story-art/${id}-mobile.webp`, depth: `/story-art/${id}-depth.webp`, aspect: 1.5, alt: '茶筅の背景画', altEn: 'A Chasen illustration', motion: true };
 }
 export function defaultExperience(): Experience {
   return {
-    scenes: CUTS.map(cut=>({...cut,...registeredArt(cut.id),alt:cut.detail,altEn:cut.detailEn})),
+    scenes: CUTS.map(cut=>({...cut,...registeredArt(cut.id==='02'?'02-v2':cut.id==='05'?'05-v3':cut.id),alt:cut.detail,altEn:cut.detailEn})),
     kyoto:{...registeredArt('03'),alt:'高台寺店の窓辺を描いた背景画',altEn:"A painted view of Kodaiji’s window counter"},
     kumamoto:{...registeredArt('06'),alt:'熊本店の抹茶の宝箱を描いた背景画',altEn:"A painted view of Kumamoto’s matcha treasure box"},
-    brand:{src:'/editorial/kyoto-detail.webp',aspect:1.5,alt:'茶筅の印が入った木の枡',altEn:"Chasen’s wooden masu boxes",motion:false},
+    brand:registeredArt('brand-v1'),
     shopHeading:{ja:'この続きは、\nお店で。',en:'Two places.\nOne Chasen moment.',detail:'京都と熊本。\nそれぞれの街で、お茶と甘いものを。',detailEn:'Kyoto and Kumamoto.\nFind your place for tea and sweets.'},
   };
 }

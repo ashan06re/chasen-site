@@ -3,6 +3,17 @@ import {test} from 'node:test';
 import {safeBookingUrl,DEFAULT_BOOKING} from '../src/lib/booking.ts';
 import {readFile} from 'node:fs/promises';
 import {imageControls} from '../src/lib/imageFraming.ts';
+import {approvedAssetId} from '../src/lib/approvedArtwork.ts';
+
+test('approved paintings resolve by immutable file identity, not CMS row',()=>{
+  const prefix='/api/notion-image/3d3c3347-6cb5-8164-abfd-e8c0d38a216b/0/%E7%94%BB%E5%83%8F/';
+  assert.equal(approvedAssetId(prefix+'ea764152a01a'),'02-v2');
+  assert.equal(approvedAssetId(prefix+'0af7d818a996'),'05-v3');
+  assert.equal(approvedAssetId(prefix+'87ca624c7165'),'brand-v1');
+  assert.equal(approvedAssetId(prefix+'aaaaaaaaaaaa'),undefined);
+  assert.equal(approvedAssetId('https://attacker.example/story-art/02-v2.webp'),undefined);
+  assert.equal(approvedAssetId('https://chasen-site-eight.vercel.app/story-art/02-v2.webp'),'02-v2');
+});
 
 test('image crop defaults, valid edits and invalid CMS values remain safe',()=>{
   assert.deepEqual(imageControls(),{zoom:1,x:50,y:50});

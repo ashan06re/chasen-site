@@ -4,6 +4,7 @@ import { cache } from "react";
 import { EXPERIENCE_DB, APPEARANCE_DB, BOOKING_DB } from "./cmsIds";
 import { DEFAULT_BOOKING, safeBookingUrl, type BookingSetting } from './booking';
 import { defaultExperience, DEFAULT_APPEARANCE, PLACEMENTS, registeredArt, type Artwork, type Appearance } from "./experience";
+import { approvedAssetId } from './approvedArtwork';
 import type {
   MenuCard,
   NewsItem,
@@ -72,8 +73,8 @@ export const getExperience = cache(async () => {
       if (src) {
         // Only our exact, precomputed painting/depth pairs can use displacement.
         // A new upload never inherits the previous picture's unrelated depth map.
-        const known = /^https:\/\/chasen-site(?:-git-redesign-ashan06re-2847s-projects|-eight)?\.vercel\.app\/story-art\/(0[1-6])\.webp$/.exec(src);
-        art = known ? { ...base, ...registeredArt(known[1]) } : { ...base, src, mobileSrc:undefined, depth:undefined };
+        const known = approvedAssetId(src);
+        art = known ? { ...base, ...registeredArt(known) } : { ...base, src, mobileSrc:undefined, depth:undefined };
         if (src.endsWith('/editorial/kyoto-detail.webp') && src.startsWith('https://chasen-site-')) art.src='/editorial/kyoto-detail.webp';
       }
       art.alt = text(p['画像の説明']) || base.alt;

@@ -34,15 +34,19 @@ for (const id of ['kyoto-artwork', 'kyoto-treasure', 'kyoto-sweets', 'kyoto-inte
   assert.match(response.headers.get('content-type') || '', /image\/webp/);
   await response.arrayBuffer();
 }
-for (let index = 1; index <= 6; index++) {
+for (const id of ['01', '02', '03', '04', '05', '06', '02-v2', '05-v3']) {
   for (const suffix of ['', '-mobile', '-depth']) {
-    const asset = `/story-art/${String(index).padStart(2, '0')}${suffix}.webp`;
+    const asset = `/story-art/${id}${suffix}.webp`;
     const response = await fetch(new URL(asset, base));
     assert.equal(response.status, 200, asset);
     assert.match(response.headers.get('content-type') || '', /image\/webp/);
     await response.arrayBuffer();
   }
 }
+const brand = await fetch(new URL('/story-art/brand-v1.webp', base));
+assert.equal(brand.status, 200, 'approved painted brand image');
+assert.match(brand.headers.get('content-type') || '', /image\/webp/);
+await brand.arrayBuffer();
 // Withdrawn imagery must not remain publicly accessible on the current deployment.
 const withdrawn = await fetch(new URL('/editorial/kumamoto-treasure.webp', base));
 assert.equal(withdrawn.status, 404, 'withdrawn Kumamoto photo');
@@ -52,4 +56,4 @@ for (const id of ['01', '02', '03', '04', '06', '08']) {
   assert.equal(response.status, 404, `withdrawn image ${id}`);
   await response.text();
 }
-console.log(`PASS ${routes.length} routes, ${checkedLinks} internal links, 18 painted assets, 5 editorial photos, withdrawn images absent`);
+console.log(`PASS ${routes.length} routes, ${checkedLinks} internal links, 25 painted assets, 5 editorial photos, withdrawn images absent`);
