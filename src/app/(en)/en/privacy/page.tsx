@@ -6,7 +6,6 @@ export const metadata: Metadata = {
   title: "Privacy Policy",
   description: "How Chasen handles personal information.",
   alternates: pageAlternates("/privacy", "en"),
-  robots: { index: true, follow: true },
 };
 
 export default PrivacyPage;

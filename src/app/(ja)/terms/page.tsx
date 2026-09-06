@@ -7,7 +7,6 @@ export const metadata: Metadata = {
   title: "サイトのご利用について",
   description: "茶筅 Chasen ウェブサイトのご利用条件・免責事項・著作権について。",
   alternates: pageAlternates("/terms", "ja"),
-  robots: { index: true, follow: true },
 };
 
 // TODO: 正式な事業者名・所在地が確定したら「運営者」セクションに追記する

@@ -7,7 +7,6 @@ export const metadata: Metadata = {
   title: "プライバシーポリシー",
   description: "茶筅 Chasen における個人情報の取り扱いについて。",
   alternates: pageAlternates("/privacy", "ja"),
-  robots: { index: true, follow: true },
 };
 
 // TODO: 正式な事業者名・所在地が確定したら「事業者情報」セクションに追記する

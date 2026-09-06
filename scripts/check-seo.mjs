@@ -39,5 +39,6 @@ if (!preview) assert.ok(robots.includes(`${site}/sitemap.xml`));
 if (preview) {
   const qa = await fetch(new URL('/qa-depth', base));
   assert.equal(qa.status, 404, 'local fault-injection route blocked on Vercel');
+  await qa.text();
 }
 console.log(`PASS SEO: 16 canonicals, ja/en/x-default, metadata, JSON-LD, sitemap, ${preview ? 'preview noindex' : 'production indexability'}`);
