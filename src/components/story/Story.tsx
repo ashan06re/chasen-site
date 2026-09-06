@@ -99,7 +99,7 @@ export default function Story({ scenes = defaults, compact = true }: { scenes?: 
         /* eslint-disable-next-line @next/next/no-img-element -- HTML first paint and context-loss fallback share WebGL image URLs. */
         <img key={cut.id} ref={element => { images.current[i] = element; }} src={i < 2 ? cut.src : undefined} srcSet={i < 2 && cut.mobileSrc ? `${cut.mobileSrc} 960w, ${cut.src} 1536w` : undefined} sizes="100vw" alt="" width={1536} height={1024} fetchPriority={i === 0 ? "high" : "auto"} onLoad={() => refresh.current()} style={{ opacity: i === 0 ? 1 : 0 }} />
       )}</div>
-      <DepthCanvas frames={frames} signal={signal} fit="contain" />
+      <DepthCanvas frames={frames} signal={signal} fit="cover" />
       <div className="painted-story-shade" aria-hidden="true" />
       <div className="story-location"><span>KYOTO · KODAIJI</span><span>{en ? "AN ILLUSTRATED TEA JOURNEY" : "一杯をめぐる、小さな旅。"}</span></div>
       <div className="story-caption-stack">{scenes.map((cut, i) => <div key={cut.id} className="story-caption" data-active={active === i} aria-hidden={active !== i}>

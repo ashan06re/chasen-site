@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { cutState, type StorySignal } from "@/lib/storyScript";
+import { depthFit } from '@/lib/depthFit';
 
 export interface DepthFrame { src: string; mobileSrc?: string; depth?: string; aspect: number; motion?: boolean }
 interface Props { frames: readonly DepthFrame[]; signal: StorySignal; className?: string; fit?: 'cover' | 'contain' }
@@ -111,8 +112,7 @@ export default function DepthCanvas({ frames, signal, className = "", fit = 'cov
       };
       const cover = (value: InstanceType<typeof THREE.Vector2>, aspect: number) => {
         const viewport = canvas!.clientWidth / Math.max(1, canvas!.clientHeight);
-        const fitAxis = fit === 'contain' ? Math.max : Math.min;
-        value.set(fitAxis(1, viewport / aspect), fitAxis(1, aspect / viewport));
+        value.set(...depthFit(viewport, aspect, fit));
       };
       function render() {
         raf = 0;
@@ -186,5 +186,5 @@ export default function DepthCanvas({ frames, signal, className = "", fit = 'cov
       canvas.removeEventListener("webglcontextlost", lost); canvas.removeEventListener("webglcontextrestored", restore);
     };
   }, [frames, signal, fit]);
-  return <canvas ref={ref} aria-hidden="true" data-renderer="fallback" className={`depth-canvas ${className}`} />;
+  return <canvas ref={ref} aria-hidden="true" data-renderer="fallback" data-fit={fit} className={`depth-canvas ${className}`} />;
 }

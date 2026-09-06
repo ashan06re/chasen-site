@@ -19,6 +19,7 @@ import { EXPERIENCE_DB } from '@/lib/cmsIds';
 // SSRF防止: Notionの配信元以外は中継しない
 const ALLOWED_HOST = /(^|\.)(amazonaws\.com|notion\.so|notion-static\.com)$/i;
 const PAGE_ID = /^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$/i;
+const PUBLIC_IMAGE_PROPERTIES = new Set(['写真','画像','メイン画像','特徴1画像','特徴2画像','特徴3画像']);
 const normalize = (id: string) => id.replace(/-/g, '').toLowerCase();
 const PUBLIC_DATABASES = new Set([EXPERIENCE_DB, ...Object.entries(process.env).filter(([key]) => /^NOTION_(MENU|KYOTO_MENU|KUMAMOTO_MENU|YOSHIDA_IMAGES)_DB_ID$/.test(key)).map(([,id]) => id || '')].filter(Boolean).map(normalize));
 
@@ -41,16 +42,18 @@ export async function GET(
   let propName = '';
   try { propName = rawProp ? decodeURIComponent(rawProp) : ''; } catch { return fail(400, 'Bad Request'); }
 
-  if (!pageId || !PAGE_ID.test(pageId) || !propName || propName.length > 100 || !Number.isInteger(index) || index < 0 || index > 20 || parts.length > 4) {
+  if (!pageId || !PAGE_ID.test(pageId) || !propName || propName.length > 100 || !Number.isInteger(index) || index < 0 || index > 20 || parts.length < 3 || parts.length > 4 || (parts[3] && !/^[a-f0-9]{12}$/.test(parts[3]))) {
     return fail(400, "Bad Request");
   }
+  // Reject unknown properties before making a metered CMS request.
+  if (!PUBLIC_IMAGE_PROPERTIES.has(propName)) return fail(404, 'Not Found');
 
   try {
     const page = await notion.pages.retrieve({ page_id: pageId });
+    if (('archived' in page && page.archived) || ('in_trash' in page && page.in_trash)) return fail(404, 'Not Found');
     const parent = (page as { parent?: { database_id?: string } }).parent;
     if (!parent?.database_id || !PUBLIC_DATABASES.has(normalize(parent.database_id))) return fail(404, 'Not Found');
     const props = (page as { properties?: Record<string, Record<string, unknown>> }).properties ?? {};
-    if (!['写真','画像','メイン画像','特徴1画像','特徴2画像','特徴3画像'].includes(propName)) return fail(404, 'Not Found');
     if (props['表示する']?.checkbox === false) return fail(404, 'Not Found');
     const files = (props[propName] as { files?: NotionFile[] } | undefined)?.files ?? [];
     const fresh = files[index]?.file?.url ?? files[index]?.external?.url;

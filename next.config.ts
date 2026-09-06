@@ -1,6 +1,18 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  poweredByHeader: false,
+  async headers() {
+    return [{ source: '/:path*', headers: [
+      { key: 'X-Content-Type-Options', value: 'nosniff' },
+      { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+      { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+      // Baseline CSP: preserves static rendering, maps and Vercel preview tools.
+      // This is not a strict script policy; nonce-based CSP needs a separate design.
+      { key: 'Content-Security-Policy', value: "object-src 'none'; base-uri 'self'; frame-ancestors 'self'" },
+      { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+    ] }];
+  },
   // CMS is shared with the live site. Avoid a build-time thundering herd.
   experimental: { staticGenerationMaxConcurrency: 1, staticGenerationMinPagesPerWorker: 100 },
   images: {

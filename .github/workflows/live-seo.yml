@@ -32,7 +32,9 @@ jobs:
           if [ "$QA_TARGET" = preview ]; then
             node scripts/check-routes.mjs https://chasen-site-git-redesign-ashan06re-2847s-projects.vercel.app
             node scripts/check-seo.mjs https://chasen-site-git-redesign-ashan06re-2847s-projects.vercel.app --preview
+            node scripts/check-security.mjs https://chasen-site-git-redesign-ashan06re-2847s-projects.vercel.app
           else
             node scripts/check-routes.mjs "$NEXT_PUBLIC_SITE_URL"
             node scripts/check-seo.mjs "$NEXT_PUBLIC_SITE_URL"
+            node scripts/check-security.mjs "$NEXT_PUBLIC_SITE_URL"
           fi
