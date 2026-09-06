@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { OG_IMAGE } from "@/lib/site";
 import { pageAlternates } from "@/lib/i18n";
 import Footer from "@/components/Footer";
 import NewsPageContent from "@/components/NewsPageContent";
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
   title: "お知らせ",
   description: "茶筅 Chasen のブランド全体のお知らせ・イベント情報をご覧いただけます。",
   alternates: pageAlternates("/news", "ja"),
-  openGraph: {
+  openGraph: { images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: "茶筅 Chasen" }],
     title: "お知らせ | 茶筅 Chasen",
     description: "茶筅 Chasen のブランド全体のお知らせ・イベント情報をご覧いただけます。",
     url: "/news",

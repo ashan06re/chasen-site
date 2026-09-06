@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { OG_IMAGE } from "@/lib/site";
 import { pageAlternates } from "@/lib/i18n";
 import StorePageLayout from "@/components/StorePageLayout";
 import Footer from "@/components/Footer";
@@ -12,11 +13,11 @@ export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Chasen 熊本店",
-  description: "熊本・桜町の日本茶スタンド。熊本の自然が育てた茶葉を現代のスタイルで。",
+  description: "熊本・SAKURA MACHI Kumamotoの日本茶スタンド、茶筅。抹茶スイーツや日本茶を楽しめる熊本店の店舗情報・アクセス・お品書き。",
   alternates: pageAlternates("/stores/kumamoto", "ja"),
-  openGraph: {
+  openGraph: { images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: "茶筅 Chasen" }],
     title: "Chasen 熊本店 | 茶筅 Chasen",
-    description: "熊本・桜町の日本茶スタンド。熊本の自然が育てた茶葉を現代のスタイルで。",
+    description: "熊本・SAKURA MACHI Kumamotoの茶筅。抹茶スイーツや日本茶、店舗情報・アクセス・お品書きをご紹介。",
     url: "/stores/kumamoto",
     type: "website",
   },

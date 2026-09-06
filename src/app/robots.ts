@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { absoluteUrl } from "@/lib/site";
+import { absoluteUrl, IS_PREVIEW } from "@/lib/site";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -7,10 +7,10 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        // 画像プロキシはクロール対象外（実体は各ページから参照される）
-        disallow: ["/api/"],
+        // Menu images are public content; crawlers must be able to fetch them.
+        disallow: [],
       },
     ],
-    sitemap: absoluteUrl("/sitemap.xml"),
+    sitemap: IS_PREVIEW ? undefined : absoluteUrl("/sitemap.xml"),
   };
 }

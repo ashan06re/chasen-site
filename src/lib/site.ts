@@ -6,6 +6,8 @@ export const SITE_URL = (
 ).replace(/\/$/, "");
 
 export const SITE_NAME = "茶筅 Chasen";
+/** Preview must be crawlable for Google to see noindex, but never indexed. */
+export const IS_PREVIEW = process.env.VERCEL_ENV === "preview" || process.env.NEXT_PUBLIC_NOINDEX === "true";
 export const OG_IMAGE = "/og.jpg";
 
 /** 店舗ごとの公式 Instagram。Notion「店舗情報」DB の Instagram 列があればそちらが優先される */

@@ -17,9 +17,7 @@ export default function SmoothScroll() {
 
     import("lenis").then(({ default: Lenis }) => {
       if (cancelled) return;
-      const lenis = new Lenis({ lerp: 0.12, wheelMultiplier: 1, smoothWheel: true, anchors: true });
-      // 検証スクリプト（ヘッドレスの連続スクショ）から任意の位置へ飛ばすための取っ手
-      (window as unknown as { __lenis?: unknown }).__lenis = lenis;
+      const lenis = new Lenis({ lerp: 0.14, wheelMultiplier: 1, smoothWheel: true, syncTouch: false, anchors: true });
       let raf = 0;
       const loop = (time: number) => {
         lenis.raf(time);
@@ -29,7 +27,6 @@ export default function SmoothScroll() {
       stop = () => {
         cancelAnimationFrame(raf);
         lenis.destroy();
-        delete (window as unknown as { __lenis?: unknown }).__lenis;
       };
     });
 

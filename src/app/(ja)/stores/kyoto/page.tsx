@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { OG_IMAGE } from "@/lib/site";
 import { pageAlternates } from "@/lib/i18n";
 import StorePageLayout from "@/components/StorePageLayout";
 import Footer from "@/components/Footer";
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
   title: "Chasen 高台寺店",
   description: "京都・高台寺近くに佇む日本茶スタンド。厳選茶葉で一杯一杯を丁寧に。",
   alternates: pageAlternates("/stores/kyoto", "ja"),
-  openGraph: {
+  openGraph: { images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: "茶筅 Chasen" }],
     title: "Chasen 高台寺店 | 茶筅 Chasen",
     description: "京都・高台寺近くに佇む日本茶スタンド。厳選茶葉で一杯一杯を丁寧に。",
     url: "/stores/kyoto",

@@ -61,7 +61,8 @@ export function storeSchema(info: StoreInfo) {
       addressRegion: area.region,
       addressCountry: "JP",
     },
-    ...(hours
+    // Do not turn "irregular holidays" or an unknown schedule into a 7-day claim.
+    ...(hours && /^(年中無休|定休日なし|無休|なし)$/.test(info.closed.trim())
       ? {
           openingHoursSpecification: [
             {

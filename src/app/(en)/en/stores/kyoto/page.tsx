@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { OG_IMAGE } from "@/lib/site";
 import KyotoStorePage from "@/app/(ja)/stores/kyoto/page";
 import { pageAlternates } from "@/lib/i18n";
 
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
   title: "Chasen Kodaiji, Kyoto",
   description,
   alternates: pageAlternates("/stores/kyoto", "en"),
-  openGraph: { title: "Chasen Kodaiji, Kyoto | Chasen", description, url: "/en/stores/kyoto", type: "website", locale: "en_US" },
+  openGraph: { images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: "茶筅 Chasen" }], title: "Chasen Kodaiji, Kyoto | Chasen", description, url: "/en/stores/kyoto", type: "website", locale: "en_US" },
 };
 
 export default KyotoStorePage;

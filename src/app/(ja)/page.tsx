@@ -1,5 +1,5 @@
 import Header from "@/components/Header";
-import EditorialHome from "@/components/EditorialHome";
+import ImmersiveHome from "@/components/ImmersiveHome";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import { storeContent, defaultBrandStory, defaultBrandStoryEn, defaultYoshidaSettings, defaultYoshidaSettingsEn, defaultSiteSettings, defaultSiteSettingsEn } from "@/data/storeContent";
@@ -25,7 +25,7 @@ export default async function HomePage() {
     <JsonLd data={[organizationSchema(settings.ja.contactEmail), websiteSchema(), storeSchema(kyoto), storeSchema(kumamoto)]} />
     <Header initialDark reservationUrl={reservationUrl} reservationUrlEn={reservationUrlEn} />
     <main>
-      <EditorialHome kyoto={kyoto} kumamoto={kumamoto} brand={brand.ja} brandEn={brand.en} tea={tea.ja} teaEn={tea.en} />
+      <ImmersiveHome kyoto={kyoto} kumamoto={kumamoto} brand={brand.ja} brandEn={brand.en} tea={tea.ja} teaEn={tea.en} />
       <ContactSection settings={settings.ja} settingsEn={settings.en} reservationUrl={reservationUrl} reservationUrlEn={reservationUrlEn} />
     </main>
     <Footer />

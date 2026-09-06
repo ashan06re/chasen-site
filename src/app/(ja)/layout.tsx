@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import RootShell from "@/components/RootShell";
-import { SITE_URL, SITE_NAME, OG_IMAGE } from "@/lib/site";
+import { SITE_URL, SITE_NAME, OG_IMAGE, IS_PREVIEW } from "@/lib/site";
 import { pageAlternates } from "@/lib/i18n";
 
 export const metadata: Metadata = {
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     "京都・熊本に展開する日本茶スタンド「茶筅」。厳選された日本茶を、現代の暮らしに合わせた形でお届けします。",
   keywords: "茶筅, Chasen, 日本茶, 抹茶, 京都, 熊本, お茶, カフェ",
   alternates: pageAlternates("/", "ja"),
-  robots: { index: true, follow: true },
+  robots: { index: !IS_PREVIEW, follow: true },
   openGraph: {
     title: "茶筅 Chasen | 日本茶スタンド",
     description: "厳選された日本茶を、現代の暮らしに合わせた形でお届けします。",

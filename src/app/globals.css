@@ -1,4 +1,125 @@
 @import "tailwindcss";
+@import "lenis/dist/lenis.css";
+
+/* Painted, immersive story. The artwork is the environment, not a framed thumbnail. */
+.immersive-home { color: #F3EEE3; background: #0B0C0A; }
+.painted-story { position: relative; background: #201E16; }
+.story-anchor { position: absolute; width: 1px; height: 1px; pointer-events: none; }
+.painted-story-viewport { position: sticky; top: 0; height: 100svh; overflow: clip; isolation: isolate; }
+.painted-story-images { overflow: clip; }
+.painted-story-images, .depth-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.painted-story-images img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(1.064); }
+.depth-canvas { opacity: 0; z-index: 3; pointer-events: none; }
+.painted-story-shade { position: absolute; z-index: 4; inset: 0; pointer-events: none; background: linear-gradient(180deg,rgba(11,12,10,.28),transparent 28%,transparent 42%,rgba(11,12,10,.32) 67%,rgba(11,12,10,.86) 100%),linear-gradient(90deg,rgba(11,12,10,.26),transparent 60%); }
+.story-location { position: absolute; top: 110px; left: 5vw; right: 5vw; display: flex; justify-content: space-between; gap: 20px; z-index: 5; font-size: 10px; letter-spacing: .22em; color: #F3EEE3; text-shadow: 0 1px 6px #000; }
+.story-location span:first-child { font-family: var(--font-cormorant),serif; font-size: 12px; }
+.story-caption-stack { position: absolute; z-index: 5; left: 6.5vw; right: 6.5vw; bottom: 150px; height: 250px; pointer-events: none; }
+.story-caption { position: absolute; inset: auto 0 0; opacity: 0; transform: translateY(10px); transition: opacity .32s,transform .5s; text-shadow: 0 2px 20px rgba(0,0,0,.6); }
+.story-caption[data-active="true"] { opacity: 1; transform: none; }
+.story-caption h2 { text-wrap: balance; }
+.story-kicker { display: flex; align-items: center; gap: 16px; font-family: var(--font-cormorant),serif; letter-spacing: .18em; font-size: 12px; margin-bottom: 24px; }
+.story-kicker span { width: 30px; height: 1px; background: #DDD2B9; }
+.story-caption h1 { font-size: clamp(38px,4.4vw,66px); line-height: 1.65; letter-spacing: .09em; font-weight: 400; }
+.story-caption h2 { font-size: clamp(28px,3.1vw,44px); line-height: 1.7; font-weight: 400; letter-spacing: .06em; }
+.story-detail { margin-top: 18px; font-size: 13px; letter-spacing: .09em; line-height: 1.9; color: #F3EEE3; }
+.story-controls { position: absolute; bottom: 26px; left: 6.5vw; right: 6.5vw; z-index: 6; display: flex; align-items: end; justify-content: space-between; gap: 36px; }
+.story-chapters { display: flex; gap: 10px; width: min(440px,50%); }
+.story-chapters a { display: flex; flex-direction: column; justify-content: center; flex: 1; gap: 10px; min-width: 30px; min-height: 50px; font-family: var(--font-cormorant),serif; color: #E7DECC; font-size: 11px; }
+.story-chapter-line { width: 100%; height: 2px; background: #E7DECC55; transition: background .25s; }
+.story-chapters a[aria-current="step"] .story-chapter-line,.story-chapters a:hover .story-chapter-line { background: #F4E7C8; }
+.story-chapters a[aria-current="step"] { color: white; }
+.story-shortcuts { display: flex; align-items: center; gap: 26px; }
+.story-shortcuts button,.story-shortcuts a { min-height: 44px; display: inline-flex; align-items: center; gap: 22px; font-size: 12px; cursor: pointer; color: #F3EEE3; }
+.story-shortcuts a { border-bottom: 1px solid #D7CEBA; }
+.story-shortcuts button { text-decoration: underline; text-underline-offset: 5px; text-decoration-color: #F3EEE36B; }
+.story-progress-track { position: absolute; bottom: 0; left: 0; right: 0; height: 2px; z-index: 6; background: #F3EEE329; }
+.story-progress-track span { display: block; height: 100%; background: #C7B382; transform: scaleX(var(--story-progress,0)); transform-origin: left; }
+.painted-story-static { padding-block: 130px 70px; background: #0B0C0A; color: #F3EEE3; }
+.story-static-heading { padding-bottom: 50px; }
+.story-static-heading h1 { font-size: clamp(26px,4vw,44px); line-height: 1.8; }
+.story-static-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px 36px; }
+.story-static-grid img { width: 100%; height: auto; }
+.story-static-grid figcaption { padding-top: 20px; }
+.story-static-grid figcaption span { font-family: var(--font-cormorant),serif; color: #C5B38E; font-size: 12px; letter-spacing: .18em; }
+.story-static-grid figcaption p { margin-top: 10px; font-size: 18px; line-height: 1.8; }
+.immersive-shops { padding-block: 110px 80px; scroll-margin-top: 0; }
+.shop-section-heading { display: flex; justify-content: space-between; align-items: end; gap: 30px; margin-bottom: 70px; }
+.shop-section-heading h2 { font-weight: 400; font-size: clamp(34px,4.5vw,62px); line-height: 1.65; letter-spacing: .08em; }
+.shop-section-heading > p { font-size: 14px; line-height: 2.2; color: #C2BBAD; padding-bottom: 12px; }
+.immersive-shop-panels { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; scroll-margin-top: 100px; }
+.immersive-shop-card:nth-child(2) { padding-top: 110px; }
+.shop-dimensional-frame { perspective: 1000px; }
+.shop-art-link { position: relative; display: block; overflow: hidden; aspect-ratio: 4 / 5; background: #292A21; }
+.depth-panel { position: absolute; inset: 0; overflow: clip; }
+.depth-panel > img { position: absolute; width: 100%; height: 100%; object-fit: cover; transform: scale(1.065); }
+.shop-art-link::after { content: ""; position: absolute; z-index: 4; inset: 0; pointer-events: none; background: linear-gradient(180deg,transparent 60%,#0B0C0ACC); border: 1px solid #F1E5C726; }
+.shop-art-caption { position: absolute; z-index: 5; bottom: 32px; left: 30px; right: 30px; display: flex; align-items: center; justify-content: space-between; }
+.shop-art-caption > span:first-child { font-family: var(--font-cormorant),serif; font-size: clamp(22px,2.7vw,38px); letter-spacing: .17em; }
+.shop-art-arrow { height: 48px; width: 48px; display: grid; place-items: center; border: 1px solid #E4D6B882; border-radius: 50%; }
+.shop-panel-info { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin-top: 28px; }
+.shop-panel-info .eyebrow { margin-bottom: 8px; }
+.shop-panel-info h3 { font-size: clamp(20px,2vw,28px); line-height: 1.6; }
+.shop-panel-info .shop-hours { font-size: 12px; text-align: right; max-width: 45%; line-height: 1.7; }
+.shop-panel-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 26px; }
+.shop-panel-actions a { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 56px; border-block: 1px solid #70634C; font-size: 12px; transition: color .2s,border-color .2s; }
+.shop-panel-actions a:hover { color: #DACCAC; border-color: #DACCAC; }
+.story-art-note { font-size: 10px; line-height: 1.9; color: #AAA697; margin-top: 48px; }
+.immersive-brand { padding-block: 80px 100px; border-top: 1px solid #38382D; }
+.immersive-brand-heading h2 { font-size: clamp(27px,3vw,42px); font-weight: 400; line-height: 1.8; }
+.immersive-brand-body { display: grid; grid-template-columns: .85fr 1fr; gap: 90px; margin-top: 50px; align-items: center; }
+.brand-masu { overflow: hidden; aspect-ratio: 4 / 3; }
+.brand-masu img { width: 100%; height: 100%; object-fit: cover; }
+.immersive-brand-body .editorial-body:first-child { margin-top: 0; }
+html[lang="en"] .story-caption h1 { font-family: var(--font-cormorant),serif; line-height: 1.05; font-size: clamp(50px,6vw,84px); letter-spacing: 0; }
+html[lang="en"] .story-caption h2 { font-family: var(--font-cormorant),serif; letter-spacing: 0; }
+@media (max-width: 767px) {
+  /* A full-width cinematic window keeps the entrance and desserts in frame.
+     No narrow centre crop of a landscape painting across the entire tall phone. */
+  .painted-story-images,.painted-story-viewport > .depth-canvas { top: 86px; bottom: auto; height: 62svh; }
+  .story-location { top: 90px; left: 24px; right: 24px; font-size: 9px; letter-spacing: .1em; }
+  .story-location span:last-child { display: none; }
+  .painted-story-shade { background: linear-gradient(180deg,#0B0C0A35,transparent 25%,transparent 42%,#0B0C0A66 65%,#0B0C0AEC 100%); }
+  .story-caption-stack { left: 24px; right: 24px; bottom: 162px; height: 220px; }
+  .story-caption h1 { font-size: clamp(30px,9vw,44px); line-height: 1.75; letter-spacing: .06em; }
+  .story-caption h2 { font-size: clamp(23px,6.4vw,31px); line-height: 1.7; max-width: 12em; }
+  .story-kicker { margin-bottom: 18px; font-size: 11px; }
+  .story-detail { font-size: 11px; line-height: 2; letter-spacing: .03em; max-width: 26em; }
+  .story-controls { left: 24px; right: 24px; bottom: max(18px,env(safe-area-inset-bottom)); display: block; }
+  .story-chapters { width: 100%; gap: 8px; }
+  .story-shortcuts { justify-content: space-between; gap: 12px; margin-top: 10px; }
+  .story-shortcuts button,.story-shortcuts a { font-size: 11px; gap: 12px; }
+  .story-static-grid { grid-template-columns: 1fr; gap: 40px; }
+  .painted-story-static { padding-top: 108px; }
+  .immersive-shops { padding-block: 66px 50px; }
+  .shop-section-heading { align-items: start; flex-direction: column; gap: 24px; margin-bottom: 42px; }
+  .shop-section-heading h2 { font-size: 37px; }
+  .shop-section-heading > p { font-size: 12px; }
+  .immersive-shop-panels { grid-template-columns: 1fr; gap: 54px; }
+  .immersive-shop-card:nth-child(2) { padding-top: 0; }
+  .shop-art-link { aspect-ratio: 4 / 4.4; }
+  .shop-art-caption { bottom: 25px; left: 24px; right: 24px; }
+  .shop-art-caption > span:first-child { font-size: 28px; }
+  .shop-panel-info { align-items: start; flex-direction: column; gap: 4px; margin-top: 24px; }
+  .shop-panel-info .shop-hours { max-width: none; text-align: left; margin-top: 0; }
+  .shop-panel-actions { gap: 18px; margin-top: 18px; }
+  .shop-panel-actions a { font-size: 11px; }
+  .immersive-brand { padding-block: 50px 60px; }
+  .immersive-brand-body { grid-template-columns: 1fr; gap: 30px; margin-top: 32px; }
+  html[lang="en"] .story-caption h1 { font-size: clamp(44px,12vw,62px); }
+}
+@media (max-height: 600px) and (min-width: 768px) {
+  .story-caption-stack { bottom: 100px; height: 210px; }
+  .story-caption h1 { font-size: 38px; line-height: 1.4; }
+  .story-kicker { margin-bottom: 12px; }
+  .story-detail { margin-top: 10px; }
+}
+@media (max-height: 620px) and (max-width: 767px) {
+  .story-caption-stack { bottom: 140px; height: 190px; }
+  .story-caption h1 { font-size: 28px; line-height: 1.5; }
+  .story-kicker { margin-bottom: 10px; }
+  .story-detail { margin-top: 8px; }
+  .story-location { top: 80px; }
+}
 
 .store-information-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
 .store-information > div { display: grid; grid-template-columns: 80px 1fr; gap: 24px; padding-block: 18px; border-bottom: 1px solid #38392E; }
@@ -63,7 +184,7 @@ a:hover .editorial-photo img { transform: scale(1.025); }
 .menu-intro { display: grid; grid-template-columns: 1fr .65fr; gap: 64px; padding-block: 60px 52px; align-items: center; }
 .menu-intro h1, .store-intro h1 { font-weight: 400; font-size: clamp(30px, 4.5vw, 56px); line-height: 1.4; }
 .menu-intro h1 small { display: block; font-size: 17px; color: #C3BBA5; margin-top: 16px; letter-spacing: .1em; }
-.menu-intro .editorial-photo { aspect-ratio: 2 / 1; }
+.menu-intro .editorial-photo { aspect-ratio: 3 / 2; }
 .menu-intro p:not(.eyebrow) { color: #B9B6AA; font-size: 13px; line-height: 2; margin-top: 20px; }
 .menu-breadcrumb { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; font-size: 12px; color: #B9B6AA; }
 .menu-breadcrumb a { display: inline-flex; align-items: center; min-height: 44px; }
@@ -120,7 +241,7 @@ a:hover .editorial-photo img { transform: scale(1.025); }
   .editorial-actions { gap: 16px 24px; margin-top: 24px; }
   .editorial-page { padding-top: 68px; }
   .menu-intro { grid-template-columns: 1fr; gap: 24px; padding-block: 24px 28px; }
-  .menu-intro .editorial-photo { aspect-ratio: 2.4 / 1; }
+  .menu-intro .editorial-photo { aspect-ratio: 2 / 1; }
   .menu-tools { top: 68px; padding-block: 12px; }
   .menu-results { scroll-margin-top: 210px; }
   .menu-tools-inner { flex-direction: column; align-items: stretch; gap: 8px; }

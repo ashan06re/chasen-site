@@ -49,8 +49,8 @@ src/
 
 - `src/lib/langContext.tsx` の `useLang()` → `{ lang, setLang, localize }`。
   `localize("/stores/kyoto")` が現在の言語に合った URL を返すので、**内部リンクは必ず `localize()` を通す**
-- `setLang("en")` は同じページの英語 URL へ遷移する（`localStorage("chasen_lang")` にも保存）。
-  保存済みの言語と逆の URL を開いたときだけ、クライアント側でその言語へ寄せる
+- `setLang("en")` は同じページの英語 URL へ明示的に遷移する。クエリとハッシュも保持。
+  保存言語による自動転送はしない。ユーザーが開いたURLを常に優先する（検索クローラー・共有URLの整合性）。
 - 英語ページを増やすときは `(ja)` にページを作り、`(en)/en/` に同名ファイルで import して re-export、
   `sitemap.ts` にパスを1行足す（日英両 URL が自動で出る）
 - EN時のテキストは Notion の英語行 → 無ければ `src/data/storeContent.ts` の `default〇〇En` 定数
@@ -109,7 +109,8 @@ ISRキャッシュ配信中に署名が切れて画像が全滅する。その�
 | `src/app/sitemap.ts` / `robots.ts` | `/sitemap.xml`・`/robots.txt` を自動生成。**ページを追加したら `sitemap.ts` にも追記する** |
 | `public/og.jpg` | OGP画像（1200×630、ロゴ版）。SNSでURLを貼ったときのサムネイル |
 
-独自ドメインを設定したら、Vercelの環境変数 `NEXT_PUBLIC_SITE_URL` を変えるだけでよい。
+独自ドメイン設定時は `NEXT_PUBLIC_SITE_URL` を更新して再ビルド。canonical・hreflang・構造化データ・sitemapを検査し、www/非wwwと旧URLからの恒久転送も設定する。
+プレビューは `VERCEL_ENV=preview` でnoindex。本番では `NEXT_PUBLIC_NOINDEX` を有効にしない。詳しくは `../引き継ぎ/公開前SEOとドメイン_20260906.md`。
 
 ## よく使うコマンド
 
@@ -177,20 +178,21 @@ npm run build  # 本番ビルド確認
 
 小さいサイズでは「Chasen」の細い文字が潰れるため、アイコンはマークのみにしてある。
 
-## 現行リデザイン（2026-09-06・承認撤回後）
+## 現行リデザイン（2026-09-06・背景画と立体物語）
 
-トップは `EditorialHome.tsx`。店内に飾られた京都風景画（IMG_6983）の写真と提供実写で構成する。
-「入口 → 店別のお品書き → 店舗 → ブランド → 予約」の通常スクロール。
-吉田銘茶園の紹介はブランドのdetails内に統合。Notionから本文を取得し続ける。
+静的な写真貼付型への変更は却下。トップは `ImmersiveHome.tsx` と `components/story/Story.tsx`。
+IMG_6983は筆致・色・空気感の参照であり、写真を主役に貼る方針ではない。
 
-- 旧スクロール物語・WebGL・深度パネル・Lenisを現行ページから除去。旧ソースとpublic/storyは親フォルダの `引き継ぎ/旧スクロール物語_20260906/` へ退避。
-- 現在の写真：`public/editorial/` の6枚。元画像は `承認済み/実写_選定/`。書き出しは `tools/export_editorial.py`（サイズと形式の変換のみ）。
-- `tools/export_web.py` は旧承認素材の復活を防ぐため停止。元画像の承認が取り消された調整済み・深度は `承認待ち/承認撤回_派生素材/` に退避。
-- 新たな画像生成は行っていない。絵画と商品写真の役割を分け、商品・店内の実態を保つ。
-- `StoreMenuLayout.tsx` は墨黒・写真グリッド、カテゴリーの絞り込みと文字検索。価格なしなら価格欄なし、写真なしなら空枠なし。
-- メニュー・店舗・予約データの取得先は従来のNotion CMSを維持。
-- `scripts/check-routes.mjs` は日英16ルート、内部リンク、6画像、撤回画像の404を検査。
-- 仮サイトはVercelログイン不要。redesignにのみpushし、本番mainの切替は行わない。
+- 承認済み6画から5場面（入口→湯→窓辺→夕暮れ茶園→宝箱）＋2店の立体パネル。590svhの物語、場面ジャンプ・店舗への近道・静止モード。
+- `public/story-art/01..06` の通常・mobile・depth計18WebP。原本は親の承認済み、採用記録を確認。入口はv2。手元whisk・砂壁sand-roomは採用しない。
+- `../tools/export_story_art.py` が承認原本だけを書き出す。旧 `export_web.py` は停止を維持。撤回画像とそのURLを復活させない。
+- `DepthCanvas.tsx` を物語・店舗・メニューで共用。Three.jsの深度視差、控えめなカメラ移動、クロスディゾルブ。Lenisは一つだけ。
+- DOM背景画を常設しWebGLは追加演出。GPU停止・画像失敗時はHTMLへ戻る。画面外停止、DPR上限1.5、テクスチャ枚数制限、破棄処理、ResizeObserver。
+- 拡大画像の枠は `overflow: clip`。`hidden`へ戻すとアンカージャンプで内部スクロールが発生しレイヤーがずれる。
+- 商品一覧はNotionの実写真・日英データを維持。メニューヒーローのみ背景画。カテゴリー絞込・検索・未登録価格の非表示。
+- ブランドと銘茶園の本文もNotion取得を維持。冗長な紹介だけdetailsに整理し、物語や立体演出を削除しない。
+- 単体7検査＋全16ルート/368リンク＋SEO検査。GPU強制停止/復旧・欠落データはローカル専用 `/qa-depth` で検査（`CHASEN_LOCAL_QA=1`、Vercelは404）。
+- Vercelのログイン不要プレビューへredesignだけpush。本番main・独自ドメイン購入は別途判断。
 
 ## 予約フォームURL管理
 

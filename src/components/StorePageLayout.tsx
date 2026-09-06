@@ -1,6 +1,6 @@
 "use client";
 import Header from "./Header";
-import Image from "next/image";
+import DepthPanel from "./DepthPanel";
 import Link from "next/link";
 import type { StoreContent } from "@/data/storeContent";
 import { useLang } from "@/lib/langContext";
@@ -89,7 +89,7 @@ export default function StorePageLayout({
           <div><p className="eyebrow">{info.area.toUpperCase()} / OUR SHOP</p><h1>{name}</h1></div>
           <Link href={localize(`/stores/${info.slug}/menu`)} className="editorial-button">{tx.viewMenu}<span aria-hidden>↗</span></Link>
         </div>
-        <div className="editorial-photo store-intro-image"><Image src={isKyoto ? "/editorial/kyoto-interior.webp" : "/editorial/kumamoto-treasure.webp"} alt={isKyoto ? (lang === "en" ? "Window-side seats at Chasen Kodaiji" : "高台寺店の窓辺のカウンター席") : (lang === "en" ? "Matcha sweets served at Chasen Kumamoto" : "熊本店の抹茶スイーツ")} fill sizes="(max-width: 767px) 90vw, 1200px" preload className={isKyoto ? "object-cover" : "object-contain"} /></div>
+        <div className="editorial-photo store-intro-image"><DepthPanel src={`/story-art/${isKyoto ? "03" : "06"}.webp`} depthSrc={`/story-art/${isKyoto ? "03" : "06"}-depth.webp`} alt={isKyoto ? (lang === "en" ? "An illustrated view of the counter seats at Chasen Kodaiji" : "高台寺店の窓辺のカウンター席を描いた背景画") : (lang === "en" ? "An illustration of Chasen Kumamoto's matcha treasure box" : "熊本店の抹茶の宝箱を描いた背景画")} /></div>
         <div className="store-information-grid">
           <div><p className="eyebrow">{tx.about}</p><p className="editorial-body">{description}</p><div className="editorial-actions"><a href={resolvedReservationUrl || localize("/#contact")} target={resolvedReservationUrl ? "_blank" : undefined} rel={resolvedReservationUrl ? "noopener noreferrer" : undefined} className="editorial-button">{tx.reserve}<span aria-hidden>↗</span></a></div></div>
           <div><p className="eyebrow">{tx.storeInfo}</p><dl className="store-information">

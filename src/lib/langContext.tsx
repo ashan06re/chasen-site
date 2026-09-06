@@ -1,11 +1,9 @@
 "use client";
-import { createContext, useContext, useEffect, ReactNode } from "react";
+import { createContext, useContext, ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { localizePath, stripLang } from "@/lib/i18n";
 
 export type Lang = "ja" | "en";
-
-const STORAGE_KEY = "chasen_lang";
 
 const LangContext = createContext<{
   lang: Lang;
@@ -17,33 +15,14 @@ const LangContext = createContext<{
 /**
  * 言語は URL（/ = 日本語、/en = 英語）で決まる。
  * 切り替えは同じページの別言語 URL へ遷移する。
- * 一度明示的に選んだ言語は localStorage に残し、次回逆言語の URL を開いたときだけ
- * クライアント側で寄せる（検索エンジンは localStorage を持たないので影響しない）。
+ * 共有URL・検索結果・戻る操作を壊さないため、保存設定での強制リダイレクトはしない。
  */
 export function LangProvider({ lang, children }: { lang: Lang; children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
 
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if ((stored === "en" || stored === "ja") && stored !== lang) {
-        router.replace(localizePath(pathname, stored) + window.location.hash);
-      }
-    } catch {
-      /* localStorage が使えない環境では何もしない */
-    }
-    // 初回マウント時のみ
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const setLang = (l: Lang) => {
-    try {
-      localStorage.setItem(STORAGE_KEY, l);
-    } catch {
-      /* noop */
-    }
-    if (l !== lang) router.push(localizePath(pathname, l) + window.location.hash);
+    if (l !== lang) router.push(localizePath(pathname, l) + window.location.search + window.location.hash);
   };
 
   const localize = (path: string) => localizePath(path, lang);

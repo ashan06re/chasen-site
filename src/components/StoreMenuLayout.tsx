@@ -5,6 +5,7 @@ import Link from "next/link";
 import Header from "./Header";
 import type { FullMenuSection, StoreInfo } from "@/data/storeContent";
 import { useLang } from "@/lib/langContext";
+import DepthPanel from "./DepthPanel";
 
 interface Props {
   info: StoreInfo;
@@ -50,7 +51,7 @@ export default function StoreMenuLayout({ info, fullMenu, fullMenuEn, reservatio
         </nav>
         <section className="menu-intro">
           <div><p className="eyebrow">{info.area.toUpperCase()} / MENU</p><h1>{en ? "A taste of Chasen." : "お品書き"}<small>{name}</small></h1><p>{en ? "Find your next favourite. Browse by category or search the menu." : "気になる一品を、ゆっくりと。\nカテゴリーや品名から、お好きな味をお探しください。"}</p></div>
-          <div className="editorial-photo"><Image src={info.slug === "kyoto" ? "/editorial/kyoto-sweets.webp" : "/editorial/kumamoto-treasure.webp"} alt={en ? "Matcha sweets at Chasen" : "茶筅の抹茶スイーツ"} fill sizes="(max-width: 767px) 90vw, 36vw" preload className="object-cover" /></div>
+          <div className="editorial-photo menu-painted-intro"><DepthPanel src={`/story-art/${info.slug === "kyoto" ? "05" : "06"}.webp`} depthSrc={`/story-art/${info.slug === "kyoto" ? "05" : "06"}-depth.webp`} alt={en ? "An illustration of Chasen's matcha treasure box" : "茶筅の抹茶の宝箱を描いた背景画"} /></div>
         </section>
       </div>
 

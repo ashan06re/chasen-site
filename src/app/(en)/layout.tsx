@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import RootShell from "@/components/RootShell";
-import { SITE_URL, SITE_NAME, OG_IMAGE } from "@/lib/site";
+import { SITE_URL, SITE_NAME, OG_IMAGE, IS_PREVIEW } from "@/lib/site";
 import { pageAlternates } from "@/lib/i18n";
 
 export const metadata: Metadata = {
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     "Chasen is a Japanese tea stand in Kyoto (Kodaiji) and Kumamoto. Carefully selected matcha, hojicha and sencha, served in a modern style.",
   keywords: "Chasen, Japanese tea, matcha, hojicha, Kyoto cafe, Kodaiji, Kumamoto cafe, tea stand",
   alternates: pageAlternates("/", "en"),
-  robots: { index: true, follow: true },
+  robots: { index: !IS_PREVIEW, follow: true },
   openGraph: {
     title: "Chasen | Japanese Tea Stand in Kyoto & Kumamoto",
     description: "Carefully selected Japanese tea, served in a modern style. Stores in Kyoto (Kodaiji) and Kumamoto.",
