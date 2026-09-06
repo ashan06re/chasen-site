@@ -34,8 +34,8 @@ const FRAG = /* glsl */ `
   uniform float uMobile;
   varying vec2 vUv;
 
-  // 1コマぶん: 寄り＋視差
-  vec3 layer(sampler2D img, sampler2D dep, vec2 cover, float t, float lead) {
+  // 1コマぶん: 寄り＋視差。深度も返す（溶けの順番に使う）
+  vec4 layer(sampler2D img, sampler2D dep, vec2 cover, float t, float lead) {
     // ゆっくり寄る（コマの終わりで 6% 大きく）。次のコマは少し引いた所から始まる
     float zoom = 1.0 / (1.0 + 0.06 * t - 0.02 * lead);
     vec2 uv = (vUv - 0.5) * cover * 0.92 * zoom + 0.5;
@@ -50,17 +50,20 @@ const FRAG = /* glsl */ `
     off.x += (t - 0.5) * d * 0.010;
 
     vec2 s = clamp(uv + off, 0.002, 0.998);
-    return texture2D(img, s).rgb;
+    return vec4(texture2D(img, s).rgb, d + 0.45);
   }
 
   void main() {
-    vec3 a = layer(uImgA, uDepA, uCoverA, uTA, 0.0);
-    vec3 col = a;
+    vec4 a = layer(uImgA, uDepA, uCoverA, uTA, 0.0);
+    vec3 col = a.rgb;
     if (uMix > 0.001) {
-      vec3 b = layer(uImgB, uDepB, uCoverB, uTB, 1.0 - uMix);
-      // 溶ける時は一度わずかに暗くなる（実写のディゾルブに近い）
-      float dip = 1.0 - 0.10 * sin(uMix * 3.14159);
-      col = mix(a, b, uMix) * dip;
+      vec4 b = layer(uImgB, uDepB, uCoverB, uTB, 1.0 - uMix);
+      // 奥（深度が小さい所）から先に溶け、手前の物が最後に入れ替わる。
+      // 一様なフェードより「場面が入れ替わる」ように見える
+      float order = mix(a.a, b.a, 0.5);
+      float m = smoothstep(0.0, 1.0, (uMix * 1.6 - order * 0.6));
+      float dip = 1.0 - 0.08 * sin(m * 3.14159);
+      col = mix(a.rgb, b.rgb, m) * dip;
     }
     // 微かな粒子（バンディング防止も兼ねる）
     float g = fract(sin(dot(gl_FragCoord.xy + uTime, vec2(12.9898, 78.233))) * 43758.5453);

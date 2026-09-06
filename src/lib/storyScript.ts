@@ -19,15 +19,12 @@ export interface Cut {
 
 export const CUTS: Cut[] = [
   { id: "01", chapter: "01", ja: "一杯が、点てられるまで。", en: "Until a bowl is whisked.", aspect: 1672 / 941 },
-  { id: "02", ja: "湯を沸かす。", en: "Water comes to a boil.", aspect: 1672 / 941 },
   { id: "03", ja: "湯を落とす。", en: "Hot water meets the matcha.", aspect: 1672 / 941 },
   { id: "04", ja: "点てる。", en: "Whisk.", aspect: 1672 / 941 },
-  { id: "05", ja: "一杯が、立つ。", en: "A bowl stands ready.", aspect: 1672 / 941 },
-  { id: "06", chapter: "05", ja: "茶葉のふるさとへ。", en: "To where the leaves grow.", aspect: 1672 / 941 },
+  { id: "06", chapter: "05", ja: "一杯が、立つ。茶葉のふるさとへ。", en: "A bowl stands ready. To where the leaves grow.", aspect: 1672 / 941 },
   { id: "07", ja: "宇治、覆下の茶園。", en: "Uji. A shaded tea garden.", aspect: 1920 / 816 },
   { id: "08", ja: "葉から、粉へ。", en: "From leaf to powder.", aspect: 1672 / 941 },
   { id: "09", ja: "そして、高台寺の店へ。", en: "Back to the shop in Kodaiji.", aspect: 1672 / 941 },
-  { id: "10", chapter: "09", ja: "一服。", en: "A bowl of tea.", aspect: 1672 / 941 },
 ];
 
 /** 1コマあたりのスクロール量（画面高の倍数）。最後に少し余白 */
@@ -46,7 +43,7 @@ export function window01(u: number, inA: number, inB: number, outA: number, outB
 }
 
 /** コマの後半、次のコマへ溶ける区間の長さ（コマ内の進行度に対する割合） */
-const FADE = 0.24;
+const FADE = 0.34;
 
 export interface CutState {
   /** 今のコマ */

@@ -76,7 +76,10 @@ export default async function HomePage() {
         ]}
       />
       <SmoothScroll />
-      <Header />
+      <Header
+        reservationUrl={reservationResult.ja !== "#" ? reservationResult.ja : undefined}
+        reservationUrlEn={reservationResult.en !== "#" ? reservationResult.en : undefined}
+      />
       <main>
         <Story />
         <BrandStorySection

@@ -55,6 +55,18 @@ export default function FooterContent({ kyoto, kumamoto, kyotoEn, kumamotoEn, se
               {tagline}
             </p>
 
+            {/* ヘッダーから移したリンク */}
+            <div className="mt-4 flex flex-wrap gap-x-6">
+              {[
+                { href: localize("/#brand"), label: lang === "en" ? "Brand" : "ブランド" },
+                { href: localize("/news"), label: lang === "en" ? "News" : "お知らせ" },
+              ].map(({ href, label }) => (
+                <Link key={href} href={href} className="inline-flex items-center min-h-11 font-[var(--font-noto-serif-jp)] text-xs tracking-wider text-chasen-muted-light hover:text-[#B8A882] transition-colors">
+                  {label}
+                </Link>
+              ))}
+            </div>
+
             {/* SNS（店舗ごとの公式アカウント） */}
             <div className="mt-3 flex flex-col">
               {[
