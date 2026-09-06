@@ -19,6 +19,7 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
+      - run: npm audit --omit=dev --audit-level=high
       - run: npx eslint src
       - run: node --test scripts/check-story.mjs scripts/check-editing.mjs
       # Live SEO checks run separately after deployment, not against a stale alias.
