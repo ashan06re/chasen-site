@@ -9,7 +9,6 @@ import { menuIsPublished } from './menuPublishing';
 import { accentColor } from './palette';
 import { MENU_PUBLICATION_DB } from './cmsIds';
 import type {
-  MenuCard,
   NewsItem,
   BrandNewsItem,
   BrandStoryContent,
@@ -43,7 +42,6 @@ async function queryAll(params: Parameters<typeof notion.databases.query>[0], fr
   return { results };
 }
 
-const MENU_DB_ID             = process.env.NOTION_MENU_DB_ID!;
 const NEWS_DB_ID             = process.env.NOTION_NEWS_DB_ID!;
 const KYOTO_MENU_DB_ID       = process.env.NOTION_KYOTO_MENU_DB_ID!;
 const KUMAMOTO_MENU_DB_ID    = process.env.NOTION_KUMAMOTO_MENU_DB_ID!;
@@ -142,55 +140,6 @@ function imageUrl(
   return `/api/notion-image/${pageId}/${index}/${encodeURIComponent(propName)}/${revision}`;
 }
 
-// ── メニュー取得（ホームSwiperカード用）──────────────────
-export async function getMenuCards(
-  store: "高台寺店" | "熊本店"
-): Promise<{ ja: MenuCard[]; en: MenuCard[] }> {
-  const res = await queryAll({
-    database_id: MENU_DB_ID,
-    filter: {
-      and: [
-        { property: "店舗",   select:   { equals: store } },
-        { property: "表示する", checkbox: { equals: true } },
-      ],
-    },
-    // 表示順（数値）で並べる。未設定の行は後ろに回る
-    sorts: [{ property: "表示順", direction: "ascending" }],
-  });
-
-  const ja: MenuCard[] = [];
-  const en: MenuCard[] = [];
-
-  for (const page of res.results) {
-    const p = (page as { properties: Record<string, Record<string, unknown>> }).properties;
-    const photoUrl = imageUrl((page as { id: string }).id, p["写真"], "写真");
-    const lang = selectName(p["言語"]);
-
-    const card: MenuCard = {
-      category: selectName(p["カテゴリ"]),
-      title:    (p["メニュー名"] as { title?: Array<{ plain_text: string }> })?.title?.[0]?.plain_text ?? "",
-      description: text(p["説明"]),
-      price:    text(p["価格"]) || undefined,
-      accent:   accentColor(selectName(p['アクセント色']), text(p["アクセントカラー"])),
-      bg:       text(p["背景カラー"])       || "#F7F5F0",
-      photoUrl,
-    };
-
-    if (lang === "英語") {
-      en.push(card);
-    } else {
-      ja.push(card);
-    }
-  }
-
-  // 英語行に写真が無ければ、同じ順番の日本語行の写真を使う（写真は日本語行にだけ登録すればよい）
-  en.forEach((card, i) => {
-    if (!card.photoUrl && ja[i]?.photoUrl) card.photoUrl = ja[i].photoUrl;
-  });
-
-  return { ja, en };
-}
-
 // ── フルメニュー取得（店舗詳細メニューページ用）────────────
 const FULL_MENU_DB: Record<"高台寺店" | "熊本店", string> = {
   "高台寺店": KYOTO_MENU_DB_ID,
@@ -230,7 +179,7 @@ export async function getFullMenuSections(
     const p = (page as { properties: Record<string, Record<string, unknown>> }).properties;
 
     // The visible category choice is authoritative; editors need not sync a hidden ID.
-    const categoryId = text(p['カテゴリー']) || selectName(p["カテゴリID"]);
+    const categoryId = text(p['カテゴリー']);
     const [categoryJa, categoryEn] = text(p['カテゴリー']).split('｜');
     const lang       = selectName(p["言語"]);
     const photoUrl   = imageUrl((page as { id: string }).id, p["写真"], "写真");
@@ -241,7 +190,7 @@ export async function getFullMenuSections(
       price:       text(p["価格"]),
       note:        text(p["備考"]) || undefined,
       photoUrl,
-      accent: accentColor(selectName(p['アクセント色']), text(p["アクセントカラー"])),
+      accent: accentColor(selectName(p['アクセント色'])),
       photoMatchOrder: (p['表示順'] as { number?: number })?.number,
     };
     if(lang!=='英語')photoSources.set(page.id,item);
@@ -253,8 +202,8 @@ export async function getFullMenuSections(
     if (!targetMap.has(categoryId)) {
       targetMap.set(categoryId, {
         id:      categoryId,
-        label:   categoryJa || text(p["カテゴリ名"]),
-        labelEn: categoryEn || text(p["カテゴリ名英語"]) || categoryJa,
+        label:   categoryJa,
+        labelEn: categoryEn || categoryJa,
         accent:  item.accent || "#3D6B35",
         items:   [],
       });
@@ -560,7 +509,7 @@ export async function getAllStoreInfo(): Promise<{
         accessEn:      def.accessEn,
         description:   text(p["紹介文"])           || def.description,
         descriptionEn: def.descriptionEn,
-        accentColor:   accentColor(selectName(p['アクセント色']), text(p["アクセントカラー"]), def.accentColor),
+        accentColor:   accentColor(selectName(p['アクセント色']), def.accentColor),
         instagram:     (p["Instagram"] ? text(p["Instagram"]) : "") || def.instagram,
       };
 

@@ -11,10 +11,10 @@ test('only one explicit store publication opens the menu',()=>{
   for(const rows of [[],[{...yes,status:'投稿しない'}],[{...yes,status:''}],[yes,yes],[{...yes,store:'熊本店'}]])assert.equal(menuIsPublished(rows,'高台寺店'),false);
   assert.equal(menuIsPublished([yes,{store:'熊本店',status:'投稿しない'}],'高台寺店'),true);
 });
-test('named accents override legacy colors and retain readable contrast',()=>{
-  assert.equal(accentColor('ほうじ茶','#3D6B35'),'#8B5E3C');
-  assert.equal(accentColor('','#b8a882'),'#B8A882');
-  assert.equal(accentColor('invalid','url(https://example.com)'),'#3D6B35');
+test('named accents use safe fallbacks and retain readable contrast',()=>{
+  assert.equal(accentColor('ほうじ茶'),'#8B5E3C');
+  assert.equal(accentColor('','#B8A882'),'#B8A882');
+  assert.equal(accentColor('invalid'),'#3D6B35');
   for(const choice of ['constructor','__proto__','toString'])assert.equal(accentColor(choice),'#3D6B35');
   for(const hex of Object.values(ACCENT_PALETTE))assert.ok(contrastRatio(readableOn(hex,'#0B0C0A'),'#0B0C0A')>=4.5);
 });
