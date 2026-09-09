@@ -6,7 +6,8 @@ import Header from "./Header";
 import type { FullMenuSection, StoreInfo } from "@/data/storeContent";
 import { useLang } from "@/lib/langContext";
 import DepthPanel from "./DepthPanel";
-import { DEFAULT_APPEARANCE, defaultExperience, imageControls, type Appearance, type Experience } from '@/lib/experience';
+import { DEFAULT_APPEARANCE, defaultExperience, type Appearance, type Experience } from '@/lib/experience';
+import { readableOn } from '@/lib/color';
 
 interface Props {
   info: StoreInfo;
@@ -74,13 +75,13 @@ export default function StoreMenuLayout({ info, fullMenu, fullMenuEn, reservatio
         {visibleSections.map(section => <section id={section.id} className="menu-category" key={section.id}>
           <div className="menu-category-heading"><h2>{en ? section.labelEn : section.label}</h2>{!en && <p>{section.labelEn}</p>}</div>
           <div className="menu-items">
-            {section.items.map((item, index) => { const crop=imageControls(item.photoZoom,item.photoX,item.photoY); return <article className={`menu-item ${item.photoUrl ? "" : "no-photo"}`} key={`${item.name}-${index}`}>
-              {item.photoUrl && <div className="menu-item-photo"><Image src={item.photoUrl} alt={en ? item.nameEn || item.name : item.name} fill sizes="(max-width: 767px) 45vw, (max-width: 1279px) 23vw, 280px" style={{objectFit:'cover',objectPosition:`${crop.x}% ${crop.y}%`,transform:`scale(${crop.zoom})`,transformOrigin:`${crop.x}% ${crop.y}%`}} /></div>}
+            {section.items.map((item, index) => <article className={`menu-item ${item.photoUrl ? "" : "no-photo"}`} key={`${item.name}-${index}`} style={{'--menu-accent':readableOn(item.accent || section.accent, '#0B0C0A')} as CSSProperties}>
+              {item.photoUrl && <div className="menu-item-photo"><Image src={item.photoUrl} alt={en ? item.nameEn || item.name : item.name} fill sizes="(max-width: 767px) 45vw, (max-width: 1279px) 23vw, 280px" style={{objectFit:'cover',objectPosition:'center'}} /></div>}
               {item.note && <p className="menu-item-note">{en ? item.noteEn || item.note : item.note}</p>}
               <h3>{en ? item.nameEn || item.name : item.name}</h3>
               {item.description && <p className="menu-item-description">{en ? item.descriptionEn || item.description : item.description}</p>}
               {item.price && <p className="menu-price">{item.price}{appearance.priceNote && <small>{en ? appearance.priceNote==='税込'?'incl. tax':'excl. tax' : appearance.priceNote}</small>}</p>}
-            </article>})}
+            </article>)}
           </div>
         </section>)}
         {count === 0 && <div className="menu-empty"><p>{en ? "No items match your search. Try a different word or category." : "該当するメニューがありません。\nキーワードやカテゴリーを変えてお探しください。"}</p><button type="button" className="editorial-button" onClick={reset}>{en ? "Show all items" : "すべてのメニューを表示"}</button></div>}

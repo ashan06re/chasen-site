@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
-import {menuIsPublished,photoPreset} from '../src/lib/menuPublishing.ts';
+import {menuIsPublished} from '../src/lib/menuPublishing.ts';
+import {ACCENT_PALETTE,accentColor} from '../src/lib/palette.ts';
+import {readableOn,contrastRatio} from '../src/lib/color.ts';
 import {bookingHref,DEFAULT_BOOKING} from '../src/lib/booking.ts';
 
 test('only one explicit store publication opens the menu',()=>{
@@ -9,10 +11,11 @@ test('only one explicit store publication opens the menu',()=>{
   for(const rows of [[],[{...yes,status:'投稿しない'}],[{...yes,status:''}],[yes,yes],[{...yes,store:'熊本店'}]])assert.equal(menuIsPublished(rows,'高台寺店'),false);
   assert.equal(menuIsPublished([yes,{store:'熊本店',status:'投稿しない'}],'高台寺店'),true);
 });
-test('photo choices map to safe crop values and preserve advanced settings',()=>{
-  assert.deepEqual(photoPreset('少し寄る','上'),{photoZoom:115,photoX:50,photoY:20});
-  assert.deepEqual(photoPreset('標準','中央'),{photoZoom:100,photoX:50,photoY:50});
-  assert.deepEqual(photoPreset('詳細調整','詳細調整'),{photoZoom:undefined,photoX:undefined,photoY:undefined});
+test('named accents override legacy colors and retain readable contrast',()=>{
+  assert.equal(accentColor('ほうじ茶','#3D6B35'),'#8B5E3C');
+  assert.equal(accentColor('','#b8a882'),'#B8A882');
+  assert.equal(accentColor('invalid','url(https://example.com)'),'#3D6B35');
+  for(const hex of Object.values(ACCENT_PALETTE))assert.ok(contrastRatio(readableOn(hex,'#0B0C0A'),'#0B0C0A')>=4.5);
 });
 test('booking targets respond to language, edited URL and pause',()=>{
   const s={...DEFAULT_BOOKING[0],mode:'外部予約サイト',url:'https://example.com/ja',urlEn:'https://example.com/en'};

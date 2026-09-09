@@ -239,6 +239,7 @@ a:hover .editorial-photo img { transform: scale(1.025); }
 .menu-item-photo { aspect-ratio: var(--menu-image-aspect, 1.4); position: relative; background: #26271F; margin-bottom: 20px; overflow: hidden; }
 .menu-item-photo img { object-fit: cover; }
 .menu-item { min-width: 0; overflow-wrap: anywhere; }
+.menu-item h3 { border-left: 2px solid var(--menu-accent, #B8A882); padding-left: 10px; }
 .menu-item h3 { font-size: 16px; line-height: 1.8; margin-bottom: 8px; }
 .menu-item-description { color: #B9B6AA; font-size: 13px; line-height: 1.9; }
 .menu-item-note { color: #C6B48B; font-size: 11px; letter-spacing: .08em; margin-bottom: 8px; }

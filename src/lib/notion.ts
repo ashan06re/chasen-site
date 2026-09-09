@@ -5,7 +5,8 @@ import { EXPERIENCE_DB, APPEARANCE_DB, BOOKING_DB } from "./cmsIds";
 import { DEFAULT_BOOKING, safeBookingUrl, type BookingSetting } from './booking';
 import { defaultExperience, DEFAULT_APPEARANCE, PLACEMENTS, registeredArt, type Artwork, type Appearance } from "./experience";
 import { approvedAssetId } from './approvedArtwork';
-import { menuIsPublished, photoPreset } from './menuPublishing';
+import { menuIsPublished } from './menuPublishing';
+import { accentColor } from './palette';
 import { MENU_PUBLICATION_DB } from './cmsIds';
 import type {
   MenuCard,
@@ -170,7 +171,7 @@ export async function getMenuCards(
       title:    (p["メニュー名"] as { title?: Array<{ plain_text: string }> })?.title?.[0]?.plain_text ?? "",
       description: text(p["説明"]),
       price:    text(p["価格"]) || undefined,
-      accent:   text(p["アクセントカラー"]) || "#3D6B35",
+      accent:   accentColor(selectName(p['アクセント色']), text(p["アクセントカラー"])),
       bg:       text(p["背景カラー"])       || "#F7F5F0",
       photoUrl,
     };
@@ -240,15 +241,9 @@ export async function getFullMenuSections(
       price:       text(p["価格"]),
       note:        text(p["備考"]) || undefined,
       photoUrl,
-      photoZoom: (p["写真の拡大率"] as { number?: number })?.number,
+      accent: accentColor(selectName(p['アクセント色']), text(p["アクセントカラー"])),
       photoMatchOrder: (p['表示順'] as { number?: number })?.number,
-      photoX: (p["写真の左右位置"] as { number?: number })?.number,
-      photoY: (p["写真の上下位置"] as { number?: number })?.number,
     };
-    const preset = photoPreset(selectName(p['写真の見せ方']), selectName(p['写真の中心']));
-    if (preset.photoZoom !== undefined) item.photoZoom = preset.photoZoom;
-    if (preset.photoX !== undefined) item.photoX = preset.photoX;
-    if (preset.photoY !== undefined) item.photoY = preset.photoY;
     if(lang!=='英語')photoSources.set(page.id,item);
     const reference=(p['対応する日本語商品'] as {relation?:{id:string}[]})?.relation;
     if(reference?.length===1)photoReferences.set(item,reference[0].id);
@@ -260,7 +255,7 @@ export async function getFullMenuSections(
         id:      categoryId,
         label:   categoryJa || text(p["カテゴリ名"]),
         labelEn: categoryEn || text(p["カテゴリ名英語"]) || categoryJa,
-        accent:  text(p["アクセントカラー"]) || "#3D6B35",
+        accent:  item.accent || "#3D6B35",
         items:   [],
       });
     }
@@ -277,7 +272,6 @@ export async function getFullMenuSections(
       const match=linkedId?photoSources.get(linkedId):matches.length===1?matches[0]:undefined;
       if (!item.photoUrl && match?.photoUrl) {
         item.photoUrl = match.photoUrl;
-        item.photoZoom ??= match.photoZoom; item.photoX ??= match.photoX; item.photoY ??= match.photoY;
       }
     });
   }
@@ -566,7 +560,7 @@ export async function getAllStoreInfo(): Promise<{
         accessEn:      def.accessEn,
         description:   text(p["紹介文"])           || def.description,
         descriptionEn: def.descriptionEn,
-        accentColor:   text(p["アクセントカラー"])  || def.accentColor,
+        accentColor:   accentColor(selectName(p['アクセント色']), text(p["アクセントカラー"]), def.accentColor),
         instagram:     (p["Instagram"] ? text(p["Instagram"]) : "") || def.instagram,
       };
 

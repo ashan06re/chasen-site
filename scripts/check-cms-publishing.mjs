@@ -27,14 +27,16 @@ test('real CMS getter never fetches menu rows when hidden, missing, ambiguous or
     assert.equal(calls[0].fresh,true);
   }
 });
-test('real CMS getter uses bilingual category choice and selected photo preset when published',async()=>{
+test('real CMS getter uses bilingual category and named accent without photo controls',async()=>{
   respond(({database_id})=>database_id==='publication-fixture'?result([publication('投稿する')]):result([
-    {id:'ja-row',properties:{メニュー名:{title:[{plain_text:'試験用のお茶'}]},カテゴリー:sel('お茶｜Tea'),言語:sel('日本語'),価格:txt('¥500'),写真の見せ方:sel('少し寄る'),写真の中心:sel('上')}},
+    {id:'ja-row',properties:{メニュー名:{title:[{plain_text:'試験用のお茶'}]},カテゴリー:sel('お茶｜Tea'),言語:sel('日本語'),価格:txt('¥500'),アクセント色:sel('ほうじ茶')}},
     {id:'en-row',properties:{メニュー名:{title:[{plain_text:'Test tea'}]},カテゴリー:sel('お茶｜Tea'),言語:sel('英語'),価格:txt('¥500')}}
   ]));
   const menus=await getFullMenuSections('高台寺店');
   assert.equal(menus.ja[0].label,'お茶');assert.equal(menus.en[0].labelEn,'Tea');
-  assert.equal(menus.ja[0].items[0].photoZoom,115);assert.equal(menus.ja[0].items[0].photoY,20);
+  assert.equal(menus.ja[0].items[0].accent,'#8B5E3C');
+  assert.equal('photoZoom' in menus.ja[0].items[0],false);
+  assert.equal('photoX' in menus.ja[0].items[0],false);
   assert.equal(calls[1].filter.property,'表示する');
 });
 test('real booking getter reads independently editable language URLs',async()=>{
