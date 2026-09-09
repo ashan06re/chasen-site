@@ -4,7 +4,7 @@ import { OG_IMAGE } from "@/lib/site";
 import KyotoMenuPage from "@/app/(ja)/stores/kyoto/menu/page";
 import { pageAlternates } from "@/lib/i18n";
 
-export const revalidate = 60;
+export const revalidate = 0;
 
 const description = "Full menu of Chasen Kodaiji, Kyoto: matcha and hojicha drinks, Japanese sweets, light meals and sets.";
 

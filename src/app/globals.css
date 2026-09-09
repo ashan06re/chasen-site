@@ -1,4 +1,9 @@
 @import "tailwindcss";
+
+.menu-upcoming { min-height: 65svh; padding-block: 48px 100px; }
+.menu-upcoming .eyebrow { margin-top: 72px; }
+.menu-upcoming h1 { font-size: clamp(26px, 4vw, 48px); line-height: 1.65; margin-bottom: 24px; text-wrap: balance; }
+.menu-upcoming .editorial-body { white-space: pre-line; max-width: 640px; }
 @import "lenis/dist/lenis.css";
 
 .shop-section-heading h2,.shop-section-heading > p { white-space: pre-line; }

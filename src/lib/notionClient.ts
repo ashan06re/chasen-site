@@ -35,3 +35,5 @@ const queryCached = unstable_cache(
   { revalidate: 60 },
 );
 export const queryNotion = (parameters: Parameters<typeof notion.databases.query>[0]) => queryCached(JSON.stringify(parameters));
+// A publication switch must never reuse stale-while-revalidate data.
+export const queryNotionFresh = (parameters: Parameters<typeof notion.databases.query>[0]) => notion.databases.query(parameters);

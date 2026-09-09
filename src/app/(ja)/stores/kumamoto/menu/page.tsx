@@ -3,11 +3,13 @@ import type { Metadata } from "next";
 import { OG_IMAGE } from "@/lib/site";
 import { pageAlternates } from "@/lib/i18n";
 import StoreMenuLayout from "@/components/StoreMenuLayout";
+import MenuUpcoming from "@/components/MenuUpcoming";
+import { getMenuPublication } from "@/lib/notion";
 import Footer from "@/components/Footer";
 import { storeContent } from "@/data/storeContent";
 import { getFullMenuSections, getAllStoreInfo, getReservationUrls, getExperience, getAppearance } from "@/lib/notion";
 
-export const revalidate = 60;
+export const revalidate = 0;
 
 export async function generateMetadata() { return cmsMetadata("/stores/kumamoto/menu", "ja", defaultMetadata); }
 const defaultMetadata: Metadata = {
@@ -23,17 +25,22 @@ const defaultMetadata: Metadata = {
 };
 
 export default async function KumamotoMenuPage() {
-  const { info, fullMenu: fallback } = storeContent.kumamoto;
-  const [result, stores, reservation, experience, appearance] = await Promise.all([
-    getFullMenuSections("熊本店").catch(() => ({ ja: fallback, en: [] as typeof fallback })),
+  const { info } = storeContent.kumamoto;
+  const [published, stores] = await Promise.all([
+    getMenuPublication("熊本店"),
     getAllStoreInfo().catch(() => null),
+  ]);
+  const currentInfo = stores?.ja["熊本店"] || info;
+  if (!published) return <><MenuUpcoming info={currentInfo} /><Footer /></>;
+  const [result, reservation, experience, appearance] = await Promise.all([
+    getFullMenuSections("熊本店").catch(() => ({ ja: [], en: [] })),
     getReservationUrls().catch(() => ({ ja: "#", en: "#" })),
     getExperience(), getAppearance(),
   ]);
-  const currentInfo = stores?.ja["熊本店"] || info;
 
-  const jaMenu = result.ja.length > 0 ? result.ja : fallback;
-  const enMenu = result.en.length > 0 ? result.en : fallback;
+  if (!result.ja.length) return <><MenuUpcoming info={currentInfo} /><Footer /></>;
+  const jaMenu = result.ja;
+  const enMenu = result.en;
 
   return (
     <>

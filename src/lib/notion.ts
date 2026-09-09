@@ -1,10 +1,12 @@
-import { notion, queryNotion } from './notionClient';
+import { notion, queryNotion, queryNotionFresh } from './notionClient';
 import { createHash } from "node:crypto";
 import { cache } from "react";
 import { EXPERIENCE_DB, APPEARANCE_DB, BOOKING_DB } from "./cmsIds";
 import { DEFAULT_BOOKING, safeBookingUrl, type BookingSetting } from './booking';
 import { defaultExperience, DEFAULT_APPEARANCE, PLACEMENTS, registeredArt, type Artwork, type Appearance } from "./experience";
 import { approvedAssetId } from './approvedArtwork';
+import { menuIsPublished, photoPreset } from './menuPublishing';
+import { MENU_PUBLICATION_DB } from './cmsIds';
 import type {
   MenuCard,
   NewsItem,
@@ -29,11 +31,11 @@ import {
 } from "@/data/storeContent";
 
 /** Notion API は1回100件までしか返さないので、続きページも全部読む（メニューは日英で100行を超える） */
-async function queryAll(params: Parameters<typeof notion.databases.query>[0]) {
+async function queryAll(params: Parameters<typeof notion.databases.query>[0], fresh = false) {
   const results: Awaited<ReturnType<typeof notion.databases.query>>["results"] = [];
   let cursor: string | undefined;
   do {
-    const res = await queryNotion({ ...params, start_cursor: cursor, page_size: 100 });
+    const res = await (fresh ? queryNotionFresh : queryNotion)({ ...params, start_cursor: cursor, page_size: 100 });
     results.push(...res.results);
     cursor = res.has_more && res.next_cursor ? res.next_cursor : undefined;
   } while (cursor);
@@ -103,6 +105,8 @@ export const getAppearance = cache(async (): Promise<Appearance> => {
 });
 
 function text(prop: Record<string, unknown> | undefined): string {
+  if (prop?.select) return selectName(prop);
+  if (prop?.date) return (prop.date as {start?: string}).start || '';
   const rt = (prop as { rich_text?: Array<{ plain_text: string }> } | undefined)?.rich_text;
   return rt?.map(part => part.plain_text).join("") ?? "";
 }
@@ -192,9 +196,22 @@ const FULL_MENU_DB: Record<"高台寺店" | "熊本店", string> = {
   "熊本店":   KUMAMOTO_MENU_DB_ID,
 };
 
+export const getMenuPublication = cache(async (store: '高台寺店' | '熊本店'): Promise<boolean> => {
+  if (!MENU_PUBLICATION_DB) return false;
+  try {
+    const {results} = await queryAll({database_id: MENU_PUBLICATION_DB}, true);
+    const rows = results.filter(p => 'properties' in p).map(page => {
+      const p = (page as {properties: Record<string, Record<string, unknown>>}).properties;
+      return {store: selectName(p['店舗']), status: selectName(p['公開設定'])};
+    });
+    return menuIsPublished(rows, store);
+  } catch { console.warn('Menu publication unavailable; keeping menus closed.'); return false; }
+});
+
 export async function getFullMenuSections(
   store: "高台寺店" | "熊本店"
 ): Promise<{ ja: import("@/data/storeContent").FullMenuSection[]; en: import("@/data/storeContent").FullMenuSection[] }> {
+  if (!await getMenuPublication(store)) return {ja: [], en: []};
   const res = await queryAll({
     database_id: FULL_MENU_DB[store],
     filter: { property: "表示する", checkbox: { equals: true } },
@@ -211,7 +228,9 @@ export async function getFullMenuSections(
   for (const page of res.results) {
     const p = (page as { properties: Record<string, Record<string, unknown>> }).properties;
 
-    const categoryId = selectName(p["カテゴリID"]);
+    // The visible category choice is authoritative; editors need not sync a hidden ID.
+    const categoryId = text(p['カテゴリー']) || selectName(p["カテゴリID"]);
+    const [categoryJa, categoryEn] = text(p['カテゴリー']).split('｜');
     const lang       = selectName(p["言語"]);
     const photoUrl   = imageUrl((page as { id: string }).id, p["写真"], "写真");
 
@@ -226,6 +245,10 @@ export async function getFullMenuSections(
       photoX: (p["写真の左右位置"] as { number?: number })?.number,
       photoY: (p["写真の上下位置"] as { number?: number })?.number,
     };
+    const preset = photoPreset(selectName(p['写真の見せ方']), selectName(p['写真の中心']));
+    if (preset.photoZoom !== undefined) item.photoZoom = preset.photoZoom;
+    if (preset.photoX !== undefined) item.photoX = preset.photoX;
+    if (preset.photoY !== undefined) item.photoY = preset.photoY;
     if(lang!=='英語')photoSources.set(page.id,item);
     const reference=(p['対応する日本語商品'] as {relation?:{id:string}[]})?.relation;
     if(reference?.length===1)photoReferences.set(item,reference[0].id);
@@ -235,8 +258,8 @@ export async function getFullMenuSections(
     if (!targetMap.has(categoryId)) {
       targetMap.set(categoryId, {
         id:      categoryId,
-        label:   text(p["カテゴリ名"]),
-        labelEn: text(p["カテゴリ名英語"]),
+        label:   categoryJa || text(p["カテゴリ名"]),
+        labelEn: categoryEn || text(p["カテゴリ名英語"]) || categoryJa,
         accent:  text(p["アクセントカラー"]) || "#3D6B35",
         items:   [],
       });

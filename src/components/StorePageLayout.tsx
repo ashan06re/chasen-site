@@ -52,7 +52,7 @@ export default function StorePageLayout({
   reservationUrlEn,
   experience = defaultExperience(),
 }: {
-  store: StoreContent;
+  store: Pick<StoreContent, 'info' | 'news'>;
   newsEn?: import("@/data/storeContent").NewsItem[];
   infoEn?: import("@/data/storeContent").StoreInfo;
   reservationUrl?: string;

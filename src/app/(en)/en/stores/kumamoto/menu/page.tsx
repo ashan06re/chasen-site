@@ -4,7 +4,7 @@ import { OG_IMAGE } from "@/lib/site";
 import KumamotoMenuPage from "@/app/(ja)/stores/kumamoto/menu/page";
 import { pageAlternates } from "@/lib/i18n";
 
-export const revalidate = 60;
+export const revalidate = 0;
 
 const description = "Full menu of Chasen Kumamoto: matcha and hojicha drinks, shaved ice, Japanese sweets, meals and sets.";
 

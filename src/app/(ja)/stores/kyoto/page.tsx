@@ -42,7 +42,7 @@ export default async function KyotoStorePage() {
       <JsonLd data={storeSchema(infoResult.ja)} />
       <StorePageLayout
         experience={experience}
-        store={{ ...storeContent.kyoto, info: infoResult.ja, news: newsResult.ja }}
+        store={{ info: infoResult.ja, news: newsResult.ja }}
         newsEn={newsEn}
         infoEn={infoResult.en}
         reservationUrl={reservationUrl}
