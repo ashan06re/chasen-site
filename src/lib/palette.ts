@@ -4,5 +4,5 @@ export const ACCENT_PALETTE: Record<string,string> = {
   '古金':'#75663F', '石色':'#6B6B5E', '墨':'#1A1A18', '白茶':'#F7F5F0',
 };
 export function accentColor(choice: string, legacy = '', fallback = '#3D6B35') {
-  return ACCENT_PALETTE[choice] || Object.values(ACCENT_PALETTE).find(hex=>hex===legacy.toUpperCase()) || fallback;
+  return (Object.hasOwn(ACCENT_PALETTE,choice) ? ACCENT_PALETTE[choice] : undefined) || Object.values(ACCENT_PALETTE).find(hex=>hex===legacy.toUpperCase()) || fallback;
 }

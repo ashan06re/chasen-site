@@ -15,6 +15,7 @@ test('named accents override legacy colors and retain readable contrast',()=>{
   assert.equal(accentColor('ほうじ茶','#3D6B35'),'#8B5E3C');
   assert.equal(accentColor('','#b8a882'),'#B8A882');
   assert.equal(accentColor('invalid','url(https://example.com)'),'#3D6B35');
+  for(const choice of ['constructor','__proto__','toString'])assert.equal(accentColor(choice),'#3D6B35');
   for(const hex of Object.values(ACCENT_PALETTE))assert.ok(contrastRatio(readableOn(hex,'#0B0C0A'),'#0B0C0A')>=4.5);
 });
 test('booking targets respond to language, edited URL and pause',()=>{

@@ -6,6 +6,7 @@ import type { StoreContent } from "@/data/storeContent";
 import { useLang } from "@/lib/langContext";
 import { INSTAGRAM } from "@/lib/site";
 import { defaultExperience, type Experience } from '@/lib/experience';
+import { readableOn } from '@/lib/color';
 
 /** "https://www.instagram.com/chasen_cafe_kumamoto/" → "@chasen_cafe_kumamoto" */
 const instagramHandle = (url: string) => {
@@ -90,7 +91,7 @@ export default function StorePageLayout({
       <section className="editorial-wrap store-intro">
         <nav className="menu-breadcrumb" aria-label={lang === "en" ? "Breadcrumb" : "パンくずリスト"}><Link href={localize("/")}>Chasen</Link><span aria-hidden>/</span><span>{name}</span></nav>
         <div className="store-intro-top">
-          <div><p className="eyebrow">{info.area.toUpperCase()} / OUR SHOP</p><h1>{name}</h1></div>
+          <div><p className="eyebrow" style={{color:readableOn((lang==='en'?infoEn?.accentColor:undefined)||info.accentColor,'#0B0C0A')}}>{info.area.toUpperCase()} / OUR SHOP</p><h1>{name}</h1></div>
           <Link href={localize(`/stores/${info.slug}/menu`)} className="editorial-button">{tx.viewMenu}<span aria-hidden>↗</span></Link>
         </div>
         <div className="editorial-photo store-intro-image"><DepthPanel src={art.src} depthSrc={art.depth} motion={art.motion} alt={lang==='en'?art.altEn:art.alt} fit="contain" /></div>
