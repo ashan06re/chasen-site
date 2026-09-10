@@ -64,25 +64,24 @@ export default function StorePageLayout({
   const resolvedReservationUrl = lang === "en" ? (reservationUrlEn || reservationUrl) : reservationUrl;
   const tx = t[lang];
   const { info } = store;
+  const currentInfo = lang === "en" && infoEn ? infoEn : info;
   const news = lang === "en" && newsEn && newsEn.length > 0 ? newsEn : store.news;
 
   const tel = (lang === "en" ? infoEn?.tel : info.tel) ?? info.tel;
-  const instagram = info.instagram || INSTAGRAM[info.slug];
+  const instagram = currentInfo.instagram || info.instagram || INSTAGRAM[info.slug];
 
   const infoRows: Array<{ label: string; value: string; href?: string; external?: boolean }> = [
-    { label: tx.address, value: lang === "en" ? (infoEn?.address ?? info.address) : info.address },
-    { label: tx.hours,   value: info.hours },
+    { label: tx.address, value: currentInfo.address },
+    { label: tx.hours,   value: currentInfo.hours },
     ...(tel ? [{ label: tx.tel, value: tel, href: `tel:${tel.replace(/-/g, "")}` }] : []),
-    { label: tx.closed,  value: lang === "en" ? (infoEn?.closed ?? info.closedEn ?? info.closed) : info.closed },
-    { label: tx.access,  value: lang === "en" ? (infoEn?.access ?? info.accessEn ?? info.access) : info.access },
+    { label: tx.closed,  value: currentInfo.closed },
+    { label: tx.access,  value: currentInfo.access },
     ...(instagram ? [{ label: "Instagram", value: instagramHandle(instagram), href: instagram, external: true }] : []),
   ];
 
-  const description = lang === "en"
-    ? (infoEn?.description ?? info.descriptionEn ?? info.description)
-    : info.description;
+  const description = currentInfo.description;
 
-  const name = lang === "en" ? infoEn?.nameEn || info.nameEn || info.name : info.name;
+  const name = currentInfo.name;
   const isKyoto = info.slug === "kyoto";
   const art = isKyoto ? experience.kyoto : experience.kumamoto;
   return <>
@@ -91,7 +90,7 @@ export default function StorePageLayout({
       <section className="editorial-wrap store-intro">
         <nav className="menu-breadcrumb" aria-label={lang === "en" ? "Breadcrumb" : "パンくずリスト"}><Link href={localize("/")}>Chasen</Link><span aria-hidden>/</span><span>{name}</span></nav>
         <div className="store-intro-top">
-          <div><p className="eyebrow" style={{color:readableOn((lang==='en'?infoEn?.accentColor:undefined)||info.accentColor,'#0B0C0A')}}>{info.area.toUpperCase()} / OUR SHOP</p><h1>{name}</h1></div>
+          <div><p className="eyebrow" style={{color:readableOn(currentInfo.accentColor,'#0B0C0A')}}>{currentInfo.area.toUpperCase()} / OUR SHOP</p><h1>{name}</h1></div>
           <Link href={localize(`/stores/${info.slug}/menu`)} className="editorial-button">{tx.viewMenu}<span aria-hidden>↗</span></Link>
         </div>
         <div className="editorial-photo store-intro-image"><DepthPanel src={art.src} depthSrc={art.depth} motion={art.motion} alt={lang==='en'?art.altEn:art.alt} fit="contain" /></div>

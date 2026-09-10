@@ -10,26 +10,27 @@ import TiltCard from "./TiltCard";
 import SmoothScroll from "./SmoothScroll";
 import type { Experience, Appearance } from '@/lib/experience';
 
-type Props = { kyoto: StoreInfo; kumamoto: StoreInfo; brand: BrandStoryContent; brandEn: BrandStoryContent; tea: YoshidaSettings; teaEn: YoshidaSettings; experience: Experience; appearance: Appearance };
+type Props = { kyoto: StoreInfo; kumamoto: StoreInfo; kyotoEn?: StoreInfo; kumamotoEn?: StoreInfo; brand: BrandStoryContent; brandEn: BrandStoryContent; tea: YoshidaSettings; teaEn: YoshidaSettings; experience: Experience; appearance: Appearance };
 
-export default function ImmersiveHome({ kyoto, kumamoto, brand, brandEn, tea, teaEn, experience, appearance }: Props) {
+export default function ImmersiveHome({ kyoto, kumamoto, kyotoEn, kumamotoEn, brand, brandEn, tea, teaEn, experience, appearance }: Props) {
   const { lang, localize } = useLang();
   const en = lang === "en";
   const story = en ? brandEn : brand;
   const teaStory = en ? teaEn : tea;
+  const shops = en ? [kyotoEn ?? kyoto, kumamotoEn ?? kumamoto] : [kyoto, kumamoto];
   return <div className="immersive-home">
     <SmoothScroll />
     <Story scenes={experience.scenes} compact={appearance.compact} />
     <section id="stores" tabIndex={-1} className="immersive-shops editorial-wrap">
       <div className="shop-section-heading"><div><p className="eyebrow">THE JOURNEY CONTINUES</p><h2>{en ? experience.shopHeading.en : experience.shopHeading.ja}</h2></div><p>{en ? experience.shopHeading.detailEn : experience.shopHeading.detail}</p></div>
-      <div id="menu" className="immersive-shop-panels">{[kyoto, kumamoto].map((shop, i) => <article key={shop.slug} className="immersive-shop-card">
+      <div id="menu" className="immersive-shop-panels">{shops.map((shop, i) => <article key={shop.slug} className="immersive-shop-card">
         <TiltCard maxTilt={4} className="shop-dimensional-frame">
-          <Link href={localize(`/stores/${shop.slug}`)} className="shop-art-link" aria-label={en ? `${shop.nameEn || shop.name} — shop and access` : `${shop.name}の店舗情報・アクセス`}>
+          <Link href={localize(`/stores/${shop.slug}`)} className="shop-art-link" aria-label={en ? `${shop.name} — shop and access` : `${shop.name}の店舗情報・アクセス`}>
             <DepthPanel src={(i===0?experience.kyoto:experience.kumamoto).src} depthSrc={(i===0?experience.kyoto:experience.kumamoto).depth} motion={(i===0?experience.kyoto:experience.kumamoto).motion} alt={en?(i===0?experience.kyoto:experience.kumamoto).altEn:(i===0?experience.kyoto:experience.kumamoto).alt} fit="contain" />
             <div className="shop-art-caption"><span>{i === 0 ? "KYOTO" : "KUMAMOTO"}</span><span className="shop-art-arrow" aria-hidden="true">↗</span></div>
           </Link>
         </TiltCard>
-        <div className="shop-panel-info"><div><p className="eyebrow">0{i + 1} / {i === 0 ? "KODAIJI" : "SAKURAMACHI"}</p><h3>{en ? shop.nameEn || shop.name : shop.name}</h3></div><p className="shop-hours">{shop.hours}</p></div>
+        <div className="shop-panel-info"><div><p className="eyebrow">0{i + 1} / {i === 0 ? "KODAIJI" : "SAKURAMACHI"}</p><h3>{shop.name}</h3></div><p className="shop-hours">{shop.hours}</p></div>
         <div className="shop-panel-actions"><Link href={localize(`/stores/${shop.slug}/menu`)}>{en ? "Explore the menu" : "お品書きを見る"}<span aria-hidden="true">↗</span></Link><Link href={localize(`/stores/${shop.slug}`)}>{en ? "Shop & access" : "店舗情報・アクセス"}<span aria-hidden="true">→</span></Link></div>
       </article>)}</div>
       <p className="story-art-note">{en ? appearance.artNoteEn : appearance.artNote}</p>

@@ -31,20 +31,21 @@ export default async function KumamotoMenuPage() {
     getAllStoreInfo().catch(() => null),
   ]);
   const currentInfo = stores?.ja["熊本店"] || info;
-  if (!published) return <><MenuUpcoming info={currentInfo} /><Footer /></>;
+  const currentInfoEn = stores?.en["熊本店"];
+  if (!published) return <><MenuUpcoming info={currentInfo} infoEn={currentInfoEn} /><Footer /></>;
   const [result, reservation, experience, appearance] = await Promise.all([
     getFullMenuSections("熊本店").catch(() => ({ ja: [], en: [] })),
     getReservationUrls().catch(() => ({ ja: "#", en: "#" })),
     getExperience(), getAppearance(),
   ]);
 
-  if (!result.ja.length) return <><MenuUpcoming info={currentInfo} /><Footer /></>;
+  if (!result.ja.length) return <><MenuUpcoming info={currentInfo} infoEn={currentInfoEn} /><Footer /></>;
   const jaMenu = result.ja;
   const enMenu = result.en;
 
   return (
     <>
-      <StoreMenuLayout info={currentInfo} fullMenu={jaMenu} fullMenuEn={enMenu} experience={experience} appearance={appearance} reservationUrl={reservation.ja !== "#" ? reservation.ja : undefined} reservationUrlEn={reservation.en !== "#" ? reservation.en : undefined} />
+      <StoreMenuLayout info={currentInfo} infoEn={currentInfoEn} fullMenu={jaMenu} fullMenuEn={enMenu} experience={experience} appearance={appearance} reservationUrl={reservation.ja !== "#" ? reservation.ja : undefined} reservationUrlEn={reservation.en !== "#" ? reservation.en : undefined} />
       <Footer />
     </>
   );

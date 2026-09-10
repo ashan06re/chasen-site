@@ -29,7 +29,7 @@ export default async function HomePage() {
     <JsonLd data={[organizationSchema(settings.ja.contactEmail), websiteSchema(), storeSchema(kyoto), storeSchema(kumamoto)]} />
     <Header initialDark reservationUrl={reservationUrl} reservationUrlEn={reservationUrlEn} />
     <main>
-      <ImmersiveHome kyoto={kyoto} kumamoto={kumamoto} brand={brand.ja} brandEn={brand.en} tea={tea.ja} teaEn={tea.en} experience={experience} appearance={appearance} />
+      <ImmersiveHome kyoto={kyoto} kumamoto={kumamoto} kyotoEn={stores.en["高台寺店"]} kumamotoEn={stores.en["熊本店"]} brand={brand.ja} brandEn={brand.en} tea={tea.ja} teaEn={tea.en} experience={experience} appearance={appearance} />
       <ContactSection settings={settings.ja} settingsEn={settings.en} reservationUrl={reservationUrl} reservationUrlEn={reservationUrlEn} />
     </main>
     <Footer />

@@ -11,6 +11,7 @@ import { readableOn } from '@/lib/color';
 
 interface Props {
   info: StoreInfo;
+  infoEn?: StoreInfo;
   fullMenu: FullMenuSection[];
   fullMenuEn?: FullMenuSection[];
   reservationUrl?: string;
@@ -19,9 +20,10 @@ interface Props {
   experience?: Experience;
 }
 
-export default function StoreMenuLayout({ info, fullMenu, fullMenuEn, reservationUrl, reservationUrlEn, appearance = DEFAULT_APPEARANCE, experience = defaultExperience() }: Props) {
+export default function StoreMenuLayout({ info, infoEn, fullMenu, fullMenuEn, reservationUrl, reservationUrlEn, appearance = DEFAULT_APPEARANCE, experience = defaultExperience() }: Props) {
   const { lang, localize } = useLang();
   const en = lang === "en";
+  const currentInfo = en && infoEn ? infoEn : info;
   const [category, setCategory] = useState("all");
   const [query, setQuery] = useState("");
   const resultsRef = useRef<HTMLDivElement>(null);
@@ -41,7 +43,7 @@ export default function StoreMenuLayout({ info, fullMenu, fullMenuEn, reservatio
           .filter(Boolean).join(" ").normalize("NFKC").toLocaleLowerCase().includes(normalizedQuery)),
     })).filter(section => section.items.length);
   const count = visibleSections.reduce((sum, section) => sum + section.items.length, 0);
-  const name = en ? info.nameEn || info.name : info.name;
+  const name = currentInfo.name;
   const reserve = (en ? reservationUrlEn || reservationUrl : reservationUrl) || localize("/#contact");
   const reset = () => { setQuery(""); selectCategory("all"); };
   const artwork = info.slug === 'kyoto' ? experience.scenes[4] : experience.kumamoto;
@@ -52,10 +54,10 @@ export default function StoreMenuLayout({ info, fullMenu, fullMenuEn, reservatio
       <div className="editorial-wrap">
         <nav className="menu-breadcrumb" aria-label={en ? "Breadcrumb" : "パンくずリスト"}>
           <Link href={localize("/")}>Chasen</Link><span aria-hidden>/</span>
-          <Link href={localize(`/stores/${info.slug}`)}>{name}</Link><span aria-hidden>/</span><span>{en ? "Menu" : "お品書き"}</span>
+          <Link href={localize(`/stores/${currentInfo.slug}`)}>{name}</Link><span aria-hidden>/</span><span>{en ? "Menu" : "お品書き"}</span>
         </nav>
         <section className="menu-intro">
-          <div><p className="eyebrow">{info.area.toUpperCase()} / MENU</p><h1>{en ? "A taste of Chasen." : "お品書き"}<small>{name}</small></h1><p>{en ? "Find your next favourite. Browse by category or search the menu." : "気になる一品を、ゆっくりと。\nカテゴリーや品名から、お好きな味をお探しください。"}</p></div>
+          <div><p className="eyebrow">{currentInfo.area.toUpperCase()} / MENU</p><h1>{en ? "A taste of Chasen." : "お品書き"}<small>{name}</small></h1><p>{en ? "Find your next favourite. Browse by category or search the menu." : "気になる一品を、ゆっくりと。\nカテゴリーや品名から、お好きな味をお探しください。"}</p></div>
           <div className="editorial-photo menu-painted-intro"><DepthPanel src={artwork.src} depthSrc={artwork.depth} motion={artwork.motion} alt={en ? artwork.altEn : artwork.alt} fit="contain" /></div>
         </section>
       </div>
@@ -85,7 +87,7 @@ export default function StoreMenuLayout({ info, fullMenu, fullMenuEn, reservatio
           </div>
         </section>)}
         {count === 0 && <div className="menu-empty"><p>{en ? "No items match your search. Try a different word or category." : "該当するメニューがありません。\nキーワードやカテゴリーを変えてお探しください。"}</p><button type="button" className="editorial-button" onClick={reset}>{en ? "Show all items" : "すべてのメニューを表示"}</button></div>}
-        <div className="menu-bottom"><Link href={localize(`/stores/${info.slug}`)} className="editorial-text-link">{en ? "Shop information & access" : "店舗情報・アクセス"}<span aria-hidden>↗</span></Link><a href={reserve} target={reserve.startsWith("http") ? "_blank" : undefined} rel={reserve.startsWith("http") ? "noopener noreferrer" : undefined} className="editorial-button">{en ? "Make a reservation" : "ご来店のご予約"}<span aria-hidden>↗</span></a></div>
+        <div className="menu-bottom"><Link href={localize(`/stores/${currentInfo.slug}`)} className="editorial-text-link">{en ? "Shop information & access" : "店舗情報・アクセス"}<span aria-hidden>↗</span></Link><a href={reserve} target={reserve.startsWith("http") ? "_blank" : undefined} rel={reserve.startsWith("http") ? "noopener noreferrer" : undefined} className="editorial-button">{en ? "Make a reservation" : "ご来店のご予約"}<span aria-hidden>↗</span></a></div>
       </div>
     </main>
   </>;
