@@ -2,7 +2,7 @@
 
 // 独自ドメインを設定したら Vercel の環境変数 NEXT_PUBLIC_SITE_URL を上書きするだけでよい
 export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://chasen-site-eight.vercel.app"
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://chasenco.com"
 ).replace(/\/$/, "");
 
 export const SITE_NAME = "茶筅 Chasen";

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 
 const base = new URL(process.argv[2] || 'http://localhost:3102');
 const preview = process.argv.includes('--preview');
-const site = (process.env.NEXT_PUBLIC_SITE_URL || 'https://chasen-site-eight.vercel.app').replace(/\/$/, '');
+const site = (process.env.NEXT_PUBLIC_SITE_URL || 'https://chasenco.com').replace(/\/$/, '');
 const paths = ['', '/news', '/reserve', '/stores/kyoto', '/stores/kyoto/menu', '/stores/kumamoto', '/stores/kumamoto/menu', '/privacy', '/terms'];
 const routes = ['', '/en'].flatMap(prefix => paths.map(path => `${prefix}${path}` || '/'));
 for (const route of routes) {

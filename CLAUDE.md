@@ -9,7 +9,8 @@
 
 **状態**: 全ページ完成・Notion連携済み・日英を URL で分離（`/` と `/en`）・**Vercel公開済み**
 
-- 本番URL: https://chasen-site-eight.vercel.app
+- 正式URL（接続準備中）: https://chasenco.com
+- 旧Vercel URL: https://chasen-site-eight.vercel.app
 - GitHub: https://github.com/ashan06re/chasen-site （pushで自動デプロイ、1〜2分で反映）
 
 ## 技術スタック
@@ -134,7 +135,7 @@ npm run build  # 本番ビルド確認
 
 1. 予約フォームのiframe埋め込み or 予約SaaS連携（現状はGoogleフォームへの外部リンク）
 2. `/privacy`・`/terms` の正式な事業者名・所在地（各ファイルの `TODO` コメント）
-3. 独自ドメイン設定（設定後 `NEXT_PUBLIC_SITE_URL` を更新）
+3. 独自ドメイン `chasenco.com` のVercel接続（コードの正式URLは更新済み。Vercel Production切替とDNS設定が残り）
 4. Vercelダッシュボードでの Analytics 有効化（コード側は導入済み・ユーザー作業）
 5. Google Search Console に `/en` 配下の登録（sitemap.xml を再送信するだけ）
 
