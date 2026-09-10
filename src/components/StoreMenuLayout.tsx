@@ -78,7 +78,7 @@ export default function StoreMenuLayout({ info, infoEn, fullMenu, fullMenuEn, re
           <div className="menu-category-heading"><h2>{en ? section.labelEn : section.label}</h2>{!en && <p>{section.labelEn}</p>}</div>
           <div className="menu-items">
             {section.items.map((item, index) => <article className={`menu-item ${item.photoUrl ? "" : "no-photo"}`} key={`${item.name}-${index}`} style={{'--menu-accent':readableOn(item.accent || section.accent, '#0B0C0A')} as CSSProperties}>
-              {item.photoUrl && <div className="menu-item-photo"><Image src={item.photoUrl} alt={en ? item.nameEn || item.name : item.name} fill sizes="(max-width: 767px) 45vw, (max-width: 1279px) 23vw, 280px" style={{objectFit:'cover',objectPosition:'center'}} /></div>}
+              {item.photoUrl && <div className="menu-item-photo"><Image src={item.photoUrl} unoptimized={item.photoUrl.startsWith('/api/notion-image/')} alt={en ? item.nameEn || item.name : item.name} fill sizes="(max-width: 767px) 45vw, (max-width: 1279px) 23vw, 280px" style={{objectFit:'cover',objectPosition:'center'}} /></div>}
               {item.note && <p className="menu-item-note">{en ? item.noteEn || item.note : item.note}</p>}
               <h3>{en ? item.nameEn || item.name : item.name}</h3>
               {item.description && <p className="menu-item-description">{en ? item.descriptionEn || item.description : item.description}</p>}

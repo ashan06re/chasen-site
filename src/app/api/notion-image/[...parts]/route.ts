@@ -1,5 +1,6 @@
 import { notion } from '@/lib/notionClient';
 import { EXPERIENCE_DB } from '@/lib/cmsIds';
+import { getMenuPublication } from '@/lib/notion';
 
 /**
  * Notion画像プロキシ
@@ -21,11 +22,16 @@ const ALLOWED_HOST = /(^|\.)(amazonaws\.com|notion\.so|notion-static\.com)$/i;
 const PAGE_ID = /^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$/i;
 const PUBLIC_IMAGE_PROPERTIES = new Set(['写真','画像','メイン画像','特徴1画像','特徴2画像','特徴3画像']);
 const normalize = (id: string) => id.replace(/-/g, '').toLowerCase();
-const PUBLIC_DATABASES = new Set([EXPERIENCE_DB, ...Object.entries(process.env).filter(([key]) => /^NOTION_(MENU|KYOTO_MENU|KUMAMOTO_MENU|YOSHIDA_IMAGES)_DB_ID$/.test(key)).map(([,id]) => id || '')].filter(Boolean).map(normalize));
+const MENU_DATABASES = new Map<string, '高台寺店' | '熊本店'>([
+  [normalize(process.env.NOTION_KYOTO_MENU_DB_ID || ''), '高台寺店'],
+  [normalize(process.env.NOTION_KUMAMOTO_MENU_DB_ID || ''), '熊本店'],
+]);
+MENU_DATABASES.delete('');
+const PUBLIC_DATABASES = new Set([normalize(EXPERIENCE_DB), ...MENU_DATABASES.keys()]);
 
 // CDNには長めに持たせ、失効の心配が無い形で配信する
 const CACHE_OK = "public, max-age=0, s-maxage=86400, stale-while-revalidate=604800";
-const CACHE_ERR = "public, max-age=0, s-maxage=60";
+const CACHE_ERR = "private, no-store";
 
 type NotionFile = { file?: { url: string }; external?: { url: string } };
 
@@ -54,6 +60,9 @@ export async function GET(
     const parent = (page as { parent?: { database_id?: string } }).parent;
     if (!parent?.database_id || !PUBLIC_DATABASES.has(normalize(parent.database_id))) return fail(404, 'Not Found');
     const props = (page as { properties?: Record<string, Record<string, unknown>> }).properties ?? {};
+    const menuStore = MENU_DATABASES.get(normalize(parent.database_id));
+    // A known image URL must not bypass a store's publication switch.
+    if (menuStore && (props['表示する']?.checkbox !== true || !await getMenuPublication(menuStore))) return fail(404, 'Not Found');
     if (props['表示する']?.checkbox === false) return fail(404, 'Not Found');
     const files = (props[propName] as { files?: NotionFile[] } | undefined)?.files ?? [];
     const fresh = files[index]?.file?.url ?? files[index]?.external?.url;
@@ -72,7 +81,7 @@ export async function GET(
       headers: {
         "Content-Type": contentType,
         "X-Content-Type-Options": "nosniff",
-        "Cache-Control": CACHE_OK,
+        "Cache-Control": menuStore ? 'private, no-store' : CACHE_OK,
       },
     });
   } catch {
