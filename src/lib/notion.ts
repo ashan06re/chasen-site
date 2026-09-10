@@ -12,8 +12,6 @@ import type {
   NewsItem,
   BrandNewsItem,
   BrandStoryContent,
-  YoshidaFeature,
-  YoshidaImages,
   YoshidaSettings,
   SiteSettings,
   StoreInfo,
@@ -21,8 +19,6 @@ import type {
 import {
   defaultBrandStory,
   defaultBrandStoryEn,
-  defaultYoshidaFeatures,
-  defaultYoshidaFeaturesEn,
   defaultYoshidaSettings,
   defaultYoshidaSettingsEn,
   defaultSiteSettings,
@@ -46,12 +42,9 @@ const NEWS_DB_ID             = process.env.NOTION_NEWS_DB_ID!;
 const KYOTO_MENU_DB_ID       = process.env.NOTION_KYOTO_MENU_DB_ID!;
 const KUMAMOTO_MENU_DB_ID    = process.env.NOTION_KUMAMOTO_MENU_DB_ID!;
 const BRAND_STORY_DB_ID      = process.env.NOTION_BRAND_STORY_DB_ID;
-const YOSHIDA_DB_ID          = process.env.NOTION_YOSHIDA_DB_ID;
 const SITE_SETTINGS_DB_ID    = process.env.NOTION_SITE_SETTINGS_DB_ID;
 const STORE_INFO_DB_ID       = process.env.NOTION_STORE_INFO_DB_ID;
 const YOSHIDA_SETTINGS_DB_ID = process.env.NOTION_YOSHIDA_SETTINGS_DB_ID;
-const RESERVATION_DB_ID        = process.env.NOTION_RESERVATION_DB_ID;
-const YOSHIDA_IMAGES_DB_ID     = process.env.NOTION_YOSHIDA_IMAGES_DB_ID;
 
 /** Human-readable Notion fields, with safe defaults and no editable technical keys. */
 export const getExperience = cache(async () => {
@@ -335,43 +328,6 @@ export async function getYoshidaSettings(): Promise<{ ja: YoshidaSettings; en: Y
   }
 }
 
-// ── 吉田銘茶園 特徴カード取得 ─────────────────────────────
-export async function getYoshidaFeatures(): Promise<{ ja: YoshidaFeature[]; en: YoshidaFeature[] }> {
-  if (!YOSHIDA_DB_ID) return { ja: defaultYoshidaFeatures, en: defaultYoshidaFeaturesEn };
-
-  try {
-    const res = await queryAll({
-      database_id: YOSHIDA_DB_ID,
-      filter: { property: "表示する", checkbox: { equals: true } },
-      sorts: [{ property: "表示順", direction: "ascending" }],
-    });
-
-    if (res.results.length === 0) return { ja: defaultYoshidaFeatures, en: defaultYoshidaFeaturesEn };
-
-    const ja: YoshidaFeature[] = [];
-    const en: YoshidaFeature[] = [];
-
-    for (const page of res.results) {
-      const p = (page as { properties: Record<string, Record<string, unknown>> }).properties;
-      const lang = selectName(p["言語"]);
-      const feature: YoshidaFeature = {
-        icon:        text(p["アイコン"]) || "•",
-        name:        (p["特徴名"] as { title?: Array<{ plain_text: string }> })?.title?.[0]?.plain_text ?? "",
-        description: text(p["説明"]),
-      };
-      if (lang === "英語") en.push(feature);
-      else ja.push(feature);
-    }
-
-    return {
-      ja: ja.length > 0 ? ja : defaultYoshidaFeatures,
-      en: en.length > 0 ? en : defaultYoshidaFeaturesEn,
-    };
-  } catch {
-    return { ja: defaultYoshidaFeatures, en: defaultYoshidaFeaturesEn };
-  }
-}
-
 // ── サイト設定取得（Hero・Contact・Footerテキスト用）────────
 export async function getSiteSettings(): Promise<{ ja: SiteSettings; en: SiteSettings }> {
   if (!SITE_SETTINGS_DB_ID) return { ja: defaultSiteSettings, en: defaultSiteSettingsEn };
@@ -433,32 +389,6 @@ export const getBookingSettings = cache(async (): Promise<BookingSetting[]> => {
     });
   } catch { return DEFAULT_BOOKING; }
 });
-
-export async function getLegacyReservationUrls(): Promise<{ ja: string; en: string }> {
-  if (!RESERVATION_DB_ID) return { ja: "#", en: "#" };
-
-  try {
-    const res = await queryAll({
-      database_id: RESERVATION_DB_ID,
-      filter: { property: "表示する", checkbox: { equals: true } },
-    });
-
-    let ja = "#";
-    let en = "#";
-
-    for (const page of res.results) {
-      const p = (page as { properties: Record<string, Record<string, unknown>> }).properties;
-      const lang = selectName(p["言語"]);
-      const url  = text(p["Contact予約URL"]);
-      if (lang === "英語") en = url || en;
-      else                  ja = url || ja;
-    }
-
-    return { ja, en: en !== "#" ? en : ja };
-  } catch {
-    return { ja: "#", en: "#" };
-  }
-}
 
 // ── 店舗情報取得（全店舗）───────────────────────────────
 export async function getAllStoreInfo(): Promise<{
@@ -523,33 +453,6 @@ export async function getAllStoreInfo(): Promise<{
     return { ja, en };
   } catch {
     return { ja: fallbackJa, en: fallbackEn };
-  }
-}
-
-// ── 吉田銘茶園 画像取得（専用DB: 吉田銘茶園 設定_画像）──────────
-export async function getYoshidaImages(): Promise<YoshidaImages> {
-  if (!YOSHIDA_IMAGES_DB_ID) return {};
-
-  try {
-    const res = await queryAll({
-      database_id: YOSHIDA_IMAGES_DB_ID,
-      filter: { property: "表示する", checkbox: { equals: true } },
-      page_size: 1,
-    });
-
-    if (res.results.length === 0) return {};
-
-    const pageId = (res.results[0] as { id: string }).id;
-    const p = (res.results[0] as { properties: Record<string, Record<string, unknown>> }).properties;
-
-    return {
-      main:     imageUrl(pageId, p["メイン画像"], "メイン画像"),
-      feature1: imageUrl(pageId, p["特徴1画像"], "特徴1画像"),
-      feature2: imageUrl(pageId, p["特徴2画像"], "特徴2画像"),
-      feature3: imageUrl(pageId, p["特徴3画像"], "特徴3画像"),
-    };
-  } catch {
-    return {};
   }
 }
 

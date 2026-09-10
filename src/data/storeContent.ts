@@ -112,13 +112,6 @@ export interface YoshidaSettings {
   intro: string;
 }
 
-export interface YoshidaImages {
-  main?: string;
-  feature1?: string;
-  feature2?: string;
-  feature3?: string;
-}
-
 export interface SiteSettings {
   heroEnglishLabel: string;
   heroCatchphrase: string;
@@ -145,12 +138,6 @@ export const defaultSiteSettingsEn: SiteSettings = {
   contactReservationUrl: "#",
   contactEmail: "chasen.ky01@gmail.com",
 };
-
-export interface YoshidaFeature {
-  icon: string;      // 例: "01", "02", "03"
-  name: string;
-  description: string;
-}
 
 export const defaultBrandStory: BrandStoryContent = {
   catchphrase: "一杯の茶が、",
@@ -188,48 +175,6 @@ export const defaultYoshidaSettingsEn: YoshidaSettings = {
     "and artisans who bring generations of craft to every harvest. " +
     "Respect for the origin lives in every sip.",
 };
-
-export const defaultYoshidaFeatures: YoshidaFeature[] = [
-  {
-    icon: "01",
-    name: "土地への敬意",
-    description:
-      "自然の恵みを最大限に引き出す農法で、茶畑の土から丁寧に向き合い続ける吉田銘茶園の姿勢が、豊かな風味を生み出します。",
-  },
-  {
-    icon: "02",
-    name: "職人の技",
-    description:
-      "代々受け継がれてきた茶づくりの知恵と、現代の技術を融合させた独自の製法が、吉田銘茶園の茶葉に深みと個性をもたらします。",
-  },
-  {
-    icon: "03",
-    name: "厳選の茶葉",
-    description:
-      "収穫の時期・天候・葉の状態を見極め、最上の状態でのみ摘まれた茶葉だけを仕入れ、茶筅の一杯に使用しています。",
-  },
-];
-
-export const defaultYoshidaFeaturesEn: YoshidaFeature[] = [
-  {
-    icon: "01",
-    name: "Respect for the Land",
-    description:
-      "Yoshida Meichaen's commitment to farming in harmony with nature — tending the soil of their tea fields with care — is what gives their leaves such a rich, expressive flavor.",
-  },
-  {
-    icon: "02",
-    name: "Artisan Craft",
-    description:
-      "A unique process that blends wisdom passed down through generations with modern technique, giving Yoshida Meichaen's leaves their distinctive depth and character.",
-  },
-  {
-    icon: "03",
-    name: "Curated Leaves",
-    description:
-      "Only leaves harvested at their peak — judged by season, weather, and condition — are selected for use in every cup at Chasen.",
-  },
-];
 
 // ────────────────────────────────────────────────────
 // 京都 高台寺店
