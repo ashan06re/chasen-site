@@ -19,8 +19,8 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
-      - run: npm audit --omit=dev --audit-level=high
+      - run: npm audit --audit-level=high
       - run: npx eslint src
-      - run: node --test scripts/check-story.mjs scripts/check-editing.mjs scripts/check-menu-publishing.mjs scripts/check-cms-publishing.mjs
+      - run: node --test scripts/check-story.mjs scripts/check-editing.mjs scripts/check-menu-publishing.mjs scripts/check-cms-publishing.mjs scripts/check-image-publication.mjs
       # Live SEO checks run separately after deployment, not against a stale alias.
       # No CMS credentials or customer data are needed by this workflow.

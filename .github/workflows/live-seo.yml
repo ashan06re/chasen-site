@@ -9,7 +9,7 @@ on:
         default: preview
       canonical:
         description: Canonical origin (change only after domain cutover)
-        default: https://chasen-site-eight.vercel.app
+        default: https://chasenco.com
         required: true
 permissions:
   contents: read
