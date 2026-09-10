@@ -6,7 +6,6 @@ import { useLang } from "@/lib/langContext";
 import { onScrollFrame, useReducedMotion } from "@/lib/motion";
 import { createStorySignal, cutState, STORY_SCROLL_SVH } from "@/lib/storyScript";
 import { defaultExperience, type StoryScene } from '@/lib/experience';
-import DepthPanel from '../DepthPanel';
 
 const DepthCanvas = dynamic(() => import("./DepthCanvas"), { ssr: false });
 const defaults=defaultExperience().scenes;
@@ -30,7 +29,7 @@ export default function Story({ scenes = defaults, compact = true }: { scenes?: 
   const flat = still || reduce;
 
   useEffect(() => {
-    if (flat || mobile) return;
+    if (flat) return;
     const section = root.current;
     const viewport = sticky.current;
     if (!section || !viewport) return;
@@ -67,21 +66,12 @@ export default function Story({ scenes = defaults, compact = true }: { scenes?: 
     const resize = new ResizeObserver(update);
     resize.observe(section); resize.observe(viewport);
     return () => { unsubscribe(); resize.disconnect(); refresh.current = () => {}; };
-  }, [flat, mobile, signal, scenes]);
+  }, [flat, signal, scenes]);
 
   function toggle() {
     setStill(value => !value);
     requestAnimationFrame(() => root.current?.scrollIntoView({ behavior: "instant", block: "start" }));
   }
-
-  if(mobile && !flat) return <section ref={root} id="story" className="mobile-painted-story" aria-label={en?'Chasen, an illustrated tea journey':'茶筅、背景画でめぐる物語'}>
-    <div className="mobile-story-intro"><span>KYOTO · KODAIJI</span><a href="#stores">{en?'Shops & menu':'店舗・お品書き'} ↗</a></div>
-    {scenes.map((cut,i)=><article key={cut.id} id={`scene-${cut.id}`} className="mobile-painted-scene">
-      <div className="mobile-scene-art"><DepthPanel src={cut.mobileSrc||cut.src} depthSrc={cut.depth} alt={en?cut.altEn:cut.alt} motion={cut.motion} fit="contain" aspect={cut.aspect} priority={i===0} /></div>
-      <div className="mobile-scene-caption"><p className="story-kicker">0{i+1}<span/>{cut.label}</p>{i===0?<h1>{en?cut.en:cut.ja}</h1>:<h2>{en?cut.en:cut.ja}</h2>}<p>{en?cut.detailEn:cut.detail}</p></div>
-    </article>)}
-    <div className="mobile-story-end"><button type="button" onClick={toggle}>{en?'Still view':'動きを抑えて見る'}</button><a href="#stores">{en?'Explore our shops':'この続きは、お店で。'} ↗</a></div>
-  </section>;
 
   if (flat) return <section ref={root} id="story" className="painted-story-static">
     <div className="editorial-wrap story-static-heading"><p className="eyebrow">THE CHASEN STORY</p><h1>{en ? scenes[0].en : scenes[0].ja}</h1><div className="editorial-actions">{!reduce && <button type="button" onClick={toggle} className="editorial-text-link">{en ? "Resume the immersive story" : "立体の物語に戻る"} ↗</button>}<a className="editorial-text-link" href="#stores">{en ? "Explore our shops" : "店舗・お品書きへ"} ↓</a></div></div>
@@ -99,7 +89,7 @@ export default function Story({ scenes = defaults, compact = true }: { scenes?: 
         /* eslint-disable-next-line @next/next/no-img-element -- HTML first paint and context-loss fallback share WebGL image URLs. */
         <img key={cut.id} ref={element => { images.current[i] = element; }} src={i < 2 ? cut.src : undefined} srcSet={i < 2 && cut.mobileSrc ? `${cut.mobileSrc} 960w, ${cut.src} 1536w` : undefined} sizes="100vw" alt="" width={1536} height={1024} fetchPriority={i === 0 ? "high" : "auto"} onLoad={() => refresh.current()} style={{ opacity: i === 0 ? 1 : 0 }} />
       )}</div>
-      <DepthCanvas frames={frames} signal={signal} fit="cover" />
+      <DepthCanvas frames={frames} signal={signal} fit={mobile ? "contain" : "cover"} />
       <div className="painted-story-shade" aria-hidden="true" />
       <div className="story-location"><span>KYOTO · KODAIJI</span><span>{en ? "AN ILLUSTRATED TEA JOURNEY" : "一杯をめぐる、小さな旅。"}</span></div>
       <div className="story-caption-stack">{scenes.map((cut, i) => <div key={cut.id} className="story-caption" data-active={active === i} aria-hidden={active !== i}>

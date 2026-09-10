@@ -20,8 +20,7 @@ test('desktop WebGL and HTML fill wide, tall and resized viewports without lette
   const css=await readFile(new URL('../src/app/globals.css',import.meta.url),'utf8');
   assert.match(css,/\.painted-story-images img\s*\{[^}]*object-fit:\s*cover/);
   const story=await readFile(new URL('../src/components/story/Story.tsx',import.meta.url),'utf8');
-  assert.match(story,/<DepthCanvas frames=\{frames\} signal=\{signal\} fit="cover"/);
-  assert.match(story,/<DepthPanel[^>]+fit="contain"/); // phone keeps the whole painting
+  assert.match(story,/<DepthCanvas frames=\{frames\} signal=\{signal\} fit=\{mobile \? "contain" : "cover"\}/);
 });
 
 test('approved paintings resolve by immutable file identity, not CMS row',()=>{
