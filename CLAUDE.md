@@ -5,11 +5,11 @@
 
 ## プロジェクト概要
 
-茶筅（Chasen）日本茶スタンドのコーポレートサイト。Next.js 16.2.9 (App Router) + Tailwind CSS v4 + Notion CMS。
+茶筅（Chasen）日本茶スタンドのコーポレートサイト。Next.js 16.3.4 (App Router) + Tailwind CSS v4 + Notion CMS。
 
 **状態**: 全ページ完成・Notion連携済み・日英を URL で分離（`/` と `/en`）・**Vercel公開済み**
 
-- 正式URL（接続準備中）: https://chasenco.com
+- 正式URL（本番公開中）: https://chasenco.com
 - 旧Vercel URL: https://chasen-site-eight.vercel.app
 - GitHub: https://github.com/ashan06re/chasen-site （pushで自動デプロイ、1〜2分で反映）
 
@@ -96,7 +96,9 @@ Notion API が返すファイルURLは **1時間で失効する署名付きURL**
 ISRキャッシュ配信中に署名が切れて画像が全滅する。そのため `notion.ts` の `imageUrl()` は
 署名付きURLではなく `/api/notion-image/<pageId>/<index>/<プロパティ名>` を返す。
 実体は `src/app/api/notion-image/[...parts]/route.ts` がリクエストごとに Notion から
-新しいURLを取り直して中継する（CDNに24時間キャッシュ）。
+新しいURLを取り直して中継する。メニュー画像は店舗の公開スイッチと行の `表示する` が
+両方有効な場合だけ返し、公開状態の変更が古いCDNキャッシュに残らないよう
+`private, no-store` で配信する。旧メニューDB・旧予約DB・吉田画像DBからの画像は許可しない。
 
 **新しく画像プロパティを読むときも、必ず `imageUrl()` を使うこと。**
 `file.url` をそのまま返すと同じ不具合が再発する。
@@ -110,7 +112,7 @@ ISRキャッシュ配信中に署名が切れて画像が全滅する。その�
 | `src/app/sitemap.ts` / `robots.ts` | `/sitemap.xml`・`/robots.txt` を自動生成。**ページを追加したら `sitemap.ts` にも追記する** |
 | `public/og.jpg` | OGP画像（1200×630、ロゴ版）。SNSでURLを貼ったときのサムネイル |
 
-独自ドメイン設定時は `NEXT_PUBLIC_SITE_URL` を更新して再ビルド。canonical・hreflang・構造化データ・sitemapを検査し、www/非wwwと旧URLからの恒久転送も設定する。
+独自ドメイン `chasenco.com` は接続済み。`NEXT_PUBLIC_SITE_URL`、canonical・hreflang・構造化データ・sitemap、wwwからapexへの恒久転送を維持する。
 プレビューは `VERCEL_ENV=preview` でnoindex。本番では `NEXT_PUBLIC_NOINDEX` を有効にしない。詳しくは `../引き継ぎ/公開前SEOとドメイン_20260906.md`。
 
 ## よく使うコマンド
@@ -131,13 +133,13 @@ npm run build  # 本番ビルド確認
 2. 高台寺店のメニュー実データ（現状ダミー。写真素材も未受領）
 3. 下の「確認待ち」
 
-**未着手**
+**未着手／運用準備中**
 
-1. 予約フォームのiframe埋め込み or 予約SaaS連携（現状はGoogleフォームへの外部リンク）
+1. 京都の予約リクエストForm・受付台帳・承認後Calendar登録・Gmail下書き（熊本は当面Hot Pepper）
 2. `/privacy`・`/terms` の正式な事業者名・所在地（各ファイルの `TODO` コメント）
-3. 独自ドメイン `chasenco.com` のVercel接続（コードの正式URLは更新済み。Vercel Production切替とDNS設定が残り）
-4. Vercelダッシュボードでの Analytics 有効化（コード側は導入済み・ユーザー作業）
-5. Google Search Console に `/en` 配下の登録（sitemap.xml を再送信するだけ）
+3. Vercelダッシュボードでの Analytics 有効化（コード側は導入済み）
+4. Google Search Consoleで `https://chasenco.com/sitemap.xml` の確認
+5. Notionメニューの編集版と公開版を分離し、編集中も直前の公開版を維持する仕組み
 
 ## 確認待ち（ユーザーの回答が要る。勝手に変えないこと）
 
@@ -193,10 +195,11 @@ IMG_6983は筆致・色・空気感の参照であり、写真を主役に貼る
 - 商品一覧はNotionの実写真・日英データを維持。メニューヒーローのみ背景画。カテゴリー絞込・検索・未登録価格の非表示。
 - ブランドと銘茶園の本文もNotion取得を維持。冗長な紹介だけdetailsに整理し、物語や立体演出を削除しない。
 - 単体7検査＋全16ルート/368リンク＋SEO検査。GPU強制停止/復旧・欠落データはローカル専用 `/qa-depth` で検査（`CHASEN_LOCAL_QA=1`、Vercelは404）。
-- Vercelのログイン不要プレビューへredesignだけpush。本番main・独自ドメイン購入は別途判断。
+- `redesign` はPR #1で `main` へ反映済み。`chasenco.com` で本番公開中。
 
-## 予約フォームURL管理
+## 予約リンク管理
 
-Notion「予約用Google Form」DB（`NOTION_RESERVATION_DB_ID`）で管理。  
-URLを変えたいときはこのDBの`Contact予約URL`フィールドを編集するだけ（最大1分で全ページ反映）。  
-読み取り関数: `getReservationUrls()` in `notion.ts`
+サイト内の予約入口は `/reserve` と `/en/reserve`。各店舗の実際の受付先はNotionの現行予約設定DBで管理する。
+店舗ごとに `受付方法`、`予約ページ`、`予約ページ（英語）`、日英の案内文を変更できる。
+`getBookingSettings()` が現行DBを読み、`getReservationUrls()` はサイト内予約ページへの固定入口を返す。
+旧「予約用Google Form」DBは現行HPでは使わない。
