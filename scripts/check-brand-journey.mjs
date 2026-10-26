@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
-import {BRAND_CHAPTERS,journeyMotion} from '../src/lib/brandJourney.ts';
+import {BRAND_CHAPTERS} from '../src/lib/brandJourney.ts';
 
 test('food-first story has five unique optional chapters and no brewing ritual',()=>{
   assert.deepEqual(BRAND_CHAPTERS.map(c=>c.id),['tamatebako','sweets','cuisine','origin','space']);
@@ -8,17 +8,4 @@ test('food-first story has five unique optional chapters and no brewing ritual',
   assert.ok(BRAND_CHAPTERS.every(c=>c.title&&c.titleEn&&c.body&&c.bodyEn&&c.caption&&c.captionEn));
   assert.doesNotMatch(JSON.stringify(BRAND_CHAPTERS),/点てられるまで|湯を落とす|quiet ritual/i);
   assert.match(BRAND_CHAPTERS[3].body,/吉田銘茶園/);
-});
-
-test('autonomous object motion is bounded; malformed input cannot break transforms',()=>{
-  for(const t of [0,1,5,10,100,NaN,Infinity])for(const x of [-100,0,100,NaN]) {
-    const m=journeyMotion(t,x,x,x);
-    assert.ok(Object.values(m).every(Number.isFinite));
-    assert.ok(Math.abs(m.x)<=32&&Math.abs(m.y)<=28);
-    assert.ok(Math.abs(m.yaw)<=6.8&&Math.abs(m.roll)<=2&&Math.abs(m.pitch)<=1.9);
-    assert.ok(m.zoom>=1&&m.zoom<=1.0281);
-  }
-  assert.notDeepEqual(journeyMotion(0,0,0,0),journeyMotion(5,0,0,0));
-  assert.ok(journeyMotion(0,1,0,0).x>journeyMotion(0,0,0,0).x);
-  assert.ok(journeyMotion(0,1,0,0).backgroundX<journeyMotion(0,0,0,0).backgroundX);
 });

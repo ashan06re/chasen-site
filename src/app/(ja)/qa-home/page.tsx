@@ -35,15 +35,13 @@ export default async function HomeReviewPage() {
   } : scene);
   if (process.env.CHASEN_JOURNEY_REVIEW_DIR) {
     const reviewDir = process.env.CHASEN_JOURNEY_REVIEW_DIR;
-    const readArt = async (file: string) => `data:image/webp;base64,${(await readFile(join(reviewDir, file))).toString('base64')}`;
-    const [box, sweets, cuisine, background, origin, space] = await Promise.all([
-      'tamatebako-subject.webp', 'sweets-subject.webp', 'cuisine-subject.webp',
-      'tamatebako-background.webp', 'origin-background.webp', 'space-background.webp',
-    ].map(readArt));
-    experience.journey = BRAND_CHAPTERS.map(chapter => ({ ...chapter,
-      subject: chapter.id === 'tamatebako' ? box : chapter.id === 'sweets' ? sweets : chapter.id === 'cuisine' ? cuisine : undefined,
-      background: chapter.id === 'tamatebako' ? background : chapter.id === 'origin' ? origin : chapter.id === 'space' ? space : undefined,
-    }));
+    const files = [
+      ['tamatebako.png', 'image/png'], ['sweets.jpg', 'image/jpeg'],
+      ['cuisine.jpg', 'image/jpeg'], ['origin.jpg', 'image/jpeg'], ['space.webp', 'image/webp'],
+    ];
+    const images = await Promise.all(files.map(async ([file, mime]) =>
+      `data:${mime};base64,${(await readFile(join(reviewDir, file))).toString('base64')}`));
+    experience.journey = BRAND_CHAPTERS.map((chapter, i) => ({ ...chapter, image: images[i] }));
   }
   const kyoto = stores.ja["高台寺店"] || storeContent.kyoto.info;
   const kumamoto = stores.ja["熊本店"] || storeContent.kumamoto.info;

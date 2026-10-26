@@ -26,7 +26,7 @@ test('Kumamoto replacement retires only the old built-in art and preserves later
   const replaced=(await getExperience()).kumamoto;
   assert.equal(replaced.src,'/story-art/06-entry-v2.webp');
   assert.equal(replaced.depth,undefined);
-  assert.equal(replaced.motion,false);
+  assert.equal(replaced.motion,true);
   assert.match(replaced.alt,/イメージ画/);
   respond(()=>result([row('https://example.com/new-approved-store.webp')]));
   const custom=(await getExperience()).kumamoto;

@@ -42,3 +42,7 @@ npx eslint src   # 手元の保存ページ由来のノイズを避けるため 
 - QA: `node --test scripts/check-story.mjs`、本番ビルド起動後に `node scripts/check-routes.mjs <URL>` と `node scripts/check-seo.mjs <URL>`（プレビューは `--preview`）。
 - `/qa-depth` はローカルの `CHASEN_LOCAL_QA=1` 時だけ有効。Vercelでは必ず404。独自ドメイン・main公開は別途判断。
 - `/qa-home` と `/en/qa-home` は同じローカル制限に加え、`CHASEN_HERO_REVIEW_FILE` で指定した確認用WebPだけを読む。承認待ち画像をpublicやCMSへ移さない。本人指定の熊本パネルは `06-entry-v2` に差替え済み。
+
+## 2026-10-27 本人の最新指定（過去の画風指定より優先）
+
+5場面は切抜き前の原画像を使い、全体が静かに浮上する演出。BrandJourneyの切抜き/背景分離/継続揺れは撤回。店舗の従来Tilt/スクロール演出は維持し、熊本は指定06-entry-v2を動かす（旧画像のdepthを流用しない）。原画像使用記録は親の承認済み/ブランド体験_原画像_20261027。現状はローカルqa-homeのみ、通常ホーム/CMS統合は次工程。CHASEN_JOURNEY_REVIEW_DIRはその原画像フォルダを指定。全体の正本は親の進行台帳.md。

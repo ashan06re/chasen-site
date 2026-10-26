@@ -1,18 +1,18 @@
 "use client";
 
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { useLang } from '@/lib/langContext';
-import { onScrollFrame, useReducedMotion, viewportProgress } from '@/lib/motion';
-import { journeyMotion, type BrandChapter } from '@/lib/brandJourney';
+import { useReducedMotion } from '@/lib/motion';
+import type { BrandChapter } from '@/lib/brandJourney';
 import styles from './BrandJourney.module.css';
 
 const imageDescriptions: Record<string, { ja: string; en: string }> = {
   tamatebako: { ja: '木箱に盛り合わせた抹茶の甘味と京都の夕景', en: 'Matcha sweets in a wooden box against an evening Kyoto view' },
   sweets: { ja: 'ガラスの器に盛った抹茶のかき氷', en: 'Matcha shaved ice in a glass bowl' },
   cuisine: { ja: '木の器に盛った肉料理', en: 'A meat and rice dish in a wooden vessel' },
-  origin: { ja: '黒い覆いの下に広がる宇治の茶園のイメージ', en: 'An image of Uji tea rows beneath a shade canopy' },
-  space: { ja: '高台寺店の木のカウンターと青緑の椅子をもとにした店内イメージ', en: 'A Kodaiji interior concept with a wooden counter and teal chairs' },
+  origin: { ja: '黒い覆いの下に広がる宇治の茶園', en: 'Uji tea rows beneath a shade canopy' },
+  space: { ja: '高台寺店の木のカウンターと青緑の椅子', en: 'The Kodaiji interior with a wooden counter and teal chairs' },
 };
 
 export default function BrandJourney({ chapters }: { chapters: BrandChapter[] }) {
@@ -21,65 +21,17 @@ export default function BrandJourney({ chapters }: { chapters: BrandChapter[] })
   const reduced = useReducedMotion();
   const [still, setStill] = useState(false);
   const [index, setIndex] = useState(0);
-  const root = useRef<HTMLElement>(null);
-  const elapsed = useRef(0);
-  const target = useRef({ x: 0, y: 0 });
   const selected = chapters[index];
   const moving = !still && !reduced;
 
-  useEffect(() => {
-    const el = root.current;
-    if (!el || !moving) return;
-    let visible = false, frame = 0, last = 0, travel = 0;
-    let x = 0, y = 0;
-    const render = (now: number) => {
-      frame = 0;
-      if (!visible || document.hidden) { last = 0; return; }
-      if (last) elapsed.current += Math.min((now - last) / 1000, .05);
-      last = now;
-      x += (target.current.x - x) * .055;
-      y += (target.current.y - y) * .055;
-      const m = journeyMotion(elapsed.current, x, y, travel);
-      el.style.setProperty('--object-x', `${m.x.toFixed(3)}px`);
-      el.style.setProperty('--object-y', `${m.y.toFixed(3)}px`);
-      el.style.setProperty('--object-yaw', `${m.yaw.toFixed(3)}deg`);
-      el.style.setProperty('--object-pitch', `${m.pitch.toFixed(3)}deg`);
-      el.style.setProperty('--object-roll', `${m.roll.toFixed(3)}deg`);
-      el.style.setProperty('--object-zoom', m.zoom.toFixed(4));
-      el.style.setProperty('--background-x', `${m.backgroundX.toFixed(3)}px`);
-      el.style.setProperty('--background-y', `${m.backgroundY.toFixed(3)}px`);
-      frame = requestAnimationFrame(render);
-    };
-    const wake = () => {
-      if (visible && !document.hidden && !frame) frame = requestAnimationFrame(render);
-      if (!visible || document.hidden) { cancelAnimationFrame(frame); frame = 0; last = 0; }
-    };
-    const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; wake(); });
-    const visual = el.querySelector<HTMLElement>('#brand-journey-art') ?? el;
-    observer.observe(visual);
-    const unsubscribe = onScrollFrame(() => { travel = viewportProgress(visual); });
-    document.addEventListener('visibilitychange', wake);
-    return () => { cancelAnimationFrame(frame); observer.disconnect(); unsubscribe(); document.removeEventListener('visibilitychange', wake); };
-  }, [moving]);
-
   if (!selected) return null;
-  return <section ref={root} id="story" className={styles.journey} data-motion={moving ? 'playing' : 'paused'} data-reduced={reduced} aria-labelledby="home-product-title"
-    onPointerMove={event => {
-      if (event.pointerType !== 'mouse') return;
-      const r = event.currentTarget.getBoundingClientRect();
-      target.current = { x: (event.clientX - r.left) / r.width * 2 - 1, y: (event.clientY - r.top) / r.height * 2 - 1 };
-    }} onPointerLeave={() => { target.current = { x: 0, y: 0 }; }}>
+  return <section id="story" className={styles.journey} data-motion={moving ? 'playing' : 'paused'} data-reduced={reduced} aria-labelledby="home-product-title">
     <div className={styles.stage}>
       <div className={styles.visual} id="brand-journey-art" role="img" aria-label={imageDescriptions[selected.id]?.[en ? 'en' : 'ja'] ?? (en ? selected.nameEn : selected.name)}>
         {chapters.map((chapter, i) => <div className={styles.scene} key={chapter.id} data-scene={chapter.id} data-active={index === i} aria-hidden="true">
-          {/* eslint-disable @next/next/no-img-element -- Review composites include alpha layers; not standalone image cards. */}
-          {chapter.background && <img className={styles.background} src={chapter.background} alt="" loading={i === 0 ? 'eager' : 'lazy'} fetchPriority={i === 0 ? 'high' : 'auto'} />}
+          {/* eslint-disable-next-line @next/next/no-img-element -- Local review displays the untouched source image. */}
+          {chapter.image && <img className={styles.original} src={chapter.image} alt="" loading={i === 0 ? 'eager' : 'lazy'} fetchPriority={i === 0 ? 'high' : 'auto'} />}
           <div className={styles.light} />
-          {chapter.subject && <div className={styles.objectEntrance}>
-            <div className={styles.shadow} />
-            <img className={styles.subject} src={chapter.subject} alt="" loading={i === 0 ? 'eager' : 'lazy'} fetchPriority={i === 0 ? 'high' : 'auto'} />
-          </div>}
-          {/* eslint-enable @next/next/no-img-element */}
         </div>)}
       </div>
       <div className={`${styles.copyWrap} editorial-wrap`}>

@@ -77,7 +77,6 @@ export const getExperience = cache(async () => {
       art.alt = replacedKumamoto ? art.alt : text(p['画像の説明']) || base.alt;
       art.altEn = replacedKumamoto ? art.altEn : text(p['画像の説明（英語）']) || base.altEn;
       art.motion = selectName(p['動き']) !== 'なし';
-      if (art.src === '/story-art/06-entry-v2.webp') art.motion = false;
       if (index < 5) result.scenes[index] = { ...result.scenes[index], ...art, ja:text(p['見出し'])||result.scenes[index].ja, en:text(p['見出し（英語）'])||result.scenes[index].en, detail:text(p['説明文'])||result.scenes[index].detail, detailEn:text(p['説明文（英語）'])||result.scenes[index].detailEn };
       else if(index===5) result.kyoto=art;
       else if(index===6) result.kumamoto=art;

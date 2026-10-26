@@ -19,7 +19,7 @@ export const DEFAULT_APPEARANCE: Appearance = {
   artNoteEn: 'Story illustrations are inspired by our shops and sweets. See each shop’s menu for product details.',
 };
 export function registeredArt(id: string): Artwork {
-  if (id === '06-entry-v2') return { src:'/story-art/06-entry-v2.webp',mobileSrc:'/story-art/06-entry-v2-mobile.webp',aspect:1.5,alt:'暖簾と木の回廊を描いた茶筅のイメージ画',altEn:'A Chasen illustration of a wooden passage and noren curtains',motion:false };
+  if (id === '06-entry-v2') return { src:'/story-art/06-entry-v2.webp',mobileSrc:'/story-art/06-entry-v2-mobile.webp',aspect:1.5,alt:'暖簾と木の回廊を描いた茶筅のイメージ画',altEn:'A Chasen illustration of a wooden passage and noren curtains',motion:true };
   if (id === 'brand-v1') return { src:'/story-art/brand-v1.webp',aspect:1500/1049,alt:'茶筅の印が入った木枡を描いた絵',altEn:'A painting of Chasen’s wooden masu boxes',motion:false };
   return { src: `/story-art/${id}.webp`, mobileSrc: `/story-art/${id}-mobile.webp`, depth: `/story-art/${id}-depth.webp`, aspect: 1.5, alt: '茶筅の背景画', altEn: 'A Chasen illustration', motion: true };
 }
