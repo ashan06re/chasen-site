@@ -34,6 +34,42 @@ html[lang="en"] .mobile-scene-caption h1,html[lang="en"] .mobile-scene-caption h
 
 /* Painted, immersive story. The artwork is the environment, not a framed thumbnail. */
 .immersive-home { color: #F3EEE3; background: #0B0C0A; }
+.product-story { padding: 124px 0 52px; }
+.product-story[data-compact="false"] { padding-bottom: 80px; }
+.product-story-layout { display: grid; grid-template-columns: .8fr 1.3fr; align-items: center; gap: clamp(28px,4vw,72px); }
+.product-story-copy h1 { font-size: clamp(27px,3vw,44px); font-weight: 400; line-height: 1.65; letter-spacing: .05em; }
+.product-story-name { white-space: nowrap; }
+.product-story-description { max-width: 29em; margin-top: 22px; color: #D1C9BA; font-size: 14px; line-height: 2; }
+.product-story-visit { margin-top: 18px; color: #C6B895; font-size: 12px; line-height: 1.9; }
+.product-story-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 16px 28px; margin-top: 28px; }
+.product-story-actions .editorial-text-link { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; }
+.product-story-art { position: relative; aspect-ratio: 3 / 2; overflow: clip; background: #0B0C0A; }
+.product-story-caption { display: flex; align-items: baseline; gap: 20px; min-height: 64px; padding-top: 16px; font-size: 12px; line-height: 1.8; }
+.product-story-caption > span { flex-shrink: 0; color: #C6B895; }
+.product-story-caption p { color: #D1C9BA; }
+.product-story-scenes { display: flex; flex-wrap: wrap; gap: 4px 16px; border-top: 1px solid #5E594D; }
+.product-story-scenes button { min-height: 48px; min-width: 44px; padding: 7px 2px; border-bottom: 2px solid transparent; color: #C9C1B2; cursor: pointer; font-size: 12px; }
+.product-story-scenes button[aria-pressed="true"] { color: #FFF6E5; border-bottom-color: #D5C29B; }
+.product-story-scenes button:hover { color: #FFF6E5; }
+.product-story-motion { display: block; margin: 4px 0 0 auto; min-height: 44px; font-size: 11px; color: #C9C1B2; text-decoration: underline; text-underline-offset: 5px; cursor: pointer; }
+.product-story button:focus-visible,.product-story a:focus-visible { outline: 2px solid #E5D3A9; outline-offset: 4px; }
+html[lang="en"] .product-story-copy h1 { font-family: var(--font-cormorant),serif; font-size: clamp(38px,4.2vw,62px); letter-spacing: 0; line-height: 1.15; }
+@media(max-width:767px) {
+  .product-story { padding: 96px 0 18px; }
+  .product-story[data-compact="false"] { padding-bottom: 34px; }
+  .product-story-layout { grid-template-columns: 1fr; gap: 26px; }
+  .product-story-copy .eyebrow { margin-bottom: 12px; }
+  .product-story-copy h1 { font-size: clamp(28px,7.5vw,38px); line-height: 1.5; }
+  .product-story-description { font-size: 12px; margin-top: 14px; line-height: 1.9; }
+  .product-story-visit { font-size: 11px; margin-top: 10px; }
+  .product-story-actions { margin-top: 18px; gap: 12px 22px; }
+  .product-story-actions .editorial-button { padding: 12px 18px; }
+  .product-story-actions .editorial-text-link { font-size: 11px; }
+  .product-story-caption { min-height: 58px; gap: 14px; padding-top: 12px; font-size: 11px; }
+  .product-story-scenes { justify-content: space-between; gap: 0 5px; }
+  .product-story-scenes button { font-size: 11px; }
+  html[lang="en"] .product-story-copy h1 { font-size: clamp(34px,9vw,46px); }
+}
 .painted-story { position: relative; background: #0B0C0A; }
 .story-anchor { position: absolute; width: 1px; height: 1px; pointer-events: none; }
 .painted-story-viewport { position: sticky; top: 0; height: 100svh; overflow: clip; isolation: isolate; }
