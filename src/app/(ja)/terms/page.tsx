@@ -13,7 +13,7 @@ const defaultMetadata: Metadata = {
 
 // TODO: 正式な事業者名・所在地が確定したら「運営者」セクションに追記する
 const CONTACT_EMAIL = "hello@chasenco.com";
-const UPDATED = "2026年9月2日 制定";
+const UPDATED = "2026年10月26日 改定";
 
 const ja: LegalDocument = {
   title: "サイトのご利用について",
@@ -47,7 +47,7 @@ const ja: LegalDocument = {
     {
       heading: "4. ご予約について",
       body: [
-        "ご予約は、当サイトからリンクする予約フォームにて受け付けています。ご予約の成立、変更、キャンセルの取り扱いは、各店舗のご案内に従います。",
+        "お席のご予約は、当サイトの予約案内ページに記載した各店舗の電話・外部予約サイトで承ります。ご予約の成立、変更、キャンセルの取り扱いは、各店舗・予約先のご案内に従います。",
       ],
     },
     {
@@ -78,7 +78,7 @@ const ja: LegalDocument = {
 const en: LegalDocument = {
   title: "Terms of Use",
   label: "Terms of Use",
-  updated: "Effective September 2, 2026",
+  updated: "Updated October 26, 2026",
   intro:
     "These terms govern your use of the website operated by Chasen (“the Site”). By using the Site, you are deemed to have agreed to these terms.",
   sections: [
@@ -106,7 +106,7 @@ const en: LegalDocument = {
     {
       heading: "4. Reservations",
       body: [
-        "Reservations are accepted through the form linked from the Site. Confirmation, changes and cancellations follow each store’s guidance.",
+        "Table bookings are accepted by phone or through the external booking service listed for each shop on our reservations page. Confirmation, changes and cancellations follow the guidance of the shop and booking service.",
       ],
     },
     {
