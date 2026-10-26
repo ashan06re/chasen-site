@@ -5,7 +5,7 @@
 
 ## プロジェクト概要
 
-茶筅（Chasen）日本茶スタンドのコーポレートサイト。Next.js 16.3.4 (App Router) + Tailwind CSS v4 + Notion CMS。
+茶筅（Chasen）日本茶スタンドのコーポレートサイト。Next.js 16.4.3 (App Router) + Tailwind CSS v4 + Notion CMS。
 
 **状態**: 全ページ完成・Notion連携済み・日英を URL で分離（`/` と `/en`）・**Vercel公開済み**
 
