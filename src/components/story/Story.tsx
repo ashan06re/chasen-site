@@ -32,7 +32,15 @@ export default function Story({ scenes = defaults, compact = true }: { scenes?: 
   const name = (scene: StoryScene) => sceneNames[scene.id]?.[en ? "en" : "ja"] ?? scene.label;
 
   return <section id="story" className="product-story" data-compact={compact} aria-labelledby="home-product-title">
-    <div className="product-story-layout editorial-wrap">
+    <div className="product-story-stage" data-landscape={selected.aspect > 1.7}>
+      <div className="product-story-art" id="home-story-art" role="group" aria-label={name(selected)}>
+        <DepthPanel key={selected.id + selected.src} src={selected.src} mobileSrc={selected.mobileSrc}
+          // A rigid product must not bend along an estimated depth map.
+          depthSrc={selected.id === "05" ? undefined : selected.depth}
+          alt={en ? selected.altEn : selected.alt} aspect={selected.aspect}
+          motion={!still && selected.motion} fit="contain" priority />
+      </div>
+      <div className="product-story-layout editorial-wrap">
       <div className="product-story-copy">
         <p className="eyebrow">KYOTO · KUMAMOTO</p>
         <h1 id="home-product-title">{en ? <>Matcha &amp;<br />Tamatebako sweets.</> : <>抹茶と、<br /><span className="product-story-name">玉手箱スイーツ。</span></>}</h1>
@@ -43,19 +51,13 @@ export default function Story({ scenes = defaults, compact = true }: { scenes?: 
           <Link className="editorial-text-link" href={localize("/reserve")}>{en ? "Table bookings" : "お席の予約案内"}<span aria-hidden="true">↗</span></Link>
         </div>
       </div>
-      <div className="product-story-gallery">
-        <figure>
-          <div className="product-story-art" id="home-story-art" role="group" aria-label={name(selected)}>
-            <DepthPanel key={selected.id + selected.src} src={selected.src} mobileSrc={selected.mobileSrc}
-              // A rigid product must not bend along an estimated depth map.
-              depthSrc={selected.id === "05" ? undefined : selected.depth}
-              alt={en ? selected.altEn : selected.alt} aspect={selected.aspect}
-              motion={!still && selected.motion} fit="contain" priority />
-          </div>
-          <figcaption className="product-story-caption" aria-live="polite" aria-atomic="true">
-            <span>{name(selected)}</span><p>{en ? selected.detailEn : selected.detail}</p>
-          </figcaption>
-        </figure>
+      </div>
+    </div>
+    <div className="product-story-gallery editorial-wrap">
+        <div className="product-story-caption" aria-live="polite" aria-atomic="true">
+          <span>{name(selected)}</span><p>{en ? selected.detailEn : selected.detail}</p>
+        </div>
+        <div className="product-story-controls">
         <nav className="product-story-scenes" aria-label={en ? "Explore Chasen scenes" : "茶筅の風景を見る"}>
           {ordered.map(scene => <button key={scene.id} id={`scene-${scene.id}`} type="button"
             aria-pressed={selected.id === scene.id} aria-controls="home-story-art"
@@ -64,7 +66,12 @@ export default function Story({ scenes = defaults, compact = true }: { scenes?: 
         {!reduce && <button className="product-story-motion" type="button" aria-pressed={still} onClick={() => setStill(value => !value)}>
           {en ? (still ? "Restore gentle motion" : "Pause motion") : (still ? "動きを戻す" : "動きを止める")}
         </button>}
-      </div>
+        </div>
+    </div>
+    <div className="product-story-invitation editorial-wrap">
+      <p className="eyebrow">A BOX OF LITTLE WONDERS</p>
+      <h2>{en ? <>Lift the lid.<br />Take a little time.</> : <>蓋を開けると、<br />ひとときがほどける。</>}</h2>
+      <p>{en ? "Matcha, sweets, and a moment to make your own." : "お茶と甘いものを、少しずつ。\n心ほどける時間を、茶筅で。"}</p>
     </div>
   </section>;
 }

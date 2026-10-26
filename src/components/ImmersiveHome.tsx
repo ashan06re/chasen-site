@@ -26,7 +26,7 @@ export default function ImmersiveHome({ kyoto, kumamoto, kyotoEn, kumamotoEn, br
       <div id="menu" className="immersive-shop-panels">{shops.map((shop, i) => <article key={shop.slug} className="immersive-shop-card">
         <TiltCard maxTilt={4} className="shop-dimensional-frame">
           <Link href={localize(`/stores/${shop.slug}`)} className="shop-art-link" aria-label={en ? `${shop.name} — shop and access` : `${shop.name}の店舗情報・アクセス`}>
-            <DepthPanel src={(i===0?experience.kyoto:experience.kumamoto).src} depthSrc={(i===0?experience.kyoto:experience.kumamoto).depth} motion={(i===0?experience.kyoto:experience.kumamoto).motion} alt={en?(i===0?experience.kyoto:experience.kumamoto).altEn:(i===0?experience.kyoto:experience.kumamoto).alt} fit="contain" />
+            <DepthPanel src={(i===0?experience.kyoto:experience.kumamoto).src} mobileSrc={(i===0?experience.kyoto:experience.kumamoto).mobileSrc} depthSrc={(i===0?experience.kyoto:experience.kumamoto).depth} motion={(i===0?experience.kyoto:experience.kumamoto).motion} alt={en?(i===0?experience.kyoto:experience.kumamoto).altEn:(i===0?experience.kyoto:experience.kumamoto).alt} fit="contain" />
             <div className="shop-art-caption"><span>{i === 0 ? "KYOTO" : "KUMAMOTO"}</span><span className="shop-art-arrow" aria-hidden="true">↗</span></div>
           </Link>
         </TiltCard>

@@ -19,6 +19,8 @@ for (const [path, expected] of [
   ['/api/notion-image/00000000-0000-0000-0000-000000000000/0/private-field', 404],
   ['/api/notion-image/00000000-0000-0000-0000-000000000000/0/%E7%94%BB%E5%83%8F/invalid-revision', 400],
   ['/qa-depth', 404],
+  ['/qa-home', 404],
+  ['/en/qa-home', 404],
 ]) {
   const response = await fetch(new URL(path, base));
   assert.equal(response.status, expected, path);

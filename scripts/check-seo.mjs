@@ -32,6 +32,7 @@ const locations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
 assert.equal(locations.length, 18, 'sitemap covers every ja/en route');
 assert.ok(locations.every(url => url.startsWith(site)));
 assert.ok(!sitemap.includes('/qa-depth'), 'QA is not discoverable in sitemap');
+assert.ok(!sitemap.includes('/qa-home'), 'design review is not discoverable in sitemap');
 assert.ok(!sitemap.includes('<lastmod>'), 'no fabricated modification dates');
 const robots = await (await fetch(new URL('/robots.txt', base))).text();
 assert.ok(!/Disallow:\s*\/(?:api)?\s*$/m.test(robots), 'page and image crawling allowed');

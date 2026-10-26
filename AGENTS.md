@@ -1,7 +1,11 @@
 <!-- BEGIN:nextjs-agent-rules -->
-# This is NOT the Next.js you know
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
+## This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
 <!-- END:nextjs-agent-rules -->
 
 ---
@@ -37,3 +41,4 @@ npx eslint src   # 手元の保存ページ由来のノイズを避けるため 
 - Notion の画像は必ずプロキシ経由（詳細は `CLAUDE.md`）
 - QA: `node --test scripts/check-story.mjs`、本番ビルド起動後に `node scripts/check-routes.mjs <URL>` と `node scripts/check-seo.mjs <URL>`（プレビューは `--preview`）。
 - `/qa-depth` はローカルの `CHASEN_LOCAL_QA=1` 時だけ有効。Vercelでは必ず404。独自ドメイン・main公開は別途判断。
+- `/qa-home` と `/en/qa-home` は同じローカル制限に加え、`CHASEN_HERO_REVIEW_FILE` で指定した確認用WebPだけを読む。承認待ち画像をpublicやCMSへ移さない。本人指定の熊本パネルは `06-entry-v2` に差替え済み。

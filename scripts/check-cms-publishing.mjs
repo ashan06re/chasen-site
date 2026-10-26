@@ -16,9 +16,25 @@ registerHooks({resolve(specifier,context,next){
   if(url&&existsSync(url))return {url:url.href,shortCircuit:true};
   return next(specifier,context);
 }});
-const {getFullMenuSections,getBookingSettings,getAllStoreInfo}=await import('../src/lib/notion.ts');
+const {getFullMenuSections,getBookingSettings,getAllStoreInfo,getExperience}=await import('../src/lib/notion.ts');
 const sel=name=>({select:{name}}), txt=value=>({rich_text:[{plain_text:value}]}), result=results=>({results,has_more:false,next_cursor:null});
 const publication=status=>({properties:{店舗:sel('高台寺店'),公開設定:sel(status)}});
+
+test('Kumamoto replacement retires only the old built-in art and preserves later CMS uploads',async()=>{
+  const row=src=>({id:'33333333-3333-3333-3333-333333333333',properties:{掲載場所:sel('熊本の店舗パネル'),画像:{files:[{external:{url:src}}]},画像の説明:txt('CMSの説明'),'画像の説明（英語）':txt('CMS description')}});
+  respond(()=>result([row('https://chasen-site-eight.vercel.app/story-art/06.webp')]));
+  const replaced=(await getExperience()).kumamoto;
+  assert.equal(replaced.src,'/story-art/06-entry-v2.webp');
+  assert.equal(replaced.depth,undefined);
+  assert.equal(replaced.motion,false);
+  assert.match(replaced.alt,/イメージ画/);
+  respond(()=>result([row('https://example.com/new-approved-store.webp')]));
+  const custom=(await getExperience()).kumamoto;
+  assert.equal(custom.src,'https://example.com/new-approved-store.webp');
+  assert.equal(custom.alt,'CMSの説明');
+  assert.equal(custom.altEn,'CMS description');
+  assert.equal(custom.depth,undefined);
+});
 
 test('real CMS getter never fetches menu rows when hidden, missing, ambiguous or unavailable',async()=>{
   for(const rows of [[publication('投稿しない')],[],[publication('投稿する'),publication('投稿する')],null]){
