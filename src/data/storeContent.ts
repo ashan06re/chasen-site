@@ -125,18 +125,18 @@ export const defaultSiteSettings: SiteSettings = {
   heroEnglishLabel: "Japanese Tea Stand",
   heroCatchphrase: "日本の茶文化を、現代の日常へ。",
   footerTagline: "日本茶スタンド",
-  contactDescription: "ご来店のご予約や、各種お問い合わせはこちらから。\n担当者が確認の上、メールにてご返信いたします。",
-  contactReservationUrl: "#",
-  contactEmail: "chasen.ky01@gmail.com",
+  contactDescription: "玉手箱のご利用に事前予約は不要です。\nお席のご予約は店舗ごとの予約案内へ、その他のお問い合わせは会社窓口へご連絡ください。",
+  contactReservationUrl: "https://chasenco.com/reserve",
+  contactEmail: "hello@chasenco.com",
 };
 
 export const defaultSiteSettingsEn: SiteSettings = {
   heroEnglishLabel: "Japanese Tea Stand",
   heroCatchphrase: "Bringing Japanese tea culture into modern everyday life.",
   footerTagline: "Japanese Tea Stand",
-  contactDescription: "For reservations and general inquiries, please use the links below.\nWe will respond by email as soon as possible.",
-  contactReservationUrl: "#",
-  contactEmail: "chasen.ky01@gmail.com",
+  contactDescription: "No advance reservation is required for the Tamatebako sweets.\nFor table bookings, see the arrangements for each shop. For other enquiries, contact our company below.",
+  contactReservationUrl: "https://chasenco.com/en/reserve",
+  contactEmail: "hello@chasenco.com",
 };
 
 export const defaultBrandStory: BrandStoryContent = {
@@ -485,7 +485,7 @@ const kumamoto: StoreContent = {
     area: "Kumamoto",
     address: "〒860-0805 熊本県熊本市中央区桜町3-10 SAKURA MACHI Kumamoto 3F",
     tel: "096-285-9336",
-    hours: "11:00 — 21:00",
+    hours: "11:00 — 22:00",
     closed: "不定休",
     closedEn: "Irregular",
     access: "熊本市電「花畑町」停留場より徒歩約5分",

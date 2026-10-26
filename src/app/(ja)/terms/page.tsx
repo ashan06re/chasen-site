@@ -12,7 +12,7 @@ const defaultMetadata: Metadata = {
 };
 
 // TODO: 正式な事業者名・所在地が確定したら「運営者」セクションに追記する
-const CONTACT_EMAIL = "chasen.ky01@gmail.com";
+const CONTACT_EMAIL = "hello@chasenco.com";
 const UPDATED = "2026年9月2日 制定";
 
 const ja: LegalDocument = {
