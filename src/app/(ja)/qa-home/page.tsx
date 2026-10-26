@@ -1,6 +1,8 @@
 import Header from "@/components/Header";
 import { notFound } from 'next/navigation';
 import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import { BRAND_CHAPTERS } from '@/lib/brandJourney';
 export const metadata = { title: 'CHASEN — local design review', robots: { index: false, follow: false } };
 import ImmersiveHome from "@/components/ImmersiveHome";
 import ContactSection from "@/components/ContactSection";
@@ -31,6 +33,18 @@ export default async function HomeReviewPage() {
     alt: '木箱の甘味と京都の夕景を描いた玉手箱の制作候補',
     altEn: 'A Tamatebako concept image with sweets and an evening Kyoto view',
   } : scene);
+  if (process.env.CHASEN_JOURNEY_REVIEW_DIR) {
+    const reviewDir = process.env.CHASEN_JOURNEY_REVIEW_DIR;
+    const readArt = async (file: string) => `data:image/webp;base64,${(await readFile(join(reviewDir, file))).toString('base64')}`;
+    const [box, sweets, cuisine, background, origin, space] = await Promise.all([
+      'tamatebako-subject.webp', 'sweets-subject.webp', 'cuisine-subject.webp',
+      'tamatebako-background.webp', 'origin-background.webp', 'space-background.webp',
+    ].map(readArt));
+    experience.journey = BRAND_CHAPTERS.map(chapter => ({ ...chapter,
+      subject: chapter.id === 'tamatebako' ? box : chapter.id === 'sweets' ? sweets : chapter.id === 'cuisine' ? cuisine : undefined,
+      background: chapter.id === 'tamatebako' ? background : chapter.id === 'origin' ? origin : chapter.id === 'space' ? space : undefined,
+    }));
+  }
   const kyoto = stores.ja["高台寺店"] || storeContent.kyoto.info;
   const kumamoto = stores.ja["熊本店"] || storeContent.kumamoto.info;
   const reservationUrl = reservation.ja !== "#" ? reservation.ja : undefined;

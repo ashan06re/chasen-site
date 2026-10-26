@@ -1,4 +1,5 @@
 import { CUTS } from './storyScript';
+import type { BrandChapter } from './brandJourney';
 export { imageControls } from './imageFraming';
 
 export const PLACEMENTS = ['入口の物語','湯の物語','窓辺の物語','茶園の物語','一服の物語','京都の店舗パネル','熊本の店舗パネル','ブランドの画像','店舗紹介の見出し'] as const;
@@ -7,6 +8,7 @@ export interface Artwork {
 }
 export interface StoryScene extends Artwork { id: string; label: string; ja: string; en: string; detail: string; detailEn: string }
 export interface Experience {
+  journey?: BrandChapter[];
   scenes: StoryScene[]; kyoto: Artwork; kumamoto: Artwork; brand: Artwork;
   shopHeading: { ja: string; en: string; detail: string; detailEn: string };
 }
