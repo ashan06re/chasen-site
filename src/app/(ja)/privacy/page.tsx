@@ -12,8 +12,8 @@ const defaultMetadata: Metadata = {
 };
 
 // TODO: 正式な事業者名・所在地が確定したら「事業者情報」セクションに追記する
-const CONTACT_EMAIL = "chasen.ky01@gmail.com";
-const UPDATED = "2026年9月2日 制定";
+const CONTACT_EMAIL = "hello@chasenco.com";
+const UPDATED = "2026年10月26日 改定";
 
 const ja: LegalDocument = {
   title: "プライバシーポリシー",
@@ -46,7 +46,7 @@ const ja: LegalDocument = {
     {
       heading: "4. 外部サービスの利用",
       body: [
-        "当店のウェブサイトは、予約フォームに Google フォーム、ホスティングに Vercel、コンテンツ管理に Notion を利用しています。これらのサービスを通じて送信された情報は、各社のプライバシーポリシーに従って取り扱われます。",
+        "当店のウェブサイトは、ホスティングに Vercel、コンテンツ管理に Notion を利用しています。熊本店のネット予約は、当サイトからホットペッパーグルメへご案内しています。これらのサービスを通じて送信された情報は、各社のプライバシーポリシーに従って取り扱われます。",
         "アクセス解析ツールを導入する場合も、個人を特定しない形での統計的な分析に限って利用します。",
       ],
     },
@@ -86,7 +86,7 @@ const ja: LegalDocument = {
 const en: LegalDocument = {
   title: "Privacy Policy",
   label: "Privacy Policy",
-  updated: "Effective September 2, 2026",
+  updated: "Updated October 26, 2026",
   intro:
     "Chasen (“we”, “us”) respects your privacy and handles personal information in accordance with Japan’s Act on the Protection of Personal Information and other applicable laws, based on the policy set out below.",
   sections: [
@@ -113,7 +113,7 @@ const en: LegalDocument = {
     {
       heading: "4. External Services",
       body: [
-        "Our website uses Google Forms for reservations, Vercel for hosting and Notion for content management. Information submitted through these services is handled in accordance with each provider’s privacy policy.",
+        "Our website uses Vercel for hosting and Notion for content management. For online table bookings at our Kumamoto shop, we link to Hot Pepper Gourmet. Information submitted through these services is handled in accordance with each provider’s privacy policy.",
       ],
     },
     {
