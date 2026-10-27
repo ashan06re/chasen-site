@@ -156,12 +156,14 @@ export default function Header({ initialDark = false, reservationUrl, reservatio
       }`}
     >
       <div className="max-w-7xl mx-auto px-5 md:px-6 py-3 md:py-4 flex items-center justify-between gap-3">
-        <Link href={localize("/")} className="flex items-center gap-3 min-h-11 hover:opacity-80 transition-opacity">
+        {/* A real home navigation also cancels a pending contact-anchor animation
+            during hydration or language-layout changes. */}
+        <a href={localize("/")} className="flex items-center gap-3 min-h-11 hover:opacity-80 transition-opacity">
           <div className="w-9 h-9 rounded-full overflow-hidden bg-[#F7F5F0] ring-1 ring-white/30 flex-shrink-0 p-[5px]">
             <Image src="/logo-mark.png" alt="茶筅 Chasen" width={36} height={36} className="object-contain w-full h-full" priority />
           </div>
           <span className="max-[380px]:hidden font-[var(--font-cormorant)] text-[#F7F5F0] text-xl tracking-[0.3em] font-light">Chasen</span>
-        </Link>
+        </a>
 
         {/* Desktop */}
         <nav ref={navRef} className="hidden md:flex items-center gap-9">

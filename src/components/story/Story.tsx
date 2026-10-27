@@ -1,107 +1,77 @@
 "use client";
 
-import dynamic from "next/dynamic";
-import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import Link from "next/link";
+import { useMemo, useState } from "react";
 import { useLang } from "@/lib/langContext";
-import { onScrollFrame, useReducedMotion } from "@/lib/motion";
-import { createStorySignal, cutState, STORY_SCROLL_SVH } from "@/lib/storyScript";
-import { defaultExperience, type StoryScene } from '@/lib/experience';
+import { useReducedMotion } from "@/lib/motion";
+import { defaultExperience, type StoryScene } from "@/lib/experience";
+import DepthPanel from "../DepthPanel";
 
-const DepthCanvas = dynamic(() => import("./DepthCanvas"), { ssr: false });
-const defaults=defaultExperience().scenes;
-const subscribeMobile=(callback:()=>void)=>{const query=window.matchMedia('(max-width: 767px)');query.addEventListener('change',callback);return()=>query.removeEventListener('change',callback);};
-const readMobile=()=>window.matchMedia('(max-width: 767px)').matches;
+const defaults = defaultExperience().scenes;
+const sceneNames: Record<string, { ja: string; en: string }> = {
+  "01": { ja: "高台寺", en: "Kodaiji" },
+  "02": { ja: "お茶", en: "Tea" },
+  "03": { ja: "窓辺", en: "Window" },
+  "04": { ja: "茶畑", en: "Tea garden" },
+  "05": { ja: "玉手箱", en: "Tamatebako" },
+};
 
+/** The product is visible immediately; exploring the story never consumes page scroll. */
 export default function Story({ scenes = defaults, compact = true }: { scenes?: StoryScene[]; compact?: boolean }) {
-  const { lang } = useLang();
+  const { lang, localize } = useLang();
   const en = lang === "en";
   const reduce = useReducedMotion();
-  const mobile=useSyncExternalStore(subscribeMobile,readMobile,()=>false);
-  const frames=useMemo(()=>scenes.map(cut=>({src:cut.src,mobileSrc:cut.mobileSrc,depth:cut.depth,aspect:cut.aspect,motion:cut.motion})),[scenes]);
-  const scrollLength=compact?420:STORY_SCROLL_SVH;
   const [still, setStill] = useState(false);
-  const [active, setActive] = useState(0);
-  const [signal] = useState(createStorySignal);
-  const root = useRef<HTMLElement>(null);
-  const sticky = useRef<HTMLDivElement>(null);
-  const images = useRef<(HTMLImageElement | null)[]>([]);
-  const refresh = useRef(() => {});
-  const flat = still || reduce;
+  const [selectedId, setSelectedId] = useState("05");
+  const ordered = useMemo(() => {
+    const available = scenes.length ? scenes : defaults;
+    const treasure = available.find(scene => scene.id === "05");
+    return treasure ? [treasure, ...available.filter(scene => scene !== treasure)] : available;
+  }, [scenes]);
+  const selected = ordered.find(scene => scene.id === selectedId) ?? ordered[0];
+  const name = (scene: StoryScene) => sceneNames[scene.id]?.[en ? "en" : "ja"] ?? scene.label;
 
-  useEffect(() => {
-    if (flat) return;
-    const section = root.current;
-    const viewport = sticky.current;
-    if (!section || !viewport) return;
-    let lastShown = 0;
-    const update = () => {
-      const travel = section.offsetHeight - viewport.offsetHeight;
-      const progress = Math.max(0, Math.min(1, -section.getBoundingClientRect().top / Math.max(1, travel)));
-      const state = cutState(progress, scenes.length);
-      const preload = (i: number) => {
-        const image = images.current[i];
-        if (image && !image.getAttribute("src")) {
-          if(scenes[i].mobileSrc) image.srcset = `${scenes[i].mobileSrc} 960w, ${scenes[i].src} 1536w`;
-          image.src = scenes[i].src;
-        }
-      };
-      preload(state.a); preload(state.b);
-      if (state.b + 1 < scenes.length && state.t > .3) preload(state.b + 1);
-      const ready = (i: number) => !!images.current[i]?.complete && !!images.current[i]?.naturalWidth;
-      const first = ready(state.a) ? state.a : lastShown;
-      const mix = ready(state.b) && ready(state.a) ? state.mix : 0;
-      const shown = mix > .5 ? state.b : first;
-      images.current.forEach((image, i) => {
-        if (!image) return;
-        image.style.opacity = String(i === first ? 1 : i === state.b ? mix : 0);
-        image.style.zIndex = i === state.b && mix > 0 ? "2" : "1";
-      });
-      lastShown = shown;
-      setActive(shown);
-      viewport.style.setProperty("--story-progress", String(progress));
-      signal.set(progress);
-    };
-    refresh.current = update;
-    const unsubscribe = onScrollFrame(update);
-    const resize = new ResizeObserver(update);
-    resize.observe(section); resize.observe(viewport);
-    return () => { unsubscribe(); resize.disconnect(); refresh.current = () => {}; };
-  }, [flat, signal, scenes]);
-
-  function toggle() {
-    setStill(value => !value);
-    requestAnimationFrame(() => root.current?.scrollIntoView({ behavior: "instant", block: "start" }));
-  }
-
-  if (flat) return <section ref={root} id="story" className="painted-story-static">
-    <div className="editorial-wrap story-static-heading"><p className="eyebrow">THE CHASEN STORY</p><h1>{en ? scenes[0].en : scenes[0].ja}</h1><div className="editorial-actions">{!reduce && <button type="button" onClick={toggle} className="editorial-text-link">{en ? "Resume the immersive story" : "立体の物語に戻る"} ↗</button>}<a className="editorial-text-link" href="#stores">{en ? "Explore our shops" : "店舗・お品書きへ"} ↓</a></div></div>
-    <div className="story-static-grid editorial-wrap">{scenes.map((cut, i) => <figure key={cut.id}>
-      {/* eslint-disable-next-line @next/next/no-img-element -- Same responsive file as WebGL, no second optimizer download. */}
-      <img src={cut.src} srcSet={cut.mobileSrc?`${cut.mobileSrc} 960w, ${cut.src} 1536w`:undefined} sizes="(max-width: 767px) 100vw, 50vw" width={1536} height={1024} alt={en ? cut.altEn : cut.alt} loading={i === 0 ? "eager" : "lazy"} />
-      <figcaption><span>0{i + 1} / {cut.label}</span><p>{en ? cut.en : cut.ja}</p></figcaption>
-    </figure>)}</div>
-  </section>;
-
-  return <section ref={root} id="story" className="painted-story" aria-label={en ? "Chasen, an illustrated scroll story" : "茶筅、背景画でめぐる物語"} style={{ height: `${scrollLength}svh` }}>
-    {scenes.map((cut, i) => <span key={cut.id} id={`scene-${cut.id}`} className="story-anchor" style={{ top: `${(i === 0 ? 0 : (i + .12) / scenes.length) * (scrollLength - 100)}svh` }} />)}
-    <div ref={sticky} className="painted-story-viewport">
-      <div className="painted-story-images" aria-hidden="true">{scenes.map((cut, i) =>
-        /* eslint-disable-next-line @next/next/no-img-element -- HTML first paint and context-loss fallback share WebGL image URLs. */
-        <img key={cut.id} ref={element => { images.current[i] = element; }} src={i < 2 ? cut.src : undefined} srcSet={i < 2 && cut.mobileSrc ? `${cut.mobileSrc} 960w, ${cut.src} 1536w` : undefined} sizes="100vw" alt="" width={1536} height={1024} fetchPriority={i === 0 ? "high" : "auto"} onLoad={() => refresh.current()} style={{ opacity: i === 0 ? 1 : 0 }} />
-      )}</div>
-      <DepthCanvas frames={frames} signal={signal} fit={mobile ? "contain" : "cover"} />
-      <div className="painted-story-shade" aria-hidden="true" />
-      <div className="story-location"><span>KYOTO · KODAIJI</span><span>{en ? "AN ILLUSTRATED TEA JOURNEY" : "一杯をめぐる、小さな旅。"}</span></div>
-      <div className="story-caption-stack">{scenes.map((cut, i) => <div key={cut.id} className="story-caption" data-active={active === i} aria-hidden={active !== i}>
-        <p className="story-kicker">0{i + 1}<span />{cut.label}</p>
-        {i === 0 ? <h1>{en ? cut.en : cut.ja}</h1> : <h2>{en ? cut.en : cut.ja}</h2>}
-        <p className="story-detail">{en ? cut.detailEn : cut.detail}</p>
-      </div>)}</div>
-      <div className="story-controls">
-        <nav aria-label={en ? "Story scenes" : "物語の場面"} className="story-chapters">{scenes.map((cut, i) => <a key={cut.id} href={`#scene-${cut.id}`} aria-label={`${i + 1}. ${en ? cut.en : cut.ja}`} aria-current={active === i ? "step" : undefined}><span className="story-chapter-line" /><span>0{i + 1}</span></a>)}</nav>
-        <div className="story-shortcuts"><button type="button" onClick={toggle}>{en ? "Still view" : "動きを抑えて見る"}</button><a href="#stores">{en ? "Shops & menu" : "店舗・お品書き"}<span aria-hidden="true">↗</span></a></div>
+  return <section id="story" className="product-story" data-compact={compact} aria-labelledby="home-product-title">
+    <div className="product-story-stage" data-landscape={selected.aspect > 1.7}>
+      <div className="product-story-art" id="home-story-art" role="group" aria-label={name(selected)}>
+        <DepthPanel key={selected.id + selected.src} src={selected.src} mobileSrc={selected.mobileSrc}
+          // A rigid product must not bend along an estimated depth map.
+          depthSrc={selected.id === "05" ? undefined : selected.depth}
+          alt={en ? selected.altEn : selected.alt} aspect={selected.aspect}
+          motion={!still && selected.motion} fit="contain" priority />
       </div>
-      <div className="story-progress-track" aria-hidden="true"><span /></div>
+      <div className="product-story-layout editorial-wrap">
+      <div className="product-story-copy">
+        <p className="eyebrow">KYOTO · KUMAMOTO</p>
+        <h1 id="home-product-title">{en ? <>Matcha &amp;<br />Tamatebako sweets.</> : <>抹茶と、<br /><span className="product-story-name">玉手箱スイーツ。</span></>}</h1>
+        <p className="product-story-description">{en ? "A wooden box filled with matcha sweets. A little time to savour, in Kyoto and Kumamoto." : "白木の箱に、抹茶の甘味を盛り合わせて。京都と熊本で、心ほどけるひとときを。"}</p>
+        <p className="product-story-visit">{en ? "Enjoy Tamatebako without an advance reservation." : "玉手箱は、ご予約なしでお楽しみいただけます。"}</p>
+        <div className="product-story-actions">
+          <a className="editorial-button" href="#stores">{en ? "Shops & menus" : "店舗・お品書き"}<span aria-hidden="true">↓</span></a>
+          <Link className="editorial-text-link" href={localize("/reserve")}>{en ? "Table bookings" : "お席の予約案内"}<span aria-hidden="true">↗</span></Link>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div className="product-story-gallery editorial-wrap">
+        <div className="product-story-caption" aria-live="polite" aria-atomic="true">
+          <span>{name(selected)}</span><p>{en ? selected.detailEn : selected.detail}</p>
+        </div>
+        <div className="product-story-controls">
+        <nav className="product-story-scenes" aria-label={en ? "Explore Chasen scenes" : "茶筅の風景を見る"}>
+          {ordered.map(scene => <button key={scene.id} id={`scene-${scene.id}`} type="button"
+            aria-pressed={selected.id === scene.id} aria-controls="home-story-art"
+            onClick={() => setSelectedId(scene.id)}>{name(scene)}</button>)}
+        </nav>
+        {!reduce && <button className="product-story-motion" type="button" aria-pressed={still} onClick={() => setStill(value => !value)}>
+          {en ? (still ? "Restore gentle motion" : "Pause motion") : (still ? "動きを戻す" : "動きを止める")}
+        </button>}
+        </div>
+    </div>
+    <div className="product-story-invitation editorial-wrap">
+      <p className="eyebrow">A BOX OF LITTLE WONDERS</p>
+      <h2>{en ? <>Lift the lid.<br />Take a little time.</> : <>蓋を開けると、<br />ひとときがほどける。</>}</h2>
+      <p>{en ? "Matcha, sweets, and a moment to make your own." : "お茶と甘いものを、少しずつ。\n心ほどける時間を、茶筅で。"}</p>
     </div>
   </section>;
 }

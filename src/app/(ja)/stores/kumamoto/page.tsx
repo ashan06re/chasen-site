@@ -27,13 +27,12 @@ const defaultMetadata: Metadata = {
 
 export default async function KumamotoStorePage() {
   const [newsResult, infoResult, reservationResult, experience] = await Promise.all([
-    getNewsItems("熊本店").catch(() => ({ ja: storeContent.kumamoto.news, en: storeContent.kumamoto.news })),
+    getNewsItems("熊本店").catch(() => ({ ja: [], en: [] })),
     getStoreInfo("熊本店").catch(()  => ({ ja: storeContent.kumamoto.info, en: storeContent.kumamoto.info })),
     getReservationUrls().catch(()     => ({ ja: "#", en: "#" })),
     getExperience(),
   ]);
 
-  const newsEn = newsResult.en.length > 0 ? newsResult.en : storeContent.kumamoto.news;
   const reservationUrl    = reservationResult.ja !== "#" ? reservationResult.ja : undefined;
   const reservationUrlEn  = reservationResult.en !== "#" ? reservationResult.en : undefined;
 
@@ -43,7 +42,7 @@ export default async function KumamotoStorePage() {
       <StorePageLayout
         experience={experience}
         store={{ info: infoResult.ja, news: newsResult.ja }}
-        newsEn={newsEn}
+        newsEn={newsResult.en}
         infoEn={infoResult.en}
         reservationUrl={reservationUrl}
         reservationUrlEn={reservationUrlEn}

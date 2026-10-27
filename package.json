@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "cms:capture": "node scripts/capture-cms.mjs",
+    "cms:verify": "node --test scripts/check-cms-release.mjs",
+    "cms:status": "node scripts/check-release-status.mjs"
   },
   "dependencies": {
     "@notionhq/client": "^2.2.15",

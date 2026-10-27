@@ -1,6 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import { useReducedMotion } from "@/lib/motion";
+import { isSamePageTopLink } from "@/lib/navigationTarget";
 
 /**
  * なめらかスクロール
@@ -18,6 +19,18 @@ export default function SmoothScroll() {
     import("lenis").then(({ default: Lenis }) => {
       if (cancelled) return;
       const lenis = new Lenis({ lerp: 0.14, wheelMultiplier: 1, smoothWheel: true, syncTouch: false, anchors: true });
+      // Cancel an in-flight anchor animation before Next replaces the page.
+      const onNavigate = (event: MouseEvent) => {
+        if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        const link = event.target instanceof Element ? event.target.closest("a") : null;
+        if (!link || link.target === "_blank" || link.hasAttribute("download")) return;
+        const url = new URL(link.href, location.href);
+        if (url.origin === location.origin && url.pathname !== location.pathname) lenis.stop();
+        // The logo can remove #contact without changing pathname. Cancel the
+        // previous anchor animation too, otherwise it pulls the visitor back down.
+        else if (isSamePageTopLink(new URL(location.href), url)) lenis.scrollTo(0, { immediate: true, force: true });
+      };
+      document.addEventListener("click", onNavigate, true);
       let raf = 0;
       const loop = (time: number) => {
         lenis.raf(time);
@@ -26,6 +39,7 @@ export default function SmoothScroll() {
       raf = requestAnimationFrame(loop);
       stop = () => {
         cancelAnimationFrame(raf);
+        document.removeEventListener("click", onNavigate, true);
         lenis.destroy();
       };
     });

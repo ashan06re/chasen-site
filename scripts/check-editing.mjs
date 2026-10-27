@@ -19,8 +19,6 @@ test('desktop WebGL and HTML fill wide, tall and resized viewports without lette
   assert.deepEqual(depthFit(0,NaN,'cover'),[1,1]);
   const css=await readFile(new URL('../src/app/globals.css',import.meta.url),'utf8');
   assert.match(css,/\.painted-story-images img\s*\{[^}]*object-fit:\s*cover/);
-  const story=await readFile(new URL('../src/components/story/Story.tsx',import.meta.url),'utf8');
-  assert.match(story,/<DepthCanvas frames=\{frames\} signal=\{signal\} fit=\{mobile \? "contain" : "cover"\}/);
 });
 
 test('approved paintings resolve by immutable file identity, not CMS row',()=>{
@@ -53,7 +51,7 @@ test('menu layout retains four/two columns and editable 7:5 framing',async()=>{
   assert.match(css,/aspect-ratio:\s*var\(--menu-image-aspect/);
 });
 test('new uploads cannot inherit unrelated depth maps',async()=>{
-  const source=await readFile(new URL('../src/lib/notion.ts',import.meta.url),'utf8');
+  const source=await readFile(new URL('../src/lib/notionDraft.ts',import.meta.url),'utf8');
   assert.match(source,/mobileSrc:undefined, depth:undefined/);
   assert.match(source,/createHash\("sha256"\)/);
 });

@@ -11,9 +11,8 @@ const defaultMetadata: Metadata = {
   alternates: pageAlternates("/privacy", "ja"),
 };
 
-// TODO: 正式な事業者名・所在地が確定したら「事業者情報」セクションに追記する
 const CONTACT_EMAIL = "hello@chasenco.com";
-const UPDATED = "2026年10月26日 改定";
+const UPDATED = "2026年10月27日 改定";
 
 const ja: LegalDocument = {
   title: "プライバシーポリシー",
@@ -25,7 +24,7 @@ const ja: LegalDocument = {
     {
       heading: "1. 取得する情報",
       body: [
-        "当店は、ご予約・お問い合わせの際に、お名前、メールアドレス、電話番号、ご来店希望日時など、対応に必要な範囲の情報を取得します。",
+        "当店は、ご予約・お問い合わせの際に、お名前、メールアドレス、電話番号、ご来店希望日時、人数、お客様が記入したご要望など、対応に必要な範囲の情報を取得します。",
         "また、ウェブサイトのご利用状況を把握するため、アクセスログ・端末情報・Cookie等の情報を取得する場合があります。これらは個人を特定する目的では利用しません。",
       ],
     },
@@ -46,8 +45,9 @@ const ja: LegalDocument = {
     {
       heading: "4. 外部サービスの利用",
       body: [
-        "当店のウェブサイトは、ホスティングに Vercel、コンテンツ管理に Notion を利用しています。熊本店のネット予約は、当サイトからホットペッパーグルメへご案内しています。これらのサービスを通じて送信された情報は、各社のプライバシーポリシーに従って取り扱われます。",
-        "アクセス解析ツールを導入する場合も、個人を特定しない形での統計的な分析に限って利用します。",
+        "当店のウェブサイトは、ホスティングにVercel、コンテンツ管理にNotionを利用しています。京都店の申込みフォームをご利用の場合は、Google Formsで受け付けた情報をNotionの予約台帳とGoogle Driveの処理記録で管理し、担当者への連絡にGoogle Chat、予定管理にGoogle Calendar、お客様との連絡にGmailを利用します。予約情報は対応に必要な担当者が扱い、公開HPには掲載しません。",
+        "熊本店のネット予約はホットペッパーグルメへご案内します。各サービスの情報の取り扱いについては、各社のプライバシーポリシーもご確認ください。",
+        "表示速度の計測にはVercel Speed Insightsを利用しています。アクセス解析を利用する場合は、ウェブサイトの利用状況を把握し改善するために用います。",
       ],
     },
     {
@@ -69,9 +69,12 @@ const ja: LegalDocument = {
       ],
     },
     {
-      heading: "8. お問い合わせ窓口",
+      heading: "8. 事業者情報・お問い合わせ窓口",
       body: [
-        `茶筅（Chasen） 個人情報お問い合わせ窓口　メール: ${CONTACT_EMAIL}`,
+        "事業者名：株式会社ＣＨＡＳＥＮ",
+        "所在地：京都府京都市左京区高野西開町５５番地",
+        "代表者：山崎富紀",
+        `個人情報お問い合わせ窓口　メール: ${CONTACT_EMAIL}`,
       ],
     },
     {
@@ -86,14 +89,14 @@ const ja: LegalDocument = {
 const en: LegalDocument = {
   title: "Privacy Policy",
   label: "Privacy Policy",
-  updated: "Updated October 26, 2026",
+  updated: "Updated October 27, 2026",
   intro:
     "Chasen (“we”, “us”) respects your privacy and handles personal information in accordance with Japan’s Act on the Protection of Personal Information and other applicable laws, based on the policy set out below.",
   sections: [
     {
       heading: "1. Information We Collect",
       body: [
-        "When you make a reservation or contact us, we collect the information needed to respond, such as your name, email address, phone number and preferred visit date and time.",
+        "When you make a reservation or contact us, we collect the information needed to respond, such as your name, email address, phone number, preferred visit date and time, party size and requests you choose to provide.",
         "We may also collect access logs, device information and cookies to understand how our website is used. This information is not used to identify individuals.",
       ],
     },
@@ -113,7 +116,9 @@ const en: LegalDocument = {
     {
       heading: "4. External Services",
       body: [
-        "Our website uses Vercel for hosting and Notion for content management. For online table bookings at our Kumamoto shop, we link to Hot Pepper Gourmet. Information submitted through these services is handled in accordance with each provider’s privacy policy.",
+        "Our website uses Vercel for hosting and Notion for content management. If you use our Kyoto request form, we receive your information through Google Forms and manage it in our Notion reservation register and Google Drive processing records. We use Google Chat to notify the people handling your request, Google Calendar to manage appointments, and Gmail to communicate with you. Reservation information is handled by those who need it to respond and is not published on this website.",
+        "For Kumamoto online bookings, we link to Hot Pepper Gourmet. Please also refer to each provider’s privacy policy for how its service handles information.",
+        "We use Vercel Speed Insights to measure website performance. When we use website analytics, it is to understand usage and improve the website.",
       ],
     },
     {
@@ -135,8 +140,13 @@ const en: LegalDocument = {
       ],
     },
     {
-      heading: "8. Contact",
-      body: [`Chasen — Privacy Inquiries. Email: ${CONTACT_EMAIL}`],
+      heading: "8. Operator and Contact",
+      body: [
+        "Operator (registered Japanese name): 株式会社ＣＨＡＳＥＮ",
+        "Registered address (Japanese): 京都府京都市左京区高野西開町５５番地",
+        "Representative: 山崎富紀",
+        `Privacy inquiries — Email: ${CONTACT_EMAIL}`,
+      ],
     },
     {
       heading: "9. Changes to This Policy",

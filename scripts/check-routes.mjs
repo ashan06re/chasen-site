@@ -6,10 +6,13 @@ const paths = ['', '/news', '/reserve', '/stores/kyoto', '/stores/kyoto/menu', '
 const routes = ['', '/en'].flatMap(prefix => paths.map(path => `${prefix}${path}` || '/'));
 const known = new Set(routes);
 let checkedLinks = 0;
+const documents = new Map();
+const anchors = [];
 for (const route of routes) {
   const response = await fetch(new URL(route, base));
   assert.equal(response.status, 200, route);
   const html = await response.text();
+  documents.set(route, html);
   assert.match(html, new RegExp(`<html[^>]+lang="${route.startsWith('/en') ? 'en' : 'ja'}"`), route);
   assert.equal([...html.matchAll(/<h1\b/g)].length, 1, `${route}: one h1`);
   assert.match(html, /rel="canonical"/, `${route}: canonical`);
@@ -21,12 +24,17 @@ for (const route of routes) {
     const url = new URL(href, new URL(route, base));
     if (url.origin !== new URL(base).origin) continue;
     assert.ok(known.has(url.pathname), `${route}: unknown internal route ${href}`);
-    if (url.pathname === route && url.hash) {
-      assert.ok(html.includes(`id="${decodeURIComponent(url.hash.slice(1))}"`), `${route}: missing anchor ${href}`);
-    }
+    assert.equal(url.pathname.startsWith('/en'), route.startsWith('/en'), `${route}: language lost at ${href}`);
+    if (url.hash) anchors.push({from:route, pathname:url.pathname, hash:decodeURIComponent(url.hash.slice(1)),href});
     checkedLinks++;
   }
   console.log(`PASS ${route}`);
+}
+for (const {from,pathname,hash,href} of anchors) assert.ok(documents.get(pathname)?.includes(`id="${hash}"`), `${from}: missing destination anchor ${href}`);
+for (const home of ['/', '/en']) {
+  const html=documents.get(home);
+  for(const id of ['tamatebako','sweets','cuisine','origin','space']) assert.ok(html.includes(`data-scene="${id}"`), `${home}: new home missing ${id}`);
+  assert.ok(!html.match(/<h1[^>]*>[\s\S]*?<\/h1>/)?.[0].includes('一杯が、点てられるまで。'), `${home}: legacy home returned`);
 }
 for (const id of ['kyoto-artwork', 'kyoto-treasure', 'kyoto-sweets', 'kyoto-interior', 'kyoto-detail']) {
   const response = await fetch(new URL(`/editorial/${id}.webp`, base));
@@ -43,6 +51,10 @@ for (const id of ['01', '02', '03', '04', '05', '06', '02-v2', '05-v3']) {
     await response.arrayBuffer();
   }
 }
+for (const id of ['tamatebako','sweets','cuisine','origin','space']) {
+ const res=await fetch(new URL(`/journey/${id}.webp`,base));assert.equal(res.status,200);assert.match(res.headers.get('content-type')||'',/image\/webp/);await res.arrayBuffer();
+}
+const panelDepth=await fetch(new URL('/story-art/06-entry-v2-depth.webp',base));assert.equal(panelDepth.status,200);await panelDepth.arrayBuffer();
 const brand = await fetch(new URL('/story-art/brand-v1.webp', base));
 assert.equal(brand.status, 200, 'approved painted brand image');
 assert.match(brand.headers.get('content-type') || '', /image\/webp/);

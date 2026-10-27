@@ -5,7 +5,6 @@ import { pageAlternates } from "@/lib/i18n";
 import Footer from "@/components/Footer";
 import NewsPageContent from "@/components/NewsPageContent";
 import { getAllNewsItems } from "@/lib/notion";
-import { brandNewsFallback, type BrandNewsItem } from "@/data/storeContent";
 
 export const revalidate = 60;
 
@@ -22,18 +21,10 @@ const defaultMetadata: Metadata = {
   },
 };
 
-const toEnglish = (items: BrandNewsItem[]): BrandNewsItem[] =>
-  items.map((item) => ({
-    ...item,
-    badge: item.badgeEn ?? item.badge,
-    title: item.titleEn ?? item.title,
-    body:  item.bodyEn  ?? item.body,
-  }));
-
 export default async function NewsPage() {
   const { ja: itemsJa, en: itemsEn } = await getAllNewsItems().catch(() => ({
-    ja: brandNewsFallback,
-    en: toEnglish(brandNewsFallback),
+    ja: [],
+    en: [],
   }));
   return (
     <>

@@ -1,0 +1,497 @@
+{
+  "schema": 1,
+  "revision": "12bbeef5d3f70e32222363cae0dbdc155c52577d99d40c7062af2cfe7bcce71c",
+  "capturedAt": "2026-10-27T07:09:49.359Z",
+  "payload": {
+    "experience": {
+      "journey": [
+        {
+          "id": "tamatebako",
+          "label": "01 / SIGNATURE",
+          "name": "玉手箱",
+          "nameEn": "Tamatebako",
+          "title": "ひらく、玉手箱。\n広がる、抹茶の楽しみ。",
+          "titleEn": "Lift the lid.\nDiscover matcha.",
+          "body": "白木の箱に、抹茶スイーツの楽しみを。\n目で楽しみ、ひとくちずつ味わう、茶筅のひととき。",
+          "bodyEn": "A wooden box of matcha sweets. A little wonder to discover, one delicious bite at a time.",
+          "caption": "玉手箱は、ご予約なしでお楽しみいただけます。",
+          "captionEn": "No advance reservation is required for Tamatebako.",
+          "image": "/api/cms-image/e82ef642cff0640b44ffee6bad62582d6b568b9b350c41c8a27a5f5d0347edbe",
+          "alt": "木箱に盛り合わせた抹茶の甘味と京都の夕景",
+          "altEn": "Matcha sweets in a wooden box against an evening Kyoto view",
+          "motion": true
+        },
+        {
+          "id": "sweets",
+          "label": "02 / MATCHA SWEETS",
+          "name": "抹茶スイーツ",
+          "nameEn": "Matcha sweets",
+          "title": "抹茶の余韻を、\n甘いひとくちに。",
+          "titleEn": "Rich matcha.\nA sweeter moment.",
+          "body": "香り、ほろ苦さ、やさしい甘さ。\n食感まで楽しむ、茶筅の抹茶スイーツ。",
+          "bodyEn": "Fragrance, a gentle bitterness, and sweetness. Discover the textures and pleasures of matcha sweets.",
+          "caption": "スイーツの内容・提供状況は、各店のお品書きへ。",
+          "captionEn": "See each shop’s menu for sweets and availability.",
+          "image": "/api/cms-image/66e76a533bb931634915a80cc87ad1c3cbe668e5e362d6af774d0b3f19437bed",
+          "alt": "ガラスの器に盛った抹茶のかき氷",
+          "altEn": "Matcha shaved ice in a glass bowl",
+          "motion": true
+        },
+        {
+          "id": "cuisine",
+          "label": "03 / DINING",
+          "name": "お料理",
+          "nameEn": "Dining",
+          "title": "甘い時間の前に、\nおいしい一皿を。",
+          "titleEn": "Stay for a meal.\nLinger for sweets.",
+          "body": "お食事から甘味まで、その日の気分に合わせて。\nひとつの席で、茶筅の味わいを。",
+          "bodyEn": "From a satisfying meal to matcha sweets, settle in and enjoy Chasen at your own pace.",
+          "caption": "お料理の内容は店舗によって異なります。",
+          "captionEn": "Dishes vary by location. Explore each shop’s menu.",
+          "image": "/api/cms-image/31f3bd217506f41fdf6c2062bb178446247de60bc5d4a0224e909b29cc9cc816",
+          "alt": "木の器に盛った肉料理",
+          "altEn": "A meat and rice dish in a wooden vessel",
+          "motion": true
+        },
+        {
+          "id": "origin",
+          "label": "04 / YOSHIDA MEICHAEN",
+          "name": "吉田銘茶園",
+          "nameEn": "Our tea origin",
+          "title": "おいしさの背景に、\n宇治のお茶。",
+          "titleEn": "Behind the flavour,\nthe tea of Uji.",
+          "body": "茶筅のお茶を支える、宇治・吉田銘茶園。\n育まれた香りと味わいを、スイーツや一杯のお茶へ。",
+          "bodyEn": "Yoshida Meichaen in Uji is our tea partner. Its tea brings depth and fragrance to the Chasen experience.",
+          "caption": "吉田銘茶園の覆下茶園。",
+          "captionEn": "Yoshida Meichaen’s shaded tea garden.",
+          "image": "/api/cms-image/7aa164b969128372bcc0f14d7aca15f362ed8dc197285a22afec97cb816491e8",
+          "alt": "黒い覆いの下に広がる宇治の茶園",
+          "altEn": "Uji tea rows beneath a shade canopy",
+          "motion": true
+        },
+        {
+          "id": "space",
+          "label": "05 / TIME AT CHASEN",
+          "name": "茶筅の空間",
+          "nameEn": "Time at Chasen",
+          "title": "味わう時間も、\nごちそうに。",
+          "titleEn": "A place to pause.\nA moment to savour.",
+          "body": "京都・高台寺と熊本。\nそれぞれの街で、お料理と抹茶スイーツをゆっくりと。",
+          "bodyEn": "In Kyoto’s Kodaiji neighbourhood and in Kumamoto, make time for good food, matcha sweets, and conversation.",
+          "caption": "高台寺店の窓辺。",
+          "captionEn": "The window counter at Chasen Kodaiji.",
+          "image": "/api/cms-image/56eaee7fb8d81b9cffe237d26843004071ba3860c4127f3584dade73e2faeaf9",
+          "alt": "高台寺店の木のカウンターと青緑の椅子",
+          "altEn": "The Kodaiji interior with a wooden counter and teal chairs",
+          "motion": true
+        }
+      ],
+      "journeyIntro": {
+        "identity": "抹茶スイーツと料理を楽しむ、京都・熊本の茶筅。",
+        "identityEn": "CHASEN / MATCHA SWEETS & DINING",
+        "label": "MATCHA, FOOD & A LITTLE WONDER",
+        "title": "お料理を楽しみ、\n抹茶にときめく。\nそんな一日を、茶筅で。",
+        "titleEn": "For the meal.\nFor the matcha.\nFor the moment.",
+        "body": "宇治のお茶の香りも、甘味の楽しみも。\nひとつの場所で、ゆっくり味わう。",
+        "bodyEn": "The tea of Uji, the pleasure of sweets, and time well spent."
+      },
+      "scenes": [
+        {
+          "id": "01",
+          "label": "ENTRANCE",
+          "ja": "一杯が、点てられるまで。",
+          "en": "The story of a bowl of matcha.",
+          "detail": "京都・高台寺。暖簾の向こうへ。",
+          "detailEn": "Through the curtain, into Chasen Kodaiji.",
+          "src": "/story-art/01.webp",
+          "mobileSrc": "/story-art/01-mobile.webp",
+          "depth": "/story-art/01-depth.webp",
+          "aspect": 1.5,
+          "alt": "京都・高台寺。暖簾の向こうへ。",
+          "altEn": "Through the curtain, into Chasen Kodaiji.",
+          "motion": true
+        },
+        {
+          "id": "02",
+          "label": "WATER",
+          "ja": "湯を落とす。香りがひらく。",
+          "en": "Warm water. A rising fragrance.",
+          "detail": "静かな一杯の、はじまり。",
+          "detailEn": "A quiet ritual begins.",
+          "src": "/story-art/02-v2.webp",
+          "mobileSrc": "/story-art/02-v2-mobile.webp",
+          "depth": "/story-art/02-v2-depth.webp",
+          "aspect": 1.5,
+          "alt": "静かな一杯の、はじまり。",
+          "altEn": "A quiet ritual begins.",
+          "motion": true
+        },
+        {
+          "id": "03",
+          "label": "LIGHT",
+          "ja": "窓辺に、ひと息。",
+          "en": "A pause by the window.",
+          "detail": "木の温もりと、やわらかな光。",
+          "detailEn": "Warm wood, gentle light.",
+          "src": "/story-art/03.webp",
+          "mobileSrc": "/story-art/03-mobile.webp",
+          "depth": "/story-art/03-depth.webp",
+          "aspect": 1.5,
+          "alt": "木の温もりと、やわらかな光。",
+          "altEn": "Warm wood, gentle light.",
+          "motion": true
+        },
+        {
+          "id": "04",
+          "label": "ORIGIN",
+          "ja": "香りをたどって、宇治へ。",
+          "en": "Follow the fragrance to Uji.",
+          "detail": "夕暮れの、覆下の茶園。",
+          "detailEn": "Evening falls over the shaded tea garden.",
+          "src": "/story-art/04.webp",
+          "mobileSrc": "/story-art/04-mobile.webp",
+          "depth": "/story-art/04-depth.webp",
+          "aspect": 1.5,
+          "alt": "夕暮れの、覆下の茶園。",
+          "altEn": "Evening falls over the shaded tea garden.",
+          "motion": true
+        },
+        {
+          "id": "05",
+          "label": "A MOMENT",
+          "ja": "一服に、心ほどける。",
+          "en": "A moment to savour.",
+          "detail": "お茶と甘いもの。その先の、特別な時間。",
+          "detailEn": "Tea, sweets, and a moment just for you.",
+          "src": "/story-art/05-v3.webp",
+          "mobileSrc": "/story-art/05-v3-mobile.webp",
+          "depth": "/story-art/05-v3-depth.webp",
+          "aspect": 1.5,
+          "alt": "お茶と甘いもの。その先の、特別な時間。",
+          "altEn": "Tea, sweets, and a moment just for you.",
+          "motion": true
+        }
+      ],
+      "kyoto": {
+        "src": "/story-art/03.webp",
+        "mobileSrc": "/story-art/03-mobile.webp",
+        "depth": "/story-art/03-depth.webp",
+        "aspect": 1.5,
+        "alt": "高台寺店の窓辺を描いた背景画",
+        "altEn": "A painted view of Kodaiji’s window counter",
+        "motion": true
+      },
+      "kumamoto": {
+        "src": "/story-art/06-entry-v2.webp",
+        "mobileSrc": "/story-art/06-entry-v2-mobile.webp",
+        "depth": "/story-art/06-entry-v2-depth.webp",
+        "aspect": 1.5,
+        "alt": "暖簾と木の回廊を描いた茶筅のイメージ画",
+        "altEn": "A Chasen illustration of a wooden passage and noren curtains",
+        "motion": true
+      },
+      "brand": {
+        "src": "/story-art/brand-v1.webp",
+        "aspect": 1.4299332697807436,
+        "alt": "茶筅の印が入った木枡を描いた絵",
+        "altEn": "A painting of Chasen’s wooden masu boxes",
+        "motion": false
+      },
+      "shopHeading": {
+        "ja": "この続きは、\nお店で。",
+        "en": "Two places.\nOne Chasen moment.",
+        "detail": "京都と熊本。\nそれぞれの街で、お茶と甘いものを。",
+        "detailEn": "Kyoto and Kumamoto.\nFind your place for tea and sweets."
+      }
+    },
+    "appearance": {
+      "menuAspect": "7 / 5",
+      "priceNote": "",
+      "operator": "茶筅 Chasen",
+      "compact": true,
+      "artNote": "物語の背景画は、店舗と商品をもとにしたイメージです。商品については各店のお品書きをご覧ください。",
+      "artNoteEn": "Story illustrations are inspired by our shops and sweets. See each shop’s menu for product details."
+    },
+    "news": {
+      "ja": [],
+      "en": []
+    },
+    "brand": {
+      "ja": {
+        "catchphrase": "心ほどける、",
+        "catchphraseHighlight": "和のひとときを。",
+        "body1": "茶筅（CHASEN）は、京都・高台寺と熊本・SAKURA MACHI Kumamotoに店舗を構える、和の味わいを楽しめる一軒です。京都の風情や日本の美意識を大切にしながら、厳選した茶葉を使用したドリンク、こだわりの甘味、お料理をご用意しています。",
+        "body2": "歴史ある街並みに寄り添う京都、賑わいの中に和の趣が息づく熊本。それぞれの街の魅力とともに、訪れる皆さまへ心安らぐひとときをお届けします。",
+        "body3": "「茶筅」という名には、日本のお茶文化や和の味わいを、もっと身近に、もっと気軽に楽しんでいただきたいという想いを込めています。"
+      },
+      "en": {
+        "catchphrase": "Taste Japan.",
+        "catchphraseHighlight": "Find Peace.",
+        "body1": "CHASEN offers Japanese-inspired sweets, dishes, and tea beverages in Kyoto’s Kodaiji area and SAKURA MACHI Kumamoto.",
+        "body2": "Rooted in Japanese aesthetics, we bring together selected tea leaves, refined sweets, and carefully prepared dishes in a warm, welcoming space.",
+        "body3": "Our name reflects our wish to make Japanese tea culture and the beauty of Japanese flavors feel closer to everyday life."
+      }
+    },
+    "tea": {
+      "ja": {
+        "label": "Our Tea Partner",
+        "nameJa": "吉田\n銘茶\n園",
+        "nameEn": "Yoshida Meichaen",
+        "intro": "茶葉のほとんどを、信頼できる生産者・吉田銘茶園から仕入れています。土地と向き合い続ける農家と、職人の手仕事が融合した茶葉だけを選び抜き、茶筅の一品に込めています。産地への敬意が、味わいに宿ります。"
+      },
+      "en": {
+        "label": "Our Tea Partner",
+        "nameJa": "吉田\n銘茶\n園",
+        "nameEn": "Yoshida Meichaen",
+        "intro": "Most of our tea leaves are sourced from Yoshida Meichaen, a trusted tea producer. Carefully selected and crafted with respect for tradition, every cup reflects the dedication behind each leaf."
+      }
+    },
+    "site": {
+      "ja": {
+        "heroEnglishLabel": "Japanese Tea Stand",
+        "heroCatchphrase": "日本の茶文化を、現代の日常へ。",
+        "footerTagline": "玉手箱と抹茶スイーツ、お料理",
+        "contactDescription": "玉手箱のご利用に事前予約は不要です。\nお席のご予約は店舗ごとの予約案内へ、その他のお問い合わせは会社窓口へご連絡ください。",
+        "contactReservationUrl": "https://chasenco.com/reserve",
+        "contactEmail": "hello@chasenco.com"
+      },
+      "en": {
+        "heroEnglishLabel": "Japanese Tea Stand",
+        "heroCatchphrase": "Bringing Japanese tea culture into modern everyday life.",
+        "footerTagline": "Tamatebako, Matcha Sweets & Dining",
+        "contactDescription": "No advance reservation is required for the Tamatebako sweets.\nFor table bookings, see the arrangements for each shop. For other enquiries, contact our company below.",
+        "contactReservationUrl": "https://chasenco.com/en/reserve",
+        "contactEmail": "hello@chasenco.com"
+      }
+    },
+    "booking": [
+      {
+        "store": "高台寺店",
+        "mode": "電話・お問い合わせ",
+        "note": "玉手箱のご利用に事前予約は不要です。お席のご予約や空席については、店舗へお電話ください。",
+        "noteEn": "No advance reservation is required for the Tamatebako sweets. Please call the shop for table bookings and availability."
+      },
+      {
+        "store": "熊本店",
+        "mode": "外部予約サイト",
+        "note": "玉手箱のご利用に事前予約は不要です。お席のご予約はホットペッパーグルメで承ります。空席・受付条件は予約先のページでご確認ください。お電話でのお問い合わせも承っています。",
+        "noteEn": "No advance reservation is required for the Tamatebako sweets. Book a table through Hot Pepper Gourmet (Japanese), where you can check availability and booking conditions. You can also call the shop with enquiries.",
+        "url": "https://www.hotpepper.jp/strJ004049475/yoyaku/",
+        "urlEn": "https://www.hotpepper.jp/strJ004049475/yoyaku/"
+      }
+    ],
+    "stores": {
+      "ja": {
+        "高台寺店": {
+          "slug": "kyoto",
+          "name": "Chasen 高台寺店",
+          "nameJa": "Chasen 高台寺",
+          "nameEn": "Chasen Kodaiji",
+          "area": "Kyoto",
+          "address": "〒605-0825 京都府京都市東山区下河原町高台寺境内",
+          "tel": "075-366-5905",
+          "hours": "11:00 — 22:00",
+          "closed": "不定休",
+          "closedEn": "Irregular",
+          "access": "京阪「祇園四条」駅より徒歩約15分",
+          "accessEn": "Approx. 15 min walk from Keihan 'Gion-Shijo' Station",
+          "description": "京都・高台寺の境内、石畳の路地に静かに佇む一軒。\n歴史と自然が調和するこの場所で、日常を少し忘れられるような、穏やかなひとときをお届けします。厳選した茶葉を使用したドリンクと、こだわりの甘味・お料理をご用意。京都散策の途中に、心ほどけるひと休みをお楽しみください。",
+          "descriptionEn": "Enjoy Tamatebako, matcha sweets and dining at Chasen Kodaiji in Kyoto, featuring matcha from Yoshida Meichaen. Take a moment to unwind during your visit to Kyoto.",
+          "accentColor": "#2A4D25",
+          "instagram": "https://www.instagram.com/chasen_french_kodaiji/"
+        },
+        "熊本店": {
+          "slug": "kumamoto",
+          "name": "Chasen 熊本店",
+          "nameJa": "Chasen 熊本",
+          "nameEn": "Chasen Kumamoto",
+          "area": "Kumamoto",
+          "address": "〒860-0805 熊本県熊本市中央区桜町3-10 SAKURA MACHI Kumamoto 3F",
+          "tel": "096-285-9336",
+          "hours": "11:00 — 22:00",
+          "closed": "不定休",
+          "closedEn": "Irregular",
+          "access": "熊本市電「花畑町」停留場より徒歩約5分",
+          "accessEn": "Approx. 5 min walk from Kumamoto City Tram 'Hanabata-machi' Stop",
+          "description": "熊本・SAKURA MACHI Kumamotoの賑わいの中にありながら、京都を思わせる和の趣を感じられる一軒。\n現代的な感性を取り入れた空間で、厳選した茶葉を使用したドリンクや、こだわりの甘味・お料理をご提供しています。地元の方にも、熊本を訪れる旅人にも、気軽に立ち寄り、心ほどけるひとときをお過ごしいただける場所を目指しています。",
+          "descriptionEn": "Enjoy matcha sweets, dining and Japanese tea at Chasen in SAKURA MACHI Kumamoto, in a space inspired by Kyoto. Whether you are a local or visiting Kumamoto, stop in and unwind.",
+          "accentColor": "#1A1A18",
+          "instagram": "https://www.instagram.com/chasen_cafe_kumamoto/"
+        }
+      },
+      "en": {
+        "高台寺店": {
+          "slug": "kyoto",
+          "name": "Chasen Kodaiji",
+          "nameJa": "茶筅 高台寺",
+          "nameEn": "Chasen Kodaiji",
+          "area": "Kyoto",
+          "address": "Within the grounds of Kodaiji Temple, Shimokawara-cho, Higashiyama-ku, Kyoto 605-0825, Japan",
+          "tel": "075-366-5905",
+          "hours": "11:00 — 22:00",
+          "closed": "Irregular",
+          "closedEn": "Irregular",
+          "access": "Approx. 15 min walk from Keihan 'Gion-Shijo' Station",
+          "accessEn": "Approx. 15 min walk from Keihan 'Gion-Shijo' Station",
+          "description": "Surrounded by the harmony of history and nature, we offer a peaceful retreat where you can step away from the bustle of everyday life. Enjoy our carefully crafted tea beverages made with selected tea leaves, along with a selection of artisanal Japanese sweets and thoughtfully prepared dishes. Whether you’re exploring Kyoto or simply taking a moment to unwind, we invite you to relax and savor a truly tranquil experience.",
+          "descriptionEn": "Enjoy Tamatebako, matcha sweets and dining at Chasen Kodaiji in Kyoto, featuring matcha from Yoshida Meichaen. Take a moment to unwind during your visit to Kyoto.",
+          "accentColor": "#2A4D25",
+          "instagram": "https://www.instagram.com/chasen_french_kodaiji/"
+        },
+        "熊本店": {
+          "slug": "kumamoto",
+          "name": "Chasen Kumamoto",
+          "nameJa": "茶筅 熊本",
+          "nameEn": "Chasen Kumamoto",
+          "area": "Kumamoto",
+          "address": "3F, SAKURA MACHI Kumamoto, 3-10 Sakuramachi, Chuo-ku, Kumamoto 860-0805, Japan",
+          "tel": "096-285-9336",
+          "hours": "11:00 — 22:00",
+          "closed": "Irregular",
+          "closedEn": "Irregular",
+          "access": "Approx. 5 min walk from Kumamoto City Tram 'Hanabata-machi' Stop",
+          "accessEn": "Approx. 5 min walk from Kumamoto City Tram 'Hanabata-machi' Stop",
+          "description": "Nestled within the vibrant atmosphere of SAKURA MACHI Kumamoto, our café offers a refined space inspired by the timeless elegance of Kyoto.\nIn a contemporary setting infused with traditional Japanese aesthetics, we serve carefully crafted tea beverages made from selected tea leaves, along with thoughtfully prepared Japanese sweets and dishes. Whether you are a local resident or a traveler exploring Kumamoto, we invite you to stop by, unwind, and enjoy a peaceful moment with us.",
+          "descriptionEn": "Enjoy matcha sweets, dining and Japanese tea at Chasen in SAKURA MACHI Kumamoto, in a space inspired by Kyoto. Whether you are a local or visiting Kumamoto, stop in and unwind.",
+          "accentColor": "#1A1A18",
+          "instagram": "https://www.instagram.com/chasen_cafe_kumamoto/"
+        }
+      }
+    },
+    "menus": {
+      "高台寺店": {
+        "published": false,
+        "sections": {
+          "ja": [],
+          "en": []
+        }
+      },
+      "熊本店": {
+        "published": false,
+        "sections": {
+          "ja": [],
+          "en": []
+        }
+      }
+    },
+    "seo": {
+      "利用規約": {
+        "ja": {
+          "title": "サイトのご利用について | 茶筅 Chasen",
+          "description": "茶筅 Chasen ウェブサイトのご利用条件・免責事項・著作権について。"
+        },
+        "en": {
+          "title": "Terms of Use | Chasen",
+          "description": "Terms of use, disclaimer and copyright for the Chasen website."
+        }
+      },
+      "プライバシーポリシー": {
+        "ja": {
+          "title": "プライバシーポリシー | 茶筅 Chasen",
+          "description": "茶筅 Chasen における個人情報の取り扱いについて。"
+        },
+        "en": {
+          "title": "Privacy Policy | Chasen",
+          "description": "How Chasen handles personal information."
+        }
+      },
+      "ご予約": {
+        "ja": {
+          "title": "ご予約のご案内 | 茶筅 Chasen",
+          "description": "茶筅 高台寺店・熊本店のご予約案内。店舗ごとの受付方法、お電話、お品書き、予約の変更・キャンセルについてご確認いただけます。"
+        },
+        "en": {
+          "title": "Reservations | Chasen",
+          "description": "Book your next Chasen moment in Kyoto or Kumamoto. Find shop-specific booking options, phone numbers, menus and guidance for changes or cancellations."
+        }
+      },
+      "お知らせ": {
+        "ja": {
+          "title": "お知らせ | 茶筅 Chasen",
+          "description": "茶筅 Chasen のブランド全体のお知らせ・イベント情報をご覧いただけます。"
+        },
+        "en": {
+          "title": "News | Chasen",
+          "description": "News, events and announcements from Chasen in Kyoto and Kumamoto, where matcha sweets and dining meet Japanese tea."
+        }
+      },
+      "熊本のお品書き": {
+        "ja": {
+          "title": "Chasen 熊本店 メニュー | 茶筅 Chasen",
+          "description": "Chasen 熊本店のお品書きのご案内。掲載準備中の内容や現在の提供状況は店舗へお問い合わせください。"
+        },
+        "en": {
+          "title": "Menu — Chasen Kumamoto | Chasen",
+          "description": "Menu information for Chasen Kumamoto. Please contact the shop for current availability while the online menu is being prepared."
+        }
+      },
+      "熊本の店舗案内": {
+        "ja": {
+          "title": "Chasen 熊本店 | 茶筅 Chasen",
+          "description": "熊本・SAKURA MACHI Kumamotoで抹茶スイーツとお料理、日本茶を楽しむ茶筅。営業時間・アクセス・ご予約のご案内。"
+        },
+        "en": {
+          "title": "Chasen Kumamoto | Chasen",
+          "description": "Enjoy matcha sweets, dining and Japanese tea at Chasen in SAKURA MACHI Kumamoto. Find opening hours, directions and reservation information."
+        }
+      },
+      "高台寺のお品書き": {
+        "ja": {
+          "title": "Chasen 高台寺店 メニュー | 茶筅 Chasen",
+          "description": "Chasen 高台寺店のお品書きのご案内。掲載準備中の内容や現在の提供状況は店舗へお問い合わせください。"
+        },
+        "en": {
+          "title": "Menu — Chasen Kodaiji, Kyoto | Chasen",
+          "description": "Menu information for Chasen Kodaiji, Kyoto. Please contact the shop for current availability while the online menu is being prepared."
+        }
+      },
+      "高台寺の店舗案内": {
+        "ja": {
+          "title": "Chasen 高台寺店 | 茶筅 Chasen",
+          "description": "京都・高台寺の茶筅で、玉手箱や抹茶スイーツ、お料理を。吉田銘茶園の抹茶とともに楽しむひととき。営業時間・アクセス・ご予約のご案内。"
+        },
+        "en": {
+          "title": "Chasen Kodaiji, Kyoto | Chasen",
+          "description": "Discover Tamatebako, matcha sweets and dining at Chasen Kodaiji in Kyoto, featuring matcha from Yoshida Meichaen. Find opening hours, directions and reservation information."
+        }
+      },
+      "ホーム": {
+        "ja": {
+          "title": "茶筅 Chasen｜玉手箱と抹茶スイーツ・お料理",
+          "description": "玉手箱、抹茶スイーツ、お料理を楽しむ茶筅 Chasen。吉田銘茶園の抹茶と、京都・高台寺と熊本それぞれの空間をご紹介します。"
+        },
+        "en": {
+          "title": "Chasen | Tamatebako, Matcha Sweets & Dining",
+          "description": "Discover Tamatebako, matcha sweets and dining at Chasen in Kyoto and Kumamoto, featuring matcha from Yoshida Meichaen."
+        }
+      }
+    }
+  },
+  "assets": {
+    "e82ef642cff0640b44ffee6bad62582d6b568b9b350c41c8a27a5f5d0347edbe": {
+      "file": "e82ef642cff0640b44ffee6bad62582d6b568b9b350c41c8a27a5f5d0347edbe.webp",
+      "contentType": "image/webp",
+      "bytes": 256106
+    },
+    "66e76a533bb931634915a80cc87ad1c3cbe668e5e362d6af774d0b3f19437bed": {
+      "file": "66e76a533bb931634915a80cc87ad1c3cbe668e5e362d6af774d0b3f19437bed.png",
+      "contentType": "image/png",
+      "bytes": 2191552
+    },
+    "31f3bd217506f41fdf6c2062bb178446247de60bc5d4a0224e909b29cc9cc816": {
+      "file": "31f3bd217506f41fdf6c2062bb178446247de60bc5d4a0224e909b29cc9cc816.webp",
+      "contentType": "image/webp",
+      "bytes": 252694
+    },
+    "7aa164b969128372bcc0f14d7aca15f362ed8dc197285a22afec97cb816491e8": {
+      "file": "7aa164b969128372bcc0f14d7aca15f362ed8dc197285a22afec97cb816491e8.png",
+      "contentType": "image/png",
+      "bytes": 4195120
+    },
+    "56eaee7fb8d81b9cffe237d26843004071ba3860c4127f3584dade73e2faeaf9": {
+      "file": "56eaee7fb8d81b9cffe237d26843004071ba3860c4127f3584dade73e2faeaf9.png",
+      "contentType": "image/png",
+      "bytes": 2707489
+    }
+  }
+}

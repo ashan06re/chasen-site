@@ -11,9 +11,8 @@ const defaultMetadata: Metadata = {
   alternates: pageAlternates("/terms", "ja"),
 };
 
-// TODO: 正式な事業者名・所在地が確定したら「運営者」セクションに追記する
 const CONTACT_EMAIL = "hello@chasenco.com";
-const UPDATED = "2026年10月26日 改定";
+const UPDATED = "2026年10月27日 改定";
 
 const ja: LegalDocument = {
   title: "サイトのご利用について",
@@ -47,7 +46,10 @@ const ja: LegalDocument = {
     {
       heading: "4. ご予約について",
       body: [
-        "お席のご予約は、当サイトの予約案内ページに記載した各店舗の電話・外部予約サイトで承ります。ご予約の成立、変更、キャンセルの取り扱いは、各店舗・予約先のご案内に従います。",
+        "お席のご予約は、予約案内ページに記載した店舗ごとの受付先をご利用ください。玉手箱をお楽しみいただくための事前予約は必須ではありません。",
+        "京都店の申込みフォームをご案内している場合、フォームの送信だけでは予約は確定しません。店舗で空席を確認し、確定のメールをお送りした時点で成立します。通常のフォーム受付は日本時間6:00〜22:00未満、回答は12時間以内を目安としています。停止中やお急ぎの場合は店舗へお電話ください。",
+        "京都店のフォームで申し込んだ予約の変更・取消は、店舗からのメールへ返信するか、お急ぎの場合は店舗へお電話ください。変更は空席を再確認してご案内します。新しいフォームの送信だけでは元の予約は変更・取消されません。",
+        "熊本店のホットペッパーグルメ経由の予約は、予約先の確定・変更・取消の案内に従ってください。",
       ],
     },
     {
@@ -69,8 +71,13 @@ const ja: LegalDocument = {
       ],
     },
     {
-      heading: "8. お問い合わせ",
-      body: [`茶筅（Chasen）　メール: ${CONTACT_EMAIL}`],
+      heading: "8. 運営者情報・お問い合わせ",
+      body: [
+        "運営者：株式会社ＣＨＡＳＥＮ",
+        "所在地：京都府京都市左京区高野西開町５５番地",
+        "代表者：山崎富紀",
+        `メール: ${CONTACT_EMAIL}`,
+      ],
     },
   ],
 };
@@ -78,7 +85,7 @@ const ja: LegalDocument = {
 const en: LegalDocument = {
   title: "Terms of Use",
   label: "Terms of Use",
-  updated: "Updated October 26, 2026",
+  updated: "Updated October 27, 2026",
   intro:
     "These terms govern your use of the website operated by Chasen (“the Site”). By using the Site, you are deemed to have agreed to these terms.",
   sections: [
@@ -106,7 +113,10 @@ const en: LegalDocument = {
     {
       heading: "4. Reservations",
       body: [
-        "Table bookings are accepted by phone or through the external booking service listed for each shop on our reservations page. Confirmation, changes and cancellations follow the guidance of the shop and booking service.",
+        "Please use the booking channel listed for your shop on our reservations page. Advance booking is not required to enjoy Tamatebako.",
+        "When a Kyoto request form is offered, submitting it does not confirm a reservation. Your reservation is confirmed when the shop checks availability and sends you a confirmation email. The form normally accepts requests from 06:00 until before 22:00 Japan time, and we aim to respond within 12 hours. Please call the shop if the form is paused or your request is urgent.",
+        "To change or cancel a Kyoto form reservation, reply to the shop’s email or call the shop for urgent requests. Changes are subject to another availability check. Submitting a new form does not change or cancel an existing reservation.",
+        "For Kumamoto bookings made through Hot Pepper Gourmet, follow the confirmation, change and cancellation instructions provided by that service.",
       ],
     },
     {
@@ -126,8 +136,13 @@ const en: LegalDocument = {
       ],
     },
     {
-      heading: "8. Contact",
-      body: [`Chasen — Email: ${CONTACT_EMAIL}`],
+      heading: "8. Operator and Contact",
+      body: [
+        "Operator (registered Japanese name): 株式会社ＣＨＡＳＥＮ",
+        "Registered address (Japanese): 京都府京都市左京区高野西開町５５番地",
+        "Representative: 山崎富紀",
+        `Email: ${CONTACT_EMAIL}`,
+      ],
     },
   ],
 };

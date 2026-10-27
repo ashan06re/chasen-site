@@ -16,9 +16,10 @@ interface Props {
   style?: CSSProperties;
   /** 傾きの強さ（度）。写真主体のカードは小さめが合う */
   maxTilt?: number;
+  disabled?: boolean;
 }
 
-export default function TiltCard({ children, className = "", style, maxTilt = 5 }: Props) {
+export default function TiltCard({ children, className = "", style, maxTilt = 5, disabled = false }: Props) {
   const reduce = useReducedMotion();
   const outerRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
@@ -29,7 +30,7 @@ export default function TiltCard({ children, className = "", style, maxTilt = 5 
     const inner = innerRef.current;
     const sheen = sheenRef.current;
     if (!outer || !inner || !sheen) return;
-    if (reduce || !hasFinePointer()) return;
+    if (disabled || reduce || !hasFinePointer()) return;
 
     let frame = 0;
     let target = { x: 0, y: 0, on: 0 };
@@ -89,7 +90,7 @@ export default function TiltCard({ children, className = "", style, maxTilt = 5 
       if (frame) cancelAnimationFrame(frame);
       inner.style.transform = ""; inner.style.boxShadow = ""; sheen.style.opacity = "0";
     };
-  }, [maxTilt, reduce]);
+  }, [maxTilt, reduce, disabled]);
 
   return (
     <div ref={outerRef} className={className} style={{ ...style, perspective: "900px" }}>

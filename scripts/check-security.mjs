@@ -15,10 +15,13 @@ for (const path of ['/', '/en', '/reserve', '/stores/kyoto/menu']) {
   await response.text();
 }
 for (const [path, expected] of [
-  ['/api/notion-image/not-a-page/0/image', 400],
+  ['/api/notion-image/not-a-page/0/image', 404],
   ['/api/notion-image/00000000-0000-0000-0000-000000000000/0/private-field', 404],
-  ['/api/notion-image/00000000-0000-0000-0000-000000000000/0/%E7%94%BB%E5%83%8F/invalid-revision', 400],
+  ['/api/notion-image/00000000-0000-0000-0000-000000000000/0/%E7%94%BB%E5%83%8F/invalid-revision', 404],
+  ['/api/cms-image/' + '0'.repeat(64), 404],
   ['/qa-depth', 404],
+  ['/qa-home', 404],
+  ['/en/qa-home', 404],
 ]) {
   const response = await fetch(new URL(path, base));
   assert.equal(response.status, expected, path);

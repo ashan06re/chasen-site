@@ -65,7 +65,7 @@ export default function StorePageLayout({
   const tx = t[lang];
   const { info } = store;
   const currentInfo = lang === "en" && infoEn ? infoEn : info;
-  const news = lang === "en" && newsEn && newsEn.length > 0 ? newsEn : store.news;
+  const news = lang === "en" ? (newsEn ?? []) : store.news;
 
   const tel = (lang === "en" ? infoEn?.tel : info.tel) ?? info.tel;
   const instagram = currentInfo.instagram || info.instagram || INSTAGRAM[info.slug];
