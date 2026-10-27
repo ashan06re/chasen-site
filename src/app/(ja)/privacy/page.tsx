@@ -11,7 +11,6 @@ const defaultMetadata: Metadata = {
   alternates: pageAlternates("/privacy", "ja"),
 };
 
-// TODO: 正式な事業者名・所在地が確定したら「事業者情報」セクションに追記する
 const CONTACT_EMAIL = "hello@chasenco.com";
 const UPDATED = "2026年10月27日 改定";
 
@@ -70,9 +69,12 @@ const ja: LegalDocument = {
       ],
     },
     {
-      heading: "8. お問い合わせ窓口",
+      heading: "8. 事業者情報・お問い合わせ窓口",
       body: [
-        `茶筅（Chasen） 個人情報お問い合わせ窓口　メール: ${CONTACT_EMAIL}`,
+        "事業者名：株式会社ＣＨＡＳＥＮ",
+        "所在地：京都府京都市左京区高野西開町５５番地",
+        "代表者：山崎富紀",
+        `個人情報お問い合わせ窓口　メール: ${CONTACT_EMAIL}`,
       ],
     },
     {
@@ -138,8 +140,13 @@ const en: LegalDocument = {
       ],
     },
     {
-      heading: "8. Contact",
-      body: [`Chasen — Privacy Inquiries. Email: ${CONTACT_EMAIL}`],
+      heading: "8. Operator and Contact",
+      body: [
+        "Operator (registered Japanese name): 株式会社ＣＨＡＳＥＮ",
+        "Registered address (Japanese): 京都府京都市左京区高野西開町５５番地",
+        "Representative: 山崎富紀",
+        `Privacy inquiries — Email: ${CONTACT_EMAIL}`,
+      ],
     },
     {
       heading: "9. Changes to This Policy",
