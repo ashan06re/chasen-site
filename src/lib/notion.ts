@@ -259,7 +259,7 @@ export async function getAllNewsItems(): Promise<{ ja: BrandNewsItem[]; en: Bran
     database_id: NEWS_DB_ID,
     filter: { property: "表示する", checkbox: { equals: true } },
     sorts: [{ property: "日付", direction: "descending" }],
-  });
+  }, true);
 
   const ja: BrandNewsItem[] = [];
   const en: BrandNewsItem[] = [];
@@ -314,8 +314,8 @@ export async function getBrandStory(): Promise<{ ja: BrandStoryContent; en: Bran
     }
 
     return {
-      ja: ja ?? defaultBrandStory,
-      en: en ?? defaultBrandStoryEn,
+      ja: ja ?? { ...defaultBrandStory, visible: false },
+      en: en ?? { ...defaultBrandStoryEn, visible: false },
     };
   } catch {
     return { ja: defaultBrandStory, en: defaultBrandStoryEn };
@@ -349,8 +349,8 @@ export async function getYoshidaSettings(): Promise<{ ja: YoshidaSettings; en: Y
     }
 
     return {
-      ja: ja ?? defaultYoshidaSettings,
-      en: en ?? defaultYoshidaSettingsEn,
+      ja: ja ?? { ...defaultYoshidaSettings, visible: false },
+      en: en ?? { ...defaultYoshidaSettingsEn, visible: false },
     };
   } catch {
     return { ja: defaultYoshidaSettings, en: defaultYoshidaSettingsEn };
@@ -505,7 +505,8 @@ export async function getNewsItems(
         { property: "表示する", checkbox: { equals: true } },
       ],
     },
-  });
+    sorts: [{ property: "日付", direction: "descending" }],
+  }, true);
 
   const ja: NewsItem[] = [];
   const en: NewsItem[] = [];

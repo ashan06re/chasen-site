@@ -382,6 +382,8 @@ html {
 }
 
 :focus-visible { outline: 2px solid #B8A882; outline-offset: 5px; }
+/* This section is an anchor destination, not an interactive control. */
+#stores[tabindex="-1"]:focus { outline: none; }
 html[lang="en"] { overflow-wrap: break-word; }
 /* Small screens keep the scene readable as a photographic frame, not a narrow crop. */
 @media (max-width: 767px) {

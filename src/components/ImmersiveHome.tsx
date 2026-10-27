@@ -39,9 +39,11 @@ export default function ImmersiveHome({ kyoto, kumamoto, kyotoEn, kumamotoEn, br
       </article>)}</div>
       <p className="story-art-note">{en ? appearance.artNoteEn : appearance.artNote}</p>
     </section>
-    <section id="brand" className="immersive-brand editorial-wrap">
+    <section id="brand" className={story.visible === false ? "" : "immersive-brand editorial-wrap"}>
+      {story.visible !== false && <>
       <div className="immersive-brand-heading"><p className="eyebrow">TEA, WITH A LITTLE WONDER.</p><h2>{story.catchphrase}<br />{story.catchphraseHighlight}</h2></div>
-      <div className="immersive-brand-body"><div className="brand-masu"><Image src={experience.brand.src} alt={en ? experience.brand.altEn : experience.brand.alt} width={700} height={500} sizes="(max-width: 767px) 90vw, 32vw" className="object-cover" /></div><div><p className="editorial-body">{story.body1}</p><details className="editorial-details"><summary>{en ? "Chasen & our tea" : "茶筅と、お茶のこと"}<span aria-hidden="true">＋</span></summary><div className="editorial-body"><p>{story.body2}</p><p>{story.body3}</p><h3>{en ? teaStory.nameEn : teaStory.nameJa}</h3><p>{teaStory.intro}</p></div></details></div></div>
+      <div className="immersive-brand-body"><div className="brand-masu"><Image src={experience.brand.src} alt={en ? experience.brand.altEn : experience.brand.alt} width={700} height={500} sizes="(max-width: 767px) 90vw, 32vw" className="object-cover" /></div><div><p className="editorial-body">{story.body1}</p><details className="editorial-details"><summary>{en ? "Chasen & our tea" : "茶筅と、お茶のこと"}<span aria-hidden="true">＋</span></summary><div className="editorial-body"><p>{story.body2}</p><p>{story.body3}</p>{teaStory.visible !== false && <><h3>{en ? teaStory.nameEn : teaStory.nameJa}</h3><p>{teaStory.intro}</p></>}</div></details></div></div>
+      </>}
     </section>
   </div>;
 }

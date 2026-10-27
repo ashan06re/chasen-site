@@ -98,6 +98,7 @@ export interface StoreContent {
 }
 
 export interface BrandStoryContent {
+  visible?: boolean;
   catchphrase: string;
   catchphraseHighlight: string;
   body1: string;
@@ -106,6 +107,7 @@ export interface BrandStoryContent {
 }
 
 export interface YoshidaSettings {
+  visible?: boolean;
   label: string;
   nameJa: string;
   nameEn: string;

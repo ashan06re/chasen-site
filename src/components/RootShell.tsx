@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "@/app/globals.css";
 import NavigationScroll from "./NavigationScroll";
+import { homeEntryScript } from "@/lib/homeEntry";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -26,6 +27,7 @@ const notoSerifJP = Noto_Serif_JP({
 export default function RootShell({ lang, children }: { lang: Lang; children: React.ReactNode }) {
   return (
     <html lang={lang} data-scroll-behavior="smooth" className={`${cormorant.variable} ${notoSerifJP.variable}`}>
+      <head><script dangerouslySetInnerHTML={{ __html: homeEntryScript }} /></head>
       <body>
         <LangProvider lang={lang}><NavigationScroll />{children}</LangProvider>
         <Analytics />

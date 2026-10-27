@@ -4,6 +4,7 @@ const UPLOADED_ART: Readonly<Record<string, string>> = {
   ea764152a01a: '02-v2',
   '0af7d818a996': '05-v3',
   '87ca624c7165': 'brand-v1',
+  '81fe8f233b23': '06-entry-v2',
 };
 export function approvedAssetId(src: string): string | undefined {
   const upload = /^\/api\/notion-image\/[a-f0-9-]{36}\/0\/%E7%94%BB%E5%83%8F\/([a-f0-9]{12})$/.exec(src);
