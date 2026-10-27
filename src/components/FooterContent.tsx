@@ -34,7 +34,7 @@ export default function FooterContent({ kyoto, kumamoto, kyotoEn, kumamotoEn, se
   const currentKyoto    = lang === "en" && kyotoEn    ? kyotoEn    : kyoto;
   const currentKumamoto = lang === "en" && kumamotoEn ? kumamotoEn : kumamoto;
   const tagline = lang === "en"
-    ? (settingsEn?.footerTagline ?? "Japanese Tea Stand")
+    ? (settingsEn?.footerTagline ?? "Tamatebako, Matcha Sweets & Dining")
     : settings.footerTagline;
   const copyright = `© ${currentYear} ${operator}. All rights reserved.`;
 

@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "revision": "a1c940aae64b48e3f8086806bb8e4259c59f47cfa26b96382f406ccf3f922ef9",
-  "capturedAt": "2026-10-27T06:10:08.135Z",
+  "revision": "f238a9612f4d6616df7374a7d0570ca3f3d4e1c7327758488bbccc1a1189571b",
+  "capturedAt": "2026-10-27T06:50:32.016Z",
   "payload": {
     "experience": {
       "journey": [
@@ -250,7 +250,7 @@
       "ja": {
         "heroEnglishLabel": "Japanese Tea Stand",
         "heroCatchphrase": "日本の茶文化を、現代の日常へ。",
-        "footerTagline": "日本茶スタンド",
+        "footerTagline": "玉手箱と抹茶スイーツ、お料理",
         "contactDescription": "玉手箱のご利用に事前予約は不要です。\nお席のご予約は店舗ごとの予約案内へ、その他のお問い合わせは会社窓口へご連絡ください。",
         "contactReservationUrl": "https://chasenco.com/reserve",
         "contactEmail": "hello@chasenco.com"
@@ -258,7 +258,7 @@
       "en": {
         "heroEnglishLabel": "Japanese Tea Stand",
         "heroCatchphrase": "Bringing Japanese tea culture into modern everyday life.",
-        "footerTagline": "Japanese Tea Stand",
+        "footerTagline": "Tamatebako, Matcha Sweets & Dining",
         "contactDescription": "No advance reservation is required for the Tamatebako sweets.\nFor table bookings, see the arrangements for each shop. For other enquiries, contact our company below.",
         "contactReservationUrl": "https://chasenco.com/en/reserve",
         "contactEmail": "hello@chasenco.com"
@@ -296,7 +296,7 @@
           "access": "京阪「祇園四条」駅より徒歩約15分",
           "accessEn": "Approx. 15 min walk from Keihan 'Gion-Shijo' Station",
           "description": "京都・高台寺の境内、石畳の路地に静かに佇む一軒。\n歴史と自然が調和するこの場所で、日常を少し忘れられるような、穏やかなひとときをお届けします。厳選した茶葉を使用したドリンクと、こだわりの甘味・お料理をご用意。京都散策の途中に、心ほどけるひと休みをお楽しみください。",
-          "descriptionEn": "A Japanese tea stand nestled in a cobblestone alley near Kodaiji Temple in Kyoto. Blending quietly into the historic streetscape, we welcome every visitor with a carefully crafted cup made from select tea leaves.",
+          "descriptionEn": "Enjoy Tamatebako, matcha sweets and dining at Chasen Kodaiji in Kyoto, featuring matcha from Yoshida Meichaen. Take a moment to unwind during your visit to Kyoto.",
           "accentColor": "#2A4D25",
           "instagram": "https://www.instagram.com/chasen_french_kodaiji/"
         },
@@ -314,7 +314,7 @@
           "access": "熊本市電「花畑町」停留場より徒歩約5分",
           "accessEn": "Approx. 5 min walk from Kumamoto City Tram 'Hanabata-machi' Stop",
           "description": "熊本・SAKURA MACHI Kumamotoの賑わいの中にありながら、京都を思わせる和の趣を感じられる一軒。\n現代的な感性を取り入れた空間で、厳選した茶葉を使用したドリンクや、こだわりの甘味・お料理をご提供しています。地元の方にも、熊本を訪れる旅人にも、気軽に立ち寄り、心ほどけるひとときをお過ごしいただける場所を目指しています。",
-          "descriptionEn": "A tea stand in the heart of Sakuramachi, Kumamoto, offering a fresh take on Japanese tea. We bring the finest leaves grown in Kumamoto's rich natural environment, served in a modern style. Whether you're a local or just passing through, you're always welcome to stop in.",
+          "descriptionEn": "Enjoy matcha sweets, dining and Japanese tea at Chasen in SAKURA MACHI Kumamoto, in a space inspired by Kyoto. Whether you are a local or visiting Kumamoto, stop in and unwind.",
           "accentColor": "#1A1A18",
           "instagram": "https://www.instagram.com/chasen_cafe_kumamoto/"
         }
@@ -334,7 +334,7 @@
           "access": "Approx. 15 min walk from Keihan 'Gion-Shijo' Station",
           "accessEn": "Approx. 15 min walk from Keihan 'Gion-Shijo' Station",
           "description": "Surrounded by the harmony of history and nature, we offer a peaceful retreat where you can step away from the bustle of everyday life. Enjoy our carefully crafted tea beverages made with selected tea leaves, along with a selection of artisanal Japanese sweets and thoughtfully prepared dishes. Whether you’re exploring Kyoto or simply taking a moment to unwind, we invite you to relax and savor a truly tranquil experience.",
-          "descriptionEn": "A Japanese tea stand nestled in a cobblestone alley near Kodaiji Temple in Kyoto. Blending quietly into the historic streetscape, we welcome every visitor with a carefully crafted cup made from select tea leaves.",
+          "descriptionEn": "Enjoy Tamatebako, matcha sweets and dining at Chasen Kodaiji in Kyoto, featuring matcha from Yoshida Meichaen. Take a moment to unwind during your visit to Kyoto.",
           "accentColor": "#2A4D25",
           "instagram": "https://www.instagram.com/chasen_french_kodaiji/"
         },
@@ -352,7 +352,7 @@
           "access": "Approx. 5 min walk from Kumamoto City Tram 'Hanabata-machi' Stop",
           "accessEn": "Approx. 5 min walk from Kumamoto City Tram 'Hanabata-machi' Stop",
           "description": "Nestled within the vibrant atmosphere of SAKURA MACHI Kumamoto, our café offers a refined space inspired by the timeless elegance of Kyoto.\nIn a contemporary setting infused with traditional Japanese aesthetics, we serve carefully crafted tea beverages made from selected tea leaves, along with thoughtfully prepared Japanese sweets and dishes. Whether you are a local resident or a traveler exploring Kumamoto, we invite you to stop by, unwind, and enjoy a peaceful moment with us.",
-          "descriptionEn": "A tea stand in the heart of Sakuramachi, Kumamoto, offering a fresh take on Japanese tea. We bring the finest leaves grown in Kumamoto's rich natural environment, served in a modern style. Whether you're a local or just passing through, you're always welcome to stop in.",
+          "descriptionEn": "Enjoy matcha sweets, dining and Japanese tea at Chasen in SAKURA MACHI Kumamoto, in a space inspired by Kyoto. Whether you are a local or visiting Kumamoto, stop in and unwind.",
           "accentColor": "#1A1A18",
           "instagram": "https://www.instagram.com/chasen_cafe_kumamoto/"
         }
@@ -412,57 +412,57 @@
         },
         "en": {
           "title": "News | Chasen",
-          "description": "News, events and announcements from Chasen, a Japanese tea stand in Kyoto and Kumamoto."
+          "description": "News, events and announcements from Chasen in Kyoto and Kumamoto, where matcha sweets and dining meet Japanese tea."
         }
       },
       "熊本のお品書き": {
         "ja": {
           "title": "Chasen 熊本店 メニュー | 茶筅 Chasen",
-          "description": "Chasen 熊本店の全メニュー。ドリンク・スイーツ・フードメニュー・セット。"
+          "description": "Chasen 熊本店のお品書きのご案内。掲載準備中の内容や現在の提供状況は店舗へお問い合わせください。"
         },
         "en": {
           "title": "Menu — Chasen Kumamoto | Chasen",
-          "description": "Full menu of Chasen Kumamoto: matcha and hojicha drinks, shaved ice, Japanese sweets, meals and sets."
+          "description": "Menu information for Chasen Kumamoto. Please contact the shop for current availability while the online menu is being prepared."
         }
       },
       "熊本の店舗案内": {
         "ja": {
           "title": "Chasen 熊本店 | 茶筅 Chasen",
-          "description": "熊本・SAKURA MACHI Kumamotoの日本茶スタンド、茶筅。抹茶スイーツや日本茶を楽しめる熊本店の店舗情報・アクセス・お品書き。"
+          "description": "熊本・SAKURA MACHI Kumamotoで抹茶スイーツとお料理、日本茶を楽しむ茶筅。営業時間・アクセス・ご予約のご案内。"
         },
         "en": {
           "title": "Chasen Kumamoto | Chasen",
-          "description": "Visit Chasen at SAKURA MACHI Kumamoto for Japanese tea and matcha sweets. Explore the menu, opening hours and directions."
+          "description": "Enjoy matcha sweets, dining and Japanese tea at Chasen in SAKURA MACHI Kumamoto. Find opening hours, directions and reservation information."
         }
       },
       "高台寺のお品書き": {
         "ja": {
           "title": "Chasen 高台寺店 メニュー | 茶筅 Chasen",
-          "description": "Chasen 高台寺店の全メニュー。ドリンク・スイーツ・フードメニュー・セット。"
+          "description": "Chasen 高台寺店のお品書きのご案内。掲載準備中の内容や現在の提供状況は店舗へお問い合わせください。"
         },
         "en": {
           "title": "Menu — Chasen Kodaiji, Kyoto | Chasen",
-          "description": "Full menu of Chasen Kodaiji, Kyoto: matcha and hojicha drinks, Japanese sweets, light meals and sets."
+          "description": "Menu information for Chasen Kodaiji, Kyoto. Please contact the shop for current availability while the online menu is being prepared."
         }
       },
       "高台寺の店舗案内": {
         "ja": {
           "title": "Chasen 高台寺店 | 茶筅 Chasen",
-          "description": "京都・高台寺近くに佇む日本茶スタンド。厳選茶葉で一杯一杯を丁寧に。"
+          "description": "京都・高台寺の茶筅で、玉手箱や抹茶スイーツ、お料理を。吉田銘茶園の抹茶とともに楽しむひととき。営業時間・アクセス・ご予約のご案内。"
         },
         "en": {
           "title": "Chasen Kodaiji, Kyoto | Chasen",
-          "description": "A Japanese tea stand near Kodaiji Temple in Kyoto's Higashiyama. Carefully selected tea leaves, brewed one cup at a time."
+          "description": "Discover Tamatebako, matcha sweets and dining at Chasen Kodaiji in Kyoto, featuring matcha from Yoshida Meichaen. Find opening hours, directions and reservation information."
         }
       },
       "ホーム": {
         "ja": {
-          "title": "茶筅 Chasen | 日本茶スタンド",
-          "description": "京都・熊本に展開する日本茶スタンド「茶筅」。厳選された日本茶を、現代の暮らしに合わせた形でお届けします。"
+          "title": "現役HP用DB。新しい確認用サイトは取得した紹介文を固定して表示。Notion保存後、制作担当が確認版を更新し、確認OK後に同じ版を本番へ反映します。本番は移行前の旧方式です。移行まで共通項目の保存が直接反映されます。最新手順は「HP編集地",
+          "description": "玉手箱、抹茶スイーツ、お料理を楽しむ茶筅 Chasen。吉田銘茶園の抹茶と、京都・高台寺と熊本それぞれの空間をご紹介します。"
         },
         "en": {
-          "title": "Chasen | Japanese Tea Stand in Kyoto & Kumamoto | Chasen",
-          "description": "Chasen is a Japanese tea stand in Kyoto (Kodaiji) and Kumamoto. Carefully selected matcha, hojicha and sencha, served in a modern style."
+          "title": "Chasen | Tamatebako, Matcha Sweets & Dining",
+          "description": "Discover Tamatebako, matcha sweets and dining at Chasen in Kyoto and Kumamoto, featuring matcha from Yoshida Meichaen."
         }
       }
     }

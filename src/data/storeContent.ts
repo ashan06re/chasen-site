@@ -124,18 +124,18 @@ export interface SiteSettings {
 }
 
 export const defaultSiteSettings: SiteSettings = {
-  heroEnglishLabel: "Japanese Tea Stand",
+  heroEnglishLabel: "Tamatebako, Matcha Sweets & Dining",
   heroCatchphrase: "日本の茶文化を、現代の日常へ。",
-  footerTagline: "日本茶スタンド",
+  footerTagline: "玉手箱と抹茶スイーツ、お料理",
   contactDescription: "玉手箱のご利用に事前予約は不要です。\nお席のご予約は店舗ごとの予約案内へ、その他のお問い合わせは会社窓口へご連絡ください。",
   contactReservationUrl: "https://chasenco.com/reserve",
   contactEmail: "hello@chasenco.com",
 };
 
 export const defaultSiteSettingsEn: SiteSettings = {
-  heroEnglishLabel: "Japanese Tea Stand",
+  heroEnglishLabel: "Tamatebako, Matcha Sweets & Dining",
   heroCatchphrase: "Bringing Japanese tea culture into modern everyday life.",
-  footerTagline: "Japanese Tea Stand",
+  footerTagline: "Tamatebako, Matcha Sweets & Dining",
   contactDescription: "No advance reservation is required for the Tamatebako sweets.\nFor table bookings, see the arrangements for each shop. For other enquiries, contact our company below.",
   contactReservationUrl: "https://chasenco.com/en/reserve",
   contactEmail: "hello@chasenco.com",
@@ -197,9 +197,9 @@ const kyoto: StoreContent = {
     access: "京阪「祇園四条」駅より徒歩約15分",
     accessEn: "Approx. 15 min walk from Keihan 'Gion-Shijo' Station",
     description:
-      "京都・高台寺のほど近く、石畳の路地に佇む日本茶スタンド。歴史ある街並みに溶け込みながら、訪れた方に一杯の茶でほっとしてほしいという想いで営業しています。厳選した産地の茶葉を、一杯一杯丁寧に仕上げます。",
+      "京都・高台寺で、玉手箱や抹茶スイーツ、お料理を。吉田銘茶園の抹茶とともに、京都散策の途中にひと休みをお楽しみください。",
     descriptionEn:
-      "A Japanese tea stand nestled in a cobblestone alley near Kodaiji Temple in Kyoto. Blending quietly into the historic streetscape, we welcome every visitor with a carefully crafted cup made from select tea leaves.",
+      "Enjoy Tamatebako, matcha sweets and dining at Chasen Kodaiji in Kyoto, featuring matcha from Yoshida Meichaen. Take a moment to unwind during your visit to Kyoto.",
     accentColor: "#2A4D25",
     instagram: INSTAGRAM.kyoto,
   },
@@ -495,7 +495,7 @@ const kumamoto: StoreContent = {
     description:
       "熊本桜町の賑わいの中に生まれた、日本茶の新しい楽しみ方を提案するスタンドです。熊本の豊かな自然が育てた茶葉を、現代的なスタイルでお届けします。地元の方にも、旅の途中の方にも、気軽に立ち寄っていただける場所を目指しています。",
     descriptionEn:
-      "A tea stand in the heart of Sakuramachi, Kumamoto, offering a fresh take on Japanese tea. We bring the finest leaves grown in Kumamoto's rich natural environment, served in a modern style. Whether you're a local or just passing through, you're always welcome to stop in.",
+      "Enjoy matcha sweets, dining and Japanese tea at Chasen in SAKURA MACHI Kumamoto, in a space inspired by Kyoto. Whether you are a local or visiting Kumamoto, stop in and unwind.",
     accentColor: "#1A1A18",
     instagram: INSTAGRAM.kumamoto,
   },
