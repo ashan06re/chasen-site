@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useLang } from "@/lib/langContext";
@@ -15,6 +16,7 @@ type Props = { kyoto: StoreInfo; kumamoto: StoreInfo; kyotoEn?: StoreInfo; kumam
 
 export default function ImmersiveHome({ kyoto, kumamoto, kyotoEn, kumamotoEn, brand, brandEn, tea, teaEn, experience, appearance }: Props) {
   const { lang, localize } = useLang();
+  const [storeMotionPaused, setStoreMotionPaused] = useState(false);
   const en = lang === "en";
   const story = en ? brandEn : brand;
   const teaStory = en ? teaEn : tea;
@@ -24,10 +26,11 @@ export default function ImmersiveHome({ kyoto, kumamoto, kyotoEn, kumamotoEn, br
     {experience.journey ? <BrandJourney chapters={experience.journey} intro={experience.journeyIntro} /> : <Story scenes={experience.scenes} compact={appearance.compact} />}
     <section id="stores" tabIndex={-1} className="immersive-shops editorial-wrap">
       <div className="shop-section-heading"><div><p className="eyebrow">THE JOURNEY CONTINUES</p><h2>{en ? experience.shopHeading.en : experience.shopHeading.ja}</h2></div><p>{en ? experience.shopHeading.detailEn : experience.shopHeading.detail}</p></div>
+      <button type="button" className="shop-motion-toggle" aria-pressed={storeMotionPaused} onClick={() => setStoreMotionPaused(!storeMotionPaused)}>{en ? (storeMotionPaused ? "Play image motion" : "Pause image motion") : (storeMotionPaused ? "店舗画像を動かす" : "店舗画像の動きを止める")}</button>
       <div id="menu" className="immersive-shop-panels">{shops.map((shop, i) => <article key={shop.slug} className="immersive-shop-card">
-        <TiltCard maxTilt={4} className="shop-dimensional-frame">
+        <TiltCard disabled={storeMotionPaused || !(i===0?experience.kyoto:experience.kumamoto).motion} maxTilt={4} className="shop-dimensional-frame">
           <Link href={localize(`/stores/${shop.slug}`)} className="shop-art-link" aria-label={en ? `${shop.name} — shop and access` : `${shop.name}の店舗情報・アクセス`}>
-            <DepthPanel src={(i===0?experience.kyoto:experience.kumamoto).src} mobileSrc={(i===0?experience.kyoto:experience.kumamoto).mobileSrc} depthSrc={(i===0?experience.kyoto:experience.kumamoto).depth} motion={(i===0?experience.kyoto:experience.kumamoto).motion} alt={en?(i===0?experience.kyoto:experience.kumamoto).altEn:(i===0?experience.kyoto:experience.kumamoto).alt} fit="contain" />
+            <DepthPanel src={(i===0?experience.kyoto:experience.kumamoto).src} mobileSrc={(i===0?experience.kyoto:experience.kumamoto).mobileSrc} depthSrc={(i===0?experience.kyoto:experience.kumamoto).depth} ambient motion={!storeMotionPaused && (i===0?experience.kyoto:experience.kumamoto).motion} alt={en?(i===0?experience.kyoto:experience.kumamoto).altEn:(i===0?experience.kyoto:experience.kumamoto).alt} fit="contain" />
             <div className="shop-art-caption"><span>{i === 0 ? "KYOTO" : "KUMAMOTO"}</span><span className="shop-art-arrow" aria-hidden="true">↗</span></div>
           </Link>
         </TiltCard>

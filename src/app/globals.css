@@ -140,7 +140,7 @@ html[lang="en"] .product-story-copy h1 { font-family: var(--font-cormorant),seri
 .shop-dimensional-frame { perspective: 1000px; }
 .shop-art-link { position: relative; display: block; overflow: hidden; aspect-ratio: 3 / 2; background: #0B0C0A; }
 .depth-panel { position: absolute; inset: 0; overflow: clip; }
-.depth-panel > img { position: absolute; width: 100%; height: 100%; object-fit: cover; }
+.depth-panel-art > img { position: absolute; width: 100%; height: 100%; object-fit: cover; }
 .shop-art-link::after { content: ""; position: absolute; z-index: 4; inset: 0; pointer-events: none; background: linear-gradient(180deg,transparent 60%,#0B0C0ACC); border: 1px solid #F1E5C726; }
 .shop-art-caption { position: absolute; z-index: 5; bottom: 32px; left: 30px; right: 30px; display: flex; align-items: center; justify-content: space-between; }
 .shop-art-caption > span:first-child { font-family: var(--font-cormorant),serif; font-size: clamp(22px,2.7vw,38px); letter-spacing: .17em; }
@@ -443,4 +443,20 @@ body {
   .hero-drift {
     animation: none;
   }
+}
+
+/* Store pictures retain depth and pointer tilt; a slow camera drift also works on touch. */
+.depth-panel-travel, .depth-panel-art { position: absolute; inset: 0; }
+.depth-panel-ambient .depth-panel-travel { transform: translateY(calc(var(--panel-travel, 0) * -10px)); }
+.depth-panel-ambient .depth-panel-art { animation: store-camera 14s ease-in-out infinite alternate; animation-play-state: paused; }
+.depth-panel-ambient[data-playing="true"] .depth-panel-art { animation-play-state: running; }
+@keyframes store-camera {
+  from { transform: scale(1.07) translate(-1.1%, .6%); }
+  to { transform: scale(1.10) translate(1.1%, -.6%); }
+}
+.shop-motion-toggle { display: block; margin: -24px 0 28px auto; padding: 8px 0; font-size: 11px; letter-spacing: .08em; color: #BEB6A3; border-bottom: 1px solid #81775C; cursor: pointer; }
+@media (prefers-reduced-motion: reduce) {
+  .depth-panel-ambient .depth-panel-art { animation: none; }
+  .depth-panel-ambient .depth-panel-travel { transform: none; }
+  .shop-motion-toggle { display: none; }
 }
