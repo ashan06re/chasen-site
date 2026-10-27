@@ -2,6 +2,16 @@ import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import vm from 'node:vm';
 import {homeEntryScript} from '../src/lib/homeEntry.ts';
+import {isSamePageTopLink} from '../src/lib/navigationTarget.ts';
+
+test('logo navigation from contact resets both languages without intercepting anchors or other destinations',()=>{
+ for(const path of ['/','/en']){
+  const current=new URL('https://example.com'+path+'#contact');
+  assert.equal(isSamePageTopLink(current,new URL('https://example.com'+path)),true);
+  for(const suffix of ['#stores','?draft=1','/stores/kyoto'])assert.equal(isSamePageTopLink(current,new URL('https://example.com'+path+suffix)),false);
+  assert.equal(isSamePageTopLink(current,new URL('https://other.example'+path)),false);
+ }
+});
 
 function enter(pathname,hash='',type='navigate'){
  const calls=[],listeners={};const location={pathname,hash,search:'?view=preview'};

@@ -2,6 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
+import { isSamePageTopLink } from "@/lib/navigationTarget";
 
 /** New pages start at the top. Hash links and browser history keep native restoration. */
 export default function NavigationScroll() {
@@ -25,6 +26,9 @@ export default function NavigationScroll() {
       const link = event.target instanceof Element ? event.target.closest("a") : null;
       if (!link || link.hasAttribute("download") || (link.target && link.target !== "_self")) return;
       const url = new URL(link.href, location.href);
+      if (isSamePageTopLink(new URL(location.href), url)) {
+        window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      }
       // Keep reload restoration disabled while reading this home. Restore the
       // browser's normal history behavior when the visitor navigates elsewhere.
       if (url.origin !== location.origin || url.pathname !== location.pathname) history.scrollRestoration = "auto";

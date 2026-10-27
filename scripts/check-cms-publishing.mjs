@@ -19,7 +19,7 @@ registerHooks({resolve(specifier,context,next){
   if(url&&existsSync(url))return {url:url.href,shortCircuit:true};
   return next(specifier,context);
 }});
-const {getFullMenuSections,getBookingSettings,getAllStoreInfo,getExperience,getAllNewsItems,getNewsItems,getBrandStory,getYoshidaSettings}=await import('../src/lib/notion.ts');
+const {getFullMenuSections,getBookingSettings,getAllStoreInfo,getExperience,getAllNewsItems,getNewsItems,getBrandStory,getYoshidaSettings}=await import('../src/lib/notionDraft.ts');
 const sel=name=>({select:{name}}), txt=value=>({rich_text:[{plain_text:value}]}), result=results=>({results,has_more:false,next_cursor:null});
 const publication=status=>({properties:{店舗:sel('高台寺店'),公開設定:sel(status)}});
 
@@ -41,6 +41,15 @@ test('unchecked brand and tea copy remain hidden instead of resurrecting sample 
  respond(()=>result([{properties:{言語:sel('日本語'),キャッチコピー:txt('現行ブランド'),紹介文:txt('現行のお茶')}}]));
  assert.notEqual((await getBrandStory()).ja.visible,false);assert.equal((await getBrandStory()).en.visible,false);
  assert.notEqual((await getYoshidaSettings()).ja.visible,false);assert.equal((await getYoshidaSettings()).en.visible,false);
+});
+test('checked unfinished notices stay hidden and formatted titles keep every text segment',async()=>{
+ respond(()=>result([
+  {properties:{店舗:sel('高台寺店'),言語:sel('日本語'),タイトル:{title:[]}}},
+  {properties:{店舗:sel('高台寺店'),言語:sel('日本語'),タイトル:{title:[{plain_text:'営業'},{plain_text:'のご案内'}]}}}
+ ]));
+ for(const load of [()=>getAllNewsItems(),()=>getNewsItems('高台寺店')]){
+  const news=await load();assert.equal(news.ja.length,1);assert.equal(news.ja[0].title,'営業のご案内');
+ }
 });
 
 test('Kumamoto replacement retires only the old built-in art and preserves later CMS uploads',async()=>{

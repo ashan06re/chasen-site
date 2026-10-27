@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  outputFileTracingIncludes: { '/api/cms-image/*': ['./src/content/cms-assets/**/*'] },
   async headers() {
     return [{ source: '/:path*', headers: [
       { key: 'X-Content-Type-Options', value: 'nosniff' },
@@ -13,12 +14,11 @@ const nextConfig: NextConfig = {
       { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
     ] }];
   },
-  // CMS is shared with the live site. Avoid a build-time thundering herd.
+  // Keep static generation bounded. Public pages read the bundled CMS edition.
   experimental: { staticGenerationMaxConcurrency: 1, staticGenerationMinPagesPerWorker: 100 },
   images: {
-    // Notion画像は /api/notion-image プロキシ経由（署名付きURLの失効対策）
+    // 公開版に固定した写真を /api/cms-image から配信する。
     localPatterns: [
-      { pathname: "/api/notion-image/**", search: "" },
       { pathname: "/**", search: "" },
     ],
     remotePatterns: [

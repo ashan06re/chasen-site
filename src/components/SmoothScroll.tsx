@@ -1,6 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import { useReducedMotion } from "@/lib/motion";
+import { isSamePageTopLink } from "@/lib/navigationTarget";
 
 /**
  * なめらかスクロール
@@ -25,6 +26,9 @@ export default function SmoothScroll() {
         if (!link || link.target === "_blank" || link.hasAttribute("download")) return;
         const url = new URL(link.href, location.href);
         if (url.origin === location.origin && url.pathname !== location.pathname) lenis.stop();
+        // The logo can remove #contact without changing pathname. Cancel the
+        // previous anchor animation too, otherwise it pulls the visitor back down.
+        else if (isSamePageTopLink(new URL(location.href), url)) lenis.scrollTo(0, { immediate: true, force: true });
       };
       document.addEventListener("click", onNavigate, true);
       let raf = 0;
