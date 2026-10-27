@@ -3,10 +3,7 @@
 .visual { position:absolute; inset:0; z-index:0; overflow:clip; }
 .scene { position:absolute; inset:0; opacity:0; visibility:hidden; transition:opacity 1500ms ease,visibility 1500ms; background:#0b0c0a; }
 .scene[data-active="true"] { opacity:1; visibility:visible; }
-.original { position:absolute; right:0; top:0; width:70%; height:100%; object-fit:contain; object-position:center right; }
-.scene[data-scene="tamatebako"] .original { width:100%; object-fit:cover; }
-.scene[data-scene="sweets"] .original { width:53%; }
-.scene[data-scene="cuisine"] .original { width:62%; }
+.original { object-fit:cover; object-position:center; }
 .scene[data-active="true"] .original { animation:imageRise 2800ms cubic-bezier(.2,.65,.3,1) both; }
 .light { position:absolute; inset:0; pointer-events:none; background:linear-gradient(90deg,#0b0c0a 0%,rgba(11,12,10,.92) 25%,rgba(11,12,10,.35) 46%,transparent 64%),linear-gradient(0deg,#0b0c0a,transparent 13%); }
 @keyframes imageRise { from { opacity:.15; transform:translate3d(0,24px,0); } to { opacity:1; transform:translate3d(0,0,0); } }
@@ -53,7 +50,7 @@
   .actions { margin-top:18px; gap:12px 18px; font-size:11px; }
   .actions :global(.editorial-button) { padding:12px 17px; }
   .actions :global(.editorial-text-link) { font-size:11px; }
-  .scene .original, .scene[data-scene="tamatebako"] .original, .scene[data-scene="sweets"] .original, .scene[data-scene="cuisine"] .original { width:100%; object-fit:contain; object-position:center; }
+  .original { object-fit:contain; }
   .light { background:linear-gradient(0deg,#0b0c0a,transparent 9%); }
   .controls { padding-top:14px; }
   .caption { min-height:60px; gap:12px; font-size:10px; }

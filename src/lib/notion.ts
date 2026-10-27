@@ -4,6 +4,7 @@ import { cache } from "react";
 import { EXPERIENCE_DB, APPEARANCE_DB, BOOKING_DB } from "./cmsIds";
 import { DEFAULT_BOOKING, safeBookingUrl, type BookingSetting } from './booking';
 import { defaultExperience, DEFAULT_APPEARANCE, PLACEMENTS, registeredArt, type Artwork, type Appearance } from "./experience";
+import { JOURNEY_PLACEMENTS } from './brandJourney';
 import { approvedAssetId } from './approvedArtwork';
 import { menuIsPublished } from './menuPublishing';
 import { accentColor } from './palette';
@@ -55,6 +56,31 @@ export const getExperience = cache(async () => {
       const row = page as { id: string; properties: Record<string, Record<string, unknown>> };
       const p = row.properties;
       const place = selectName(p['掲載場所']);
+      const chapterIndex = JOURNEY_PLACEMENTS.indexOf(place as typeof JOURNEY_PLACEMENTS[number]);
+      if (chapterIndex >= 0 && result.journey) {
+        const chapter = result.journey[chapterIndex];
+        result.journey[chapterIndex] = {
+          ...chapter, image: imageUrl(row.id, p['画像'], '画像') || chapter.image,
+          label: text(p['ラベル']) || chapter.label,
+          name: text(p['タブ名']) || chapter.name, nameEn: text(p['タブ名（英語）']) || chapter.nameEn,
+          title: text(p['見出し']) || chapter.title, titleEn: text(p['見出し（英語）']) || chapter.titleEn,
+          body: text(p['説明文']) || chapter.body, bodyEn: text(p['説明文（英語）']) || chapter.bodyEn,
+          caption: text(p['注記']) || chapter.caption, captionEn: text(p['注記（英語）']) || chapter.captionEn,
+          alt: text(p['画像の説明']) || chapter.alt, altEn: text(p['画像の説明（英語）']) || chapter.altEn,
+          motion: selectName(p['動き']) !== 'なし',
+        };
+        continue;
+      }
+      if (place === '新ホーム｜導入文' && result.journeyIntro) {
+        const intro = result.journeyIntro;
+        result.journeyIntro = {
+          identity: text(p['画像の説明']) || intro.identity, identityEn: text(p['画像の説明（英語）']) || intro.identityEn,
+          label: text(p['ラベル']) || intro.label,
+          title: text(p['見出し']) || intro.title, titleEn: text(p['見出し（英語）']) || intro.titleEn,
+          body: text(p['説明文']) || intro.body, bodyEn: text(p['説明文（英語）']) || intro.bodyEn,
+        };
+        continue;
+      }
       const index = PLACEMENTS.indexOf(place as typeof PLACEMENTS[number]);
       if (index < 0) continue;
       if (index === 8) {

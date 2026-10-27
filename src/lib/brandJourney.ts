@@ -10,6 +10,9 @@ export interface BrandChapter {
   caption: string;
   captionEn: string;
   image?: string;
+  alt?: string;
+  altEn?: string;
+  motion?: boolean;
 }
 
 /** Food and hospitality first. Stable IDs are separate from the legacy CMS scene IDs. */
@@ -20,3 +23,22 @@ export const BRAND_CHAPTERS: readonly BrandChapter[] = [
   { id: 'origin', label: '04 / YOSHIDA MEICHAEN', name: '吉田銘茶園', nameEn: 'Our tea origin', title: 'おいしさの背景に、\n宇治のお茶。', titleEn: 'Behind the flavour,\nthe tea of Uji.', body: '茶筅のお茶を支える、宇治・吉田銘茶園。\n育まれた香りと味わいを、スイーツや一杯のお茶へ。', bodyEn: 'Yoshida Meichaen in Uji is our tea partner. Its tea brings depth and fragrance to the Chasen experience.', caption: '吉田銘茶園の覆下茶園。', captionEn: 'Yoshida Meichaen’s shaded tea garden.' },
   { id: 'space', label: '05 / TIME AT CHASEN', name: '茶筅の空間', nameEn: 'Time at Chasen', title: '味わう時間も、\nごちそうに。', titleEn: 'A place to pause.\nA moment to savour.', body: '京都・高台寺と熊本。\nそれぞれの街で、お料理と抹茶スイーツをゆっくりと。', bodyEn: 'In Kyoto’s Kodaiji neighbourhood and in Kumamoto, make time for good food, matcha sweets, and conversation.', caption: '高台寺店の窓辺。', captionEn: 'The window counter at Chasen Kodaiji.' },
 ];
+
+/** New placements are ignored by the currently deployed legacy home. */
+export const JOURNEY_PLACEMENTS = ['新ホーム｜玉手箱', '新ホーム｜抹茶スイーツ', '新ホーム｜お料理', '新ホーム｜吉田銘茶園', '新ホーム｜茶筅の空間'] as const;
+export interface JourneyIntro { identity: string; identityEn: string; label: string; title: string; titleEn: string; body: string; bodyEn: string }
+export const DEFAULT_JOURNEY_INTRO: JourneyIntro = {
+  identity: '抹茶スイーツと料理を楽しむ、京都・熊本の茶筅。', identityEn: 'CHASEN / MATCHA SWEETS & DINING',
+  label: 'MATCHA, FOOD & A LITTLE WONDER', title: 'お料理を楽しみ、\n抹茶にときめく。\nそんな一日を、茶筅で。', titleEn: 'For the meal.\nFor the matcha.\nFor the moment.',
+  body: '宇治のお茶の香りも、甘味の楽しみも。\nひとつの場所で、ゆっくり味わう。', bodyEn: 'The tea of Uji, the pleasure of sweets, and time well spent.',
+};
+export const DEFAULT_IMAGE_DESCRIPTIONS: Record<string, {ja: string; en: string}> = {
+  tamatebako: {ja:'木箱に盛り合わせた抹茶の甘味と京都の夕景',en:'Matcha sweets in a wooden box against an evening Kyoto view'},
+  sweets: {ja:'ガラスの器に盛った抹茶のかき氷',en:'Matcha shaved ice in a glass bowl'},
+  cuisine: {ja:'木の器に盛った肉料理',en:'A meat and rice dish in a wooden vessel'},
+  origin: {ja:'黒い覆いの下に広がる宇治の茶園',en:'Uji tea rows beneath a shade canopy'},
+  space: {ja:'高台寺店の木のカウンターと青緑の椅子',en:'The Kodaiji interior with a wooden counter and teal chairs'},
+};
+export function defaultJourney(): BrandChapter[] {
+  return BRAND_CHAPTERS.map(chapter => ({...chapter, image: `/journey/${chapter.id}.webp`, alt: DEFAULT_IMAGE_DESCRIPTIONS[chapter.id].ja, altEn: DEFAULT_IMAGE_DESCRIPTIONS[chapter.id].en, motion:true}));
+}

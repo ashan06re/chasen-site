@@ -21,7 +21,7 @@ export default function ImmersiveHome({ kyoto, kumamoto, kyotoEn, kumamotoEn, br
   const shops = en ? [kyotoEn ?? kyoto, kumamotoEn ?? kumamoto] : [kyoto, kumamoto];
   return <div className="immersive-home">
     <SmoothScroll />
-    {experience.journey ? <BrandJourney chapters={experience.journey} /> : <Story scenes={experience.scenes} compact={appearance.compact} />}
+    {experience.journey ? <BrandJourney chapters={experience.journey} intro={experience.journeyIntro} /> : <Story scenes={experience.scenes} compact={appearance.compact} />}
     <section id="stores" tabIndex={-1} className="immersive-shops editorial-wrap">
       <div className="shop-section-heading"><div><p className="eyebrow">THE JOURNEY CONTINUES</p><h2>{en ? experience.shopHeading.en : experience.shopHeading.ja}</h2></div><p>{en ? experience.shopHeading.detailEn : experience.shopHeading.detail}</p></div>
       <div id="menu" className="immersive-shop-panels">{shops.map((shop, i) => <article key={shop.slug} className="immersive-shop-card">

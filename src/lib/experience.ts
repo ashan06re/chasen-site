@@ -1,5 +1,5 @@
 import { CUTS } from './storyScript';
-import type { BrandChapter } from './brandJourney';
+import { defaultJourney, DEFAULT_JOURNEY_INTRO, type BrandChapter, type JourneyIntro } from './brandJourney';
 export { imageControls } from './imageFraming';
 
 export const PLACEMENTS = ['入口の物語','湯の物語','窓辺の物語','茶園の物語','一服の物語','京都の店舗パネル','熊本の店舗パネル','ブランドの画像','店舗紹介の見出し'] as const;
@@ -8,7 +8,7 @@ export interface Artwork {
 }
 export interface StoryScene extends Artwork { id: string; label: string; ja: string; en: string; detail: string; detailEn: string }
 export interface Experience {
-  journey?: BrandChapter[];
+  journey?: BrandChapter[]; journeyIntro?: JourneyIntro;
   scenes: StoryScene[]; kyoto: Artwork; kumamoto: Artwork; brand: Artwork;
   shopHeading: { ja: string; en: string; detail: string; detailEn: string };
 }
@@ -19,12 +19,13 @@ export const DEFAULT_APPEARANCE: Appearance = {
   artNoteEn: 'Story illustrations are inspired by our shops and sweets. See each shop’s menu for product details.',
 };
 export function registeredArt(id: string): Artwork {
-  if (id === '06-entry-v2') return { src:'/story-art/06-entry-v2.webp',mobileSrc:'/story-art/06-entry-v2-mobile.webp',aspect:1.5,alt:'暖簾と木の回廊を描いた茶筅のイメージ画',altEn:'A Chasen illustration of a wooden passage and noren curtains',motion:true };
+  if (id === '06-entry-v2') return { src:'/story-art/06-entry-v2.webp',mobileSrc:'/story-art/06-entry-v2-mobile.webp',depth:'/story-art/06-entry-v2-depth.webp',aspect:1.5,alt:'暖簾と木の回廊を描いた茶筅のイメージ画',altEn:'A Chasen illustration of a wooden passage and noren curtains',motion:true };
   if (id === 'brand-v1') return { src:'/story-art/brand-v1.webp',aspect:1500/1049,alt:'茶筅の印が入った木枡を描いた絵',altEn:'A painting of Chasen’s wooden masu boxes',motion:false };
   return { src: `/story-art/${id}.webp`, mobileSrc: `/story-art/${id}-mobile.webp`, depth: `/story-art/${id}-depth.webp`, aspect: 1.5, alt: '茶筅の背景画', altEn: 'A Chasen illustration', motion: true };
 }
 export function defaultExperience(): Experience {
   return {
+    journey: defaultJourney(), journeyIntro: {...DEFAULT_JOURNEY_INTRO},
     scenes: CUTS.map(cut=>({...cut,...registeredArt(cut.id==='02'?'02-v2':cut.id==='05'?'05-v3':cut.id),alt:cut.detail,altEn:cut.detailEn})),
     kyoto:{...registeredArt('03'),alt:'高台寺店の窓辺を描いた背景画',altEn:"A painted view of Kodaiji’s window counter"},
     kumamoto:registeredArt('06-entry-v2'),
