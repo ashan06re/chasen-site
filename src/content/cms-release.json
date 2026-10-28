@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "revision": "12bbeef5d3f70e32222363cae0dbdc155c52577d99d40c7062af2cfe7bcce71c",
-  "capturedAt": "2026-10-27T07:09:49.359Z",
+  "revision": "f57c0314442340f4d495df604d391ce4f84a41902ab38290d8034204fd2e6ede",
+  "capturedAt": "2026-10-28T04:10:44.125Z",
   "payload": {
     "experience": {
       "journey": [
@@ -267,9 +267,11 @@
     "booking": [
       {
         "store": "高台寺店",
-        "mode": "電話・お問い合わせ",
-        "note": "玉手箱のご利用に事前予約は不要です。お席のご予約や空席については、店舗へお電話ください。",
-        "noteEn": "No advance reservation is required for the Tamatebako sweets. Please call the shop for table bookings and availability."
+        "mode": "外部予約サイト",
+        "note": "玉手箱のご利用に事前予約は不要です。お席の予約リクエストは日本時間6:00〜22:00、来店希望時刻の6時間前まで受け付けます。送信だけでは確定せず、店舗確認後にメールでご案内します。12時間を目安に返信します。お急ぎの場合は店舗へお電話ください。",
+        "noteEn": "No advance reservation is required for the Tamatebako sweets. Request a table between 06:00 and 22:00 Japan time, at least 6 hours before your visit. Submitting the form does not confirm your booking. We will check availability and email you, aiming to reply within 12 hours. For urgent enquiries, please call the shop.",
+        "url": "https://docs.google.com/forms/d/e/1FAIpQLSeYPug4UBRKMedAYFUifca0T9rppQRwcvxpZFY0MdoKnNfduw/viewform",
+        "urlEn": "https://docs.google.com/forms/d/e/1FAIpQLSf1t26VOO0ueC3o7kRXSfMOat6CPlXeT6gZ0WGRa1mVy_QooQ/viewform"
       },
       {
         "store": "熊本店",
