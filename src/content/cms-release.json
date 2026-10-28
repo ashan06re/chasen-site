@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "revision": "f57c0314442340f4d495df604d391ce4f84a41902ab38290d8034204fd2e6ede",
-  "capturedAt": "2026-10-28T04:10:44.125Z",
+  "revision": "ef345286590a7576a49a04d4aa23f332c83f0c70092dd6e710779a90263f221f",
+  "capturedAt": "2026-10-28T09:01:31.490Z",
   "payload": {
     "experience": {
       "journey": [
@@ -248,16 +248,12 @@
     },
     "site": {
       "ja": {
-        "heroEnglishLabel": "Japanese Tea Stand",
-        "heroCatchphrase": "日本の茶文化を、現代の日常へ。",
         "footerTagline": "玉手箱と抹茶スイーツ、お料理",
         "contactDescription": "玉手箱のご利用に事前予約は不要です。\nお席のご予約は店舗ごとの予約案内へ、その他のお問い合わせは会社窓口へご連絡ください。",
         "contactReservationUrl": "https://chasenco.com/reserve",
         "contactEmail": "hello@chasenco.com"
       },
       "en": {
-        "heroEnglishLabel": "Japanese Tea Stand",
-        "heroCatchphrase": "Bringing Japanese tea culture into modern everyday life.",
         "footerTagline": "Tamatebako, Matcha Sweets & Dining",
         "contactDescription": "No advance reservation is required for the Tamatebako sweets.\nFor table bookings, see the arrangements for each shop. For other enquiries, contact our company below.",
         "contactReservationUrl": "https://chasenco.com/en/reserve",

@@ -22,6 +22,8 @@ for (const [path, expected] of [
   ['/qa-depth', 404],
   ['/qa-home', 404],
   ['/en/qa-home', 404],
+  ['/qa-menu', 404],
+  ['/en/qa-menu', 404],
 ]) {
   const response = await fetch(new URL(path, base));
   assert.equal(response.status, expected, path);

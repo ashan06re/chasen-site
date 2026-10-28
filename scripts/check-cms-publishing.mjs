@@ -91,6 +91,14 @@ test('real CMS getter uses bilingual category and named accent without photo con
   assert.equal('photoX' in menus.ja[0].items[0],false);
   assert.equal(calls[1].filter.property,'表示する');
 });
+test('menu title keeps formatted segments and hides checked unfinished products',async()=>{
+  respond(({database_id})=>database_id==='publication-fixture'?result([publication('投稿する')]):result([
+    {id:'complete',properties:{メニュー名:{title:[{plain_text:'抹茶'},{plain_text:'パフェ'}]},カテゴリー:sel('甘味｜Sweets'),言語:sel('日本語')}},
+    {id:'unfinished',properties:{メニュー名:{title:[]},カテゴリー:sel('甘味｜Sweets'),言語:sel('日本語')}}
+  ]));
+  const menu=await getFullMenuSections('高台寺店');
+  assert.equal(menu.ja[0].items.length,1);assert.equal(menu.ja[0].items[0].name,'抹茶パフェ');
+});
 test('real booking getter reads independently editable language URLs',async()=>{
   respond(()=>result([{properties:{店舗:sel('高台寺店'),受付方法:sel('外部予約サイト'),予約ページ:{url:'https://example.com/ja'},'予約ページ（英語）':{url:'https://example.com/en'}}}]));
   const settings=await getBookingSettings();

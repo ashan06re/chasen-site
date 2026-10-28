@@ -6,6 +6,7 @@ import Header from "./Header";
 import type { FullMenuSection, StoreInfo } from "@/data/storeContent";
 import { useLang } from "@/lib/langContext";
 import DepthPanel from "./DepthPanel";
+import MenuUpcoming from "./MenuUpcoming";
 import { DEFAULT_APPEARANCE, defaultExperience, type Appearance, type Experience } from '@/lib/experience';
 import { readableOn } from '@/lib/color';
 
@@ -31,7 +32,8 @@ export default function StoreMenuLayout({ info, infoEn, fullMenu, fullMenuEn, re
     setCategory(id);
     requestAnimationFrame(() => resultsRef.current?.scrollIntoView({ block: "start", behavior: "instant" }));
   };
-  const sections = en && fullMenuEn?.length ? fullMenuEn : fullMenu;
+  // An intentionally empty English edition must not resurrect Japanese items.
+  const sections = en ? fullMenuEn ?? [] : fullMenu;
   const normalizedQuery = query.normalize("NFKC").trim().toLocaleLowerCase();
   const selectedCategory = sections.some(section => section.id === category) ? category : "all";
   const visibleSections = sections
@@ -47,6 +49,8 @@ export default function StoreMenuLayout({ info, infoEn, fullMenu, fullMenuEn, re
   const reserve = (en ? reservationUrlEn || reservationUrl : reservationUrl) || localize("/#contact");
   const reset = () => { setQuery(""); selectCategory("all"); };
   const artwork = info.slug === 'kyoto' ? experience.scenes[4] : experience.kumamoto;
+
+  if (!sections.length) return <MenuUpcoming info={info} infoEn={infoEn} />;
 
   return <>
     <Header initialDark reservationUrl={reservationUrl} reservationUrlEn={reservationUrlEn} />
