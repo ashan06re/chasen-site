@@ -7,7 +7,7 @@
 
 茶筅（Chasen）日本茶スタンドのコーポレートサイト。Next.js 16.4.3 (App Router) + Tailwind CSS v4 + Notion CMS。
 
-**状態（2026-10-27）**: ページ基盤・Notion・日英URL・Vercel公開済み。両店メニューは準備中、新ホームは通常ルート・実Notion統合済み（本番未反映）。京都予約は日英下書きまで会社内実測、停止中。完成判定と残件は親の進行台帳を優先。
+**状態（2026-10-28 JST）**: 新ホーム・Notion固定版・日英URLをVercel Proの本番へ反映済み。両店メニューは準備中。京都予約は主要な送受信・変更取消・復旧と本人の通常操作を実測済み。開始制御の会社保存・読取診断、日英フォームの回答者一般アクセス変更まで完了し、申込み受付は停止中。京都の新フォーム入口は公開前の固定版で準備中。完成判定と残件は親の進行台帳を優先。
 
 - 正式URL（本番公開中）: https://chasenco.com
 - 旧Vercel URL: https://chasen-site-eight.vercel.app
@@ -76,9 +76,9 @@ src/
 
 ## Notion CMS（2026-10-27 固定版方式）
 
-`redesign`はNotionの全表示領域と画像を取得時点で固定して配信する。`src/lib/notion.ts`が固定版の公開読取、`notionDraft.ts`が取得処理専用のNotion読取。`src/content/cms-release.json`と`cms-assets/`を一組で管理する。画像は固定版に登録された`/api/cms-image/`経由。旧`/api/notion-image/`は固定版で404。署名付きURLをHTMLへ直接埋めない。
+本番・`redesign`の確認用とも、Notionの全表示領域と画像を取得時点で固定して配信する。`src/lib/notion.ts`が固定版の公開読取、`notionDraft.ts`が取得処理専用のNotion読取。`src/content/cms-release.json`と`cms-assets/`を一組で管理する。画像は固定版に登録された`/api/cms-image/`経由。旧`/api/notion-image/`は固定版で404。署名付きURLをHTMLへ直接埋めない。
 
-**旧本番main1663cb0はまだ従来のNotion直接読取。初回切替まで共通項目の編集は旧本番にも影響する。** 新方式導入後はNotion保存だけではHPは変わらず、制作担当が取得→redesign確認→本人が具体版を承認→同じ版を本番へ反映する。詳しくは [CMS_RELEASE.md](CMS_RELEASE.md)。Notion内に公開ボタンはない。公開単位は全サイト。
+**PR #13で本番へ固定版方式を導入済み（2026-10-28 JST）。** Notion保存だけではHPは変わらず、制作担当が取得→redesign確認→本人が具体版を承認→同じ版を本番へ反映する。詳しくは [CMS_RELEASE.md](CMS_RELEASE.md)。Notion内に公開ボタンはない。公開単位は全サイト。
 
 - `npm run cms:capture`：DB/画像の取得、取得中編集の二重照合、原子的な版更新。失敗時は前版を維持。
 - `npm run cms:verify`、build、差分と実画面で編集意図を確認。誤ったCMS原本の内容を自動で正解へ変える仕組みではない。
