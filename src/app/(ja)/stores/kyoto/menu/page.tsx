@@ -39,7 +39,7 @@ export default async function KyotoMenuPage() {
     getExperience(), getAppearance(),
   ]);
 
-  if (!result.ja.length) return <><MenuUpcoming info={currentInfo} infoEn={currentInfoEn} /><Footer /></>;
+  if (!result.ja.length && !result.en.length) return <><MenuUpcoming info={currentInfo} infoEn={currentInfoEn} /><Footer /></>;
   const jaMenu = result.ja;
   const enMenu = result.en;
 

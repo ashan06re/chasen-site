@@ -115,8 +115,6 @@ export interface YoshidaSettings {
 }
 
 export interface SiteSettings {
-  heroEnglishLabel: string;
-  heroCatchphrase: string;
   footerTagline: string;
   contactDescription: string;
   contactReservationUrl: string;
@@ -124,8 +122,6 @@ export interface SiteSettings {
 }
 
 export const defaultSiteSettings: SiteSettings = {
-  heroEnglishLabel: "Tamatebako, Matcha Sweets & Dining",
-  heroCatchphrase: "日本の茶文化を、現代の日常へ。",
   footerTagline: "玉手箱と抹茶スイーツ、お料理",
   contactDescription: "玉手箱のご利用に事前予約は不要です。\nお席のご予約は店舗ごとの予約案内へ、その他のお問い合わせは会社窓口へご連絡ください。",
   contactReservationUrl: "https://chasenco.com/reserve",
@@ -133,8 +129,6 @@ export const defaultSiteSettings: SiteSettings = {
 };
 
 export const defaultSiteSettingsEn: SiteSettings = {
-  heroEnglishLabel: "Tamatebako, Matcha Sweets & Dining",
-  heroCatchphrase: "Bringing Japanese tea culture into modern everyday life.",
   footerTagline: "Tamatebako, Matcha Sweets & Dining",
   contactDescription: "No advance reservation is required for the Tamatebako sweets.\nFor table bookings, see the arrangements for each shop. For other enquiries, contact our company below.",
   contactReservationUrl: "https://chasenco.com/en/reserve",

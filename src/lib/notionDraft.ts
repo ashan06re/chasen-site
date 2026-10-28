@@ -207,7 +207,7 @@ export async function getFullMenuSections(
     const photoUrl   = imageUrl((page as { id: string }).id, p["写真"], "写真");
 
     const item: import("@/data/storeContent").FullMenuItem = {
-      name:        (p["メニュー名"] as { title?: Array<{ plain_text: string }> })?.title?.[0]?.plain_text ?? "",
+      name:        (p["メニュー名"] as { title?: Array<{ plain_text: string }> })?.title?.map(part => part.plain_text).join("").trim() ?? "",
       description: text(p["説明"]),
       price:       text(p["価格"]),
       note:        text(p["備考"]) || undefined,
@@ -215,6 +215,8 @@ export async function getFullMenuSections(
       accent: accentColor(selectName(p['アクセント色'])),
       photoMatchOrder: (p['表示順'] as { number?: number })?.number,
     };
+    // A visible but unfinished product must not create an empty menu card.
+    if (!item.name) continue;
     if(lang!=='英語')photoSources.set(page.id,item);
     const reference=(p['対応する日本語商品'] as {relation?:{id:string}[]})?.relation;
     if(reference?.length===1)photoReferences.set(item,reference[0].id);
@@ -359,7 +361,7 @@ export async function getYoshidaSettings(): Promise<{ ja: YoshidaSettings; en: Y
   }
 }
 
-// ── サイト設定取得（Hero・Contact・Footerテキスト用）────────
+// ── サイト設定取得（Contact・Footerテキスト用）────────
 export async function getSiteSettings(): Promise<{ ja: SiteSettings; en: SiteSettings }> {
   if (!SITE_SETTINGS_DB_ID) return { ja: defaultSiteSettings, en: defaultSiteSettingsEn };
 
@@ -376,8 +378,6 @@ export async function getSiteSettings(): Promise<{ ja: SiteSettings; en: SiteSet
       const p = (page as { properties: Record<string, Record<string, unknown>> }).properties;
       const lang = selectName(p["言語"]);
       const s: SiteSettings = {
-        heroEnglishLabel:      text(p["Hero英語ラベル"])    || defaultSiteSettings.heroEnglishLabel,
-        heroCatchphrase:       text(p["Heroキャッチコピー"]) || defaultSiteSettings.heroCatchphrase,
         footerTagline:         text(p["フッタータグライン"])  || defaultSiteSettings.footerTagline,
         contactDescription:    text(p["Contact説明文"])     || defaultSiteSettings.contactDescription,
         contactReservationUrl: text(p["Contact予約URL"])    || defaultSiteSettings.contactReservationUrl,
