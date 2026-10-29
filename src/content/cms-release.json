@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "revision": "ef345286590a7576a49a04d4aa23f332c83f0c70092dd6e710779a90263f221f",
-  "capturedAt": "2026-10-28T09:01:31.490Z",
+  "revision": "98da09cbbb13c3791e5286f9af2ed16bb1d45bbf02403982b869f434b5ed4c21",
+  "capturedAt": "2026-10-29T04:15:09.114Z",
   "payload": {
     "experience": {
       "journey": [
@@ -271,11 +271,9 @@
       },
       {
         "store": "熊本店",
-        "mode": "外部予約サイト",
-        "note": "玉手箱のご利用に事前予約は不要です。お席のご予約はホットペッパーグルメで承ります。空席・受付条件は予約先のページでご確認ください。お電話でのお問い合わせも承っています。",
-        "noteEn": "No advance reservation is required for the Tamatebako sweets. Book a table through Hot Pepper Gourmet (Japanese), where you can check availability and booking conditions. You can also call the shop with enquiries.",
-        "url": "https://www.hotpepper.jp/strJ004049475/yoyaku/",
-        "urlEn": "https://www.hotpepper.jp/strJ004049475/yoyaku/"
+        "mode": "電話・お問い合わせ",
+        "note": "玉手箱のご利用に事前予約は不要です。ネット予約ページを確認中のため、お席のご予約・空席のお問い合わせは店舗へお電話ください。",
+        "noteEn": "No advance reservation is required for the Tamatebako sweets. We are checking the online booking page. Please call the shop for table reservations and availability."
       }
     ],
     "stores": {
