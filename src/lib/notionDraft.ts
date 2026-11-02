@@ -204,7 +204,8 @@ export async function getFullMenuSections(
     const categoryId = text(p['カテゴリー']);
     const [categoryJa, categoryEn] = text(p['カテゴリー']).split('｜');
     const lang       = selectName(p["言語"]);
-    const photoUrl   = imageUrl((page as { id: string }).id, p["写真"], "写真");
+    const showPhoto  = selectName(p['写真の表示']) !== '表示しない';
+    const photoUrl   = showPhoto ? imageUrl((page as { id: string }).id, p["写真"], "写真") : undefined;
 
     const item: import("@/data/storeContent").FullMenuItem = {
       name:        (p["メニュー名"] as { title?: Array<{ plain_text: string }> })?.title?.map(part => part.plain_text).join("").trim() ?? "",
@@ -212,6 +213,7 @@ export async function getFullMenuSections(
       price:       text(p["価格"]),
       note:        text(p["備考"]) || undefined,
       photoUrl,
+      showPhoto,
       accent: accentColor(selectName(p['アクセント色'])),
       photoMatchOrder: (p['表示順'] as { number?: number })?.number,
     };
@@ -240,6 +242,7 @@ export async function getFullMenuSections(
   for (const [categoryId, enSection] of enMap) {
     const jaItems = jaMap.get(categoryId)?.items ?? [];
     enSection.items.forEach(item => {
+      if (item.showPhoto === false) return;
       const matches = typeof item.photoMatchOrder==='number' ? jaItems.filter(ja=>ja.photoMatchOrder===item.photoMatchOrder) : [];
       const linkedId=photoReferences.get(item);
       const match=linkedId?photoSources.get(linkedId):matches.length===1?matches[0]:undefined;

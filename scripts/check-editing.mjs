@@ -43,11 +43,10 @@ test('booking links accept HTTPS only, never script/data/credential URLs',()=>{
   assert.equal(safeBookingUrl('https://example.com/book?shop=kyoto'),'https://example.com/book?shop=kyoto');
   assert.ok(DEFAULT_BOOKING.every(s=>s.mode==='電話・お問い合わせ'&&!s.url));
 });
-test('menu layout retains four/two columns and editable 7:5 framing',async()=>{
+test('menu layout aligns mixed photos in two/one columns and retains editable framing',async()=>{
   const css=await readFile(new URL('../src/app/globals.css',import.meta.url),'utf8');
-  assert.match(css,/\.menu-items\s*\{[^}]*repeat\(4,/);
   assert.match(css,/\.menu-items\s*\{[^}]*repeat\(2,/);
-  assert.doesNotMatch(css,/\.menu-items\s*\{[^}]*grid-template-columns:\s*1fr;/);
+  assert.match(css,/\.menu-items\s*\{[^}]*grid-template-columns:\s*1fr;/);
   assert.match(css,/aspect-ratio:\s*var\(--menu-image-aspect/);
 });
 test('new uploads cannot inherit unrelated depth maps',async()=>{
