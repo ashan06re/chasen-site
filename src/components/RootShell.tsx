@@ -27,6 +27,9 @@ const notoSerifJP = Noto_Serif_JP({
 export default function RootShell({ lang, children }: { lang: Lang; children: React.ReactNode }) {
   return (
     <html lang={lang} data-scroll-behavior="smooth" className={`${cormorant.variable} ${notoSerifJP.variable}`}>
+      {/* This is the App Router root document shared by both language layouts.
+          Keep the restoration guard before body parsing; next/head is for Pages Router. */}
+      {/* eslint-disable-next-line @next/next/no-head-element */}
       <head><script dangerouslySetInnerHTML={{ __html: homeEntryScript }} /></head>
       <body>
         <LangProvider lang={lang}><NavigationScroll />{children}</LangProvider>
