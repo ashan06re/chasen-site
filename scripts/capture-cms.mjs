@@ -3,7 +3,7 @@ import {registerHooks} from 'node:module';
 import nextEnv from '@next/env';
 const {loadEnvConfig}=nextEnv;
 import {existsSync} from 'node:fs';
-import {readFile,writeFile,mkdir,rename} from 'node:fs/promises';
+import {writeFile,mkdir,rename} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
