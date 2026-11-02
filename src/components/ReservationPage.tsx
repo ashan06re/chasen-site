@@ -20,8 +20,9 @@ export default function ReservationPage({settings,stores,storesEn}:{settings:Boo
       <Link className="editorial-text-link" href={localize(`/stores/${store.slug}/menu`)}>{en?'Explore the menu':'お品書きを見る'} →</Link></div>
       {!closed&&kyotoForm&&setting.store==='高台寺店'&&<div className="reservation-help">
         <h3>{en?'Request, availability check, confirmation':'お申込みから、予約確定まで'}</h3>
-        <p>{en?'Submitting the form does not confirm a booking. We check availability at the shop, then email you. Your booking is confirmed when we send a confirmation email. We aim to respond within 12 hours; please call for urgent requests.':'フォームの送信だけでは予約は確定しません。店舗で空席を確認し、確定のメールをお送りした時点で予約成立となります。回答は12時間以内が目安です。お急ぎの場合は店舗へお電話ください。'}</p>
+        <p>{en?'Submitting the form does not confirm a booking. We check availability at the shop, then email you. Your booking is confirmed when we send a confirmation email. For visits today or tomorrow (Japan time), we prioritize requests and aim to reply within 12 hours. Requests for later dates are reviewed each morning from around 09:00, with a reply aimed by noon on the day after submission at the latest. Please call for urgent requests.':'フォームの送信だけでは予約は確定しません。店舗で空席を確認し、確定のメールをお送りした時点で予約成立となります。当日・翌日のご来店は優先し、12時間以内を目安に返信します。明後日以降のご来店は毎朝9時頃から順次確認し、遅くとも申込翌日の正午までを目安に返信します。日時はすべて日本時間です。お急ぎの場合は店舗へお電話ください。'}</p>
         <p>{en?'Form hours: 06:00–before 22:00 Japan time. Request a visit from today through 60 days ahead, at least 6 hours in advance, for 1–8 guests. For 9 or more guests, please contact the shop.':'フォーム受付は日本時間6:00〜22:00未満。当日から60日先まで、来店希望時刻の6時間前まで、1〜8名でお申込みいただけます。9名以上は店舗へご相談ください。'}</p>
+        <p>{en?'Please check your inbox and spam folder for an email from kyoto@chasenco.com. If no reply arrives by the relevant time, or your visit is approaching, contact the shop. You do not need to submit the same request again.':'kyoto@chasenco.com からのメールを、迷惑メールフォルダも含めてご確認ください。目安を過ぎても返信がない場合や、ご来店希望時刻が近い場合は店舗へご連絡ください。同じ申込みを再送する必要はありません。'}</p>
         <Link className="editorial-text-link" href={localize('/privacy')}>{en?'How we handle your information':'個人情報の取り扱い'} →</Link>
       </div>}
     </article>;})}</div>
