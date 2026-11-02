@@ -9,13 +9,13 @@ import { homeEntryScript } from "@/lib/homeEntry";
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
+  weight: "variable",
   display: "swap",
 });
 
 const notoSerifJP = Noto_Serif_JP({
   variable: "--font-noto-serif-jp",
-  weight: ["300", "400", "500", "700"],
+  weight: "variable",
   display: "swap",
   preload: false,
 });
