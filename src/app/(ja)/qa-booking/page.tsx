@@ -19,8 +19,8 @@ export default async function BookingQaPage() {
   const stores = await getAllStoreInfo();
   const settings: BookingSetting[] = [{
     store: '高台寺店', mode: '電話・お問い合わせ', url: ja, urlEn: en,
-    note: '限定テスト：ご本人のテスト用メールのみ使用してください。送信だけでは予約確定になりません。申込受付は日本時間6:00〜22:00、来店希望は月〜日11:00〜21:00（不定休）。当日を含め、来店希望時刻の6時間前まで受付。1〜8名、9名以上は電話・店舗メールへ。返信目安12時間以内。',
-    noteEn: 'Private test: use only the approved test email. Submitting a request does not confirm a booking. Requests: 06:00–22:00 Japan time. Visits: Mon–Sun 11:00–21:00, with irregular closures. Submit at least 6 hours before the requested visit time, including same-day requests. 1–8 guests; 9+ by phone or shop email. Reply within 12 hours.',
+    note: '限定テスト：ご本人のテスト用メールのみ使用してください。送信だけでは予約確定になりません。申込受付は日本時間6:00〜22:00、来店希望は月〜日11:00〜21:00（不定休）。当日を含め、来店希望時刻の6時間前まで受付。1〜8名、9名以上は電話・店舗メールへ。当日・翌日の来店は優先して12時間以内を目安に返信。明後日以降は毎朝9時頃から順次確認し、遅くとも申込翌日の正午までが返信目安（日本時間）。',
+    noteEn: 'Private test: use only the approved test email. Submitting a request does not confirm a booking. Requests: 06:00–22:00 Japan time. Visits: Mon–Sun 11:00–21:00, with irregular closures. Submit at least 6 hours before the requested visit time, including same-day requests. 1–8 guests; 9+ by phone or shop email. Visits today or tomorrow: prioritized, with a reply aimed within 12 hours. Later visits: reviewed from around 09:00 each morning, with a reply aimed by noon on the day after submission at the latest (Japan time).',
   }];
   return <>
     <aside style={{ position: 'relative', zIndex: 60, background: '#3d4b36', color: '#fff', padding: '16px 24px' }}>
