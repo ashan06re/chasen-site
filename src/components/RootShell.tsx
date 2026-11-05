@@ -9,13 +9,13 @@ import { homeEntryScript } from "@/lib/homeEntry";
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
+  weight: "variable",
   display: "swap",
 });
 
 const notoSerifJP = Noto_Serif_JP({
   variable: "--font-noto-serif-jp",
-  weight: ["300", "400", "500", "700"],
+  weight: "variable",
   display: "swap",
   preload: false,
 });
@@ -27,6 +27,9 @@ const notoSerifJP = Noto_Serif_JP({
 export default function RootShell({ lang, children }: { lang: Lang; children: React.ReactNode }) {
   return (
     <html lang={lang} data-scroll-behavior="smooth" className={`${cormorant.variable} ${notoSerifJP.variable}`}>
+      {/* This is the App Router root document shared by both language layouts.
+          Keep the restoration guard before body parsing; next/head is for Pages Router. */}
+      {/* eslint-disable-next-line @next/next/no-head-element */}
       <head><script dangerouslySetInnerHTML={{ __html: homeEntryScript }} /></head>
       <body>
         <LangProvider lang={lang}><NavigationScroll />{children}</LangProvider>

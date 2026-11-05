@@ -5,9 +5,8 @@ import Link from "next/link";
 import Header from "./Header";
 import type { FullMenuSection, StoreInfo } from "@/data/storeContent";
 import { useLang } from "@/lib/langContext";
-import DepthPanel from "./DepthPanel";
 import MenuUpcoming from "./MenuUpcoming";
-import { DEFAULT_APPEARANCE, defaultExperience, type Appearance, type Experience } from '@/lib/experience';
+import { DEFAULT_APPEARANCE, type Appearance } from '@/lib/experience';
 import { readableOn } from '@/lib/color';
 
 interface Props {
@@ -18,10 +17,9 @@ interface Props {
   reservationUrl?: string;
   reservationUrlEn?: string;
   appearance?: Appearance;
-  experience?: Experience;
 }
 
-export default function StoreMenuLayout({ info, infoEn, fullMenu, fullMenuEn, reservationUrl, reservationUrlEn, appearance = DEFAULT_APPEARANCE, experience = defaultExperience() }: Props) {
+export default function StoreMenuLayout({ info, infoEn, fullMenu, fullMenuEn, reservationUrl, reservationUrlEn, appearance = DEFAULT_APPEARANCE }: Props) {
   const { lang, localize } = useLang();
   const en = lang === "en";
   const currentInfo = en && infoEn ? infoEn : info;
@@ -48,7 +46,6 @@ export default function StoreMenuLayout({ info, infoEn, fullMenu, fullMenuEn, re
   const name = currentInfo.name;
   const reserve = (en ? reservationUrlEn || reservationUrl : reservationUrl) || localize("/#contact");
   const reset = () => { setQuery(""); selectCategory("all"); };
-  const artwork = info.slug === 'kyoto' ? experience.scenes[4] : experience.kumamoto;
 
   if (!sections.length) return <MenuUpcoming info={info} infoEn={infoEn} />;
 
@@ -60,9 +57,9 @@ export default function StoreMenuLayout({ info, infoEn, fullMenu, fullMenuEn, re
           <Link href={localize("/")}>Chasen</Link><span aria-hidden>/</span>
           <Link href={localize(`/stores/${currentInfo.slug}`)}>{name}</Link><span aria-hidden>/</span><span>{en ? "Menu" : "お品書き"}</span>
         </nav>
-        <section className="menu-intro">
+        <section className="menu-intro menu-intro-typeset">
           <div><p className="eyebrow">{currentInfo.area.toUpperCase()} / MENU</p><h1>{en ? "A taste of Chasen." : "お品書き"}<small>{name}</small></h1><p>{en ? "Find your next favourite. Browse by category or search the menu." : "気になる一品を、ゆっくりと。\nカテゴリーや品名から、お好きな味をお探しください。"}</p></div>
-          <div className="editorial-photo menu-painted-intro"><DepthPanel src={artwork.src} depthSrc={artwork.depth} motion={artwork.motion} alt={en ? artwork.altEn : artwork.alt} fit="contain" /></div>
+          <p className="menu-signature" aria-hidden="true">{en ? <>Tea, sweets,<br />a little time.</> : <>A taste of<br />Chasen.</>}</p>
         </section>
       </div>
 
@@ -79,15 +76,22 @@ export default function StoreMenuLayout({ info, infoEn, fullMenu, fullMenuEn, re
       <div className="editorial-wrap menu-results" ref={resultsRef}>
         <p className="menu-count" role="status" aria-live="polite">{en ? `${count} items` : `${count} 品を表示`}</p>
         {visibleSections.map(section => <section id={section.id} className="menu-category" key={section.id}>
-          <div className="menu-category-heading"><h2>{en ? section.labelEn : section.label}</h2>{!en && <p>{section.labelEn}</p>}</div>
+          <div className="menu-category-heading"><span className="menu-category-number" aria-hidden="true">{String(sections.findIndex(original => original.id === section.id) + 1).padStart(2, "0")}</span><h2>{en ? section.labelEn : section.label}</h2>{!en && <p>{section.labelEn}</p>}</div>
           <div className="menu-items">
-            {section.items.map((item, index) => <article className={`menu-item ${item.photoUrl ? "" : "no-photo"}`} key={`${item.name}-${index}`} style={{'--menu-accent':readableOn(item.accent || section.accent, '#0B0C0A')} as CSSProperties}>
-              {item.photoUrl && <div className="menu-item-photo"><Image src={item.photoUrl} unoptimized={item.photoUrl.startsWith('/api/')} alt={en ? item.nameEn || item.name : item.name} fill sizes="(max-width: 767px) 45vw, (max-width: 1279px) 23vw, 280px" style={{objectFit:'cover',objectPosition:'center'}} /></div>}
-              {item.note && <p className="menu-item-note">{en ? item.noteEn || item.note : item.note}</p>}
-              <h3>{en ? item.nameEn || item.name : item.name}</h3>
-              {item.description && <p className="menu-item-description">{en ? item.descriptionEn || item.description : item.description}</p>}
-              {item.price && <p className="menu-price">{item.price}{appearance.priceNote && <small>{en ? appearance.priceNote==='税込'?'incl. tax':'excl. tax' : appearance.priceNote}</small>}</p>}
-            </article>)}
+            {section.items.map((item, index) => {
+              const photoUrl = item.showPhoto === false ? undefined : item.photoUrl;
+              return <article className={`menu-item ${photoUrl ? "" : "no-photo"}`} key={`${item.name}-${index}`} style={{'--menu-accent':readableOn(item.accent || section.accent, '#0B0C0A')} as CSSProperties}>
+                <div className="menu-item-copy">
+                  <div className="menu-item-heading">
+                    {item.note && <p className="menu-item-note">{en ? item.noteEn || item.note : item.note}</p>}
+                    <h3>{en ? item.nameEn || item.name : item.name}</h3>
+                  </div>
+                  {item.description && <p className="menu-item-description">{en ? item.descriptionEn || item.description : item.description}</p>}
+                  {item.price && <p className="menu-price">{item.price}{appearance.priceNote && <small>{en ? appearance.priceNote==='税込'?'incl. tax':'excl. tax' : appearance.priceNote}</small>}</p>}
+                </div>
+                {photoUrl && <div className="menu-item-photo"><Image src={photoUrl} unoptimized={photoUrl.startsWith('/api/')} alt={en ? item.nameEn || item.name : item.name} fill sizes="(max-width: 767px) 36vw, 180px" style={{objectFit:'cover',objectPosition:'center'}} /></div>}
+              </article>;
+            })}
           </div>
         </section>)}
         {count === 0 && <div className="menu-empty"><p>{en ? "No items match your search. Try a different word or category." : "該当するメニューがありません。\nキーワードやカテゴリーを変えてお探しください。"}</p><button type="button" className="editorial-button" onClick={reset}>{en ? "Show all items" : "すべてのメニューを表示"}</button></div>}

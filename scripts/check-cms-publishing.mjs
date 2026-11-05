@@ -131,3 +131,47 @@ test('new home introduction is editable in both languages',async()=>{
  respond(()=>result([{id:'intro',properties:{掲載場所:sel('新ホーム｜導入文'),見出し:txt('導入'),'見出し（英語）':txt('Introduction'),説明文:txt('本文'),'説明文（英語）':txt('Body'),画像の説明:txt('店の説明'),'画像の説明（英語）':txt('Identity'),ラベル:txt('LABEL')}}]));
  const {journeyIntro:c}=await getExperience();assert.deepEqual(c,{identity:'店の説明',identityEn:'Identity',label:'LABEL',title:'導入',titleEn:'Introduction',body:'本文',bodyEn:'Body'});
 });
+
+const menuPhotoRow=(id,lang,{visibility,photo=true,order=1,reference,category='甘味｜Sweets'}={})=>({id,properties:{
+ メニュー名:{title:[{plain_text:id}]},言語:sel(lang),カテゴリー:sel(category),表示順:{number:order},
+ 説明:txt('商品説明'),価格:txt('¥500'),備考:txt('限定'),
+ ...(visibility===undefined?{}:{写真の表示:visibility===null?{select:null}:sel(visibility)}),
+ ...(photo?{写真:{files:[{external:{url:`https://example.com/${id}.webp`}}]}}:{}),
+ ...(reference?{'対応する日本語商品':{relation:[{id:reference}]}}:{}),
+}});
+function respondMenu(rows){respond(({database_id})=>database_id==='publication-fixture'?result([publication('投稿する')]):result(rows));}
+test('photo visibility preserves products and content, with backward-compatible unset/empty defaults',async()=>{
+ for(const visibility of [undefined,null,'表示する','表示しない']){
+  respondMenu([menuPhotoRow('ja','日本語',{visibility})]);
+  const {ja}=await getFullMenuSections('高台寺店');
+  const item=ja[0].items[0];assert.equal(ja[0].items.length,1);
+  assert.equal(item.name,'ja');assert.equal(item.description,'商品説明');assert.equal(item.price,'¥500');assert.equal(item.note,'限定');
+  assert.equal(item.showPhoto,visibility!=='表示しない');
+  assert.equal(item.photoUrl,visibility==='表示しない'?undefined:'https://example.com/ja.webp');
+ }
+});
+test('English explicit hide wins over own photo, linked Japanese photo and display-order fallback',async()=>{
+ for(const photo of [false,true])for(const reference of [undefined,'ja']){
+  respondMenu([menuPhotoRow('ja','日本語'),menuPhotoRow('en','英語',{visibility:'表示しない',photo,reference})]);
+  const {ja,en}=await getFullMenuSections('高台寺店');
+  assert.equal(ja[0].items[0].photoUrl,'https://example.com/ja.webp');
+  assert.equal(en[0].items[0].photoUrl,undefined);assert.equal(en[0].items[0].name,'en');
+ }
+});
+test('English fallback respects source visibility but its own visible photo remains independent',async()=>{
+ for(const reference of [undefined,'ja'])for(const hidden of [false,true]){
+  respondMenu([menuPhotoRow('ja','日本語',{visibility:hidden?'表示しない':'表示する'}),menuPhotoRow('en','英語',{photo:false,reference})]);
+  const {en}=await getFullMenuSections('高台寺店');
+  assert.equal(en[0].items[0].photoUrl,hidden?undefined:'https://example.com/ja.webp');
+ }
+ respondMenu([menuPhotoRow('ja','日本語',{visibility:'表示しない'}),menuPhotoRow('en','英語',{reference:'ja'})]);
+ assert.equal((await getFullMenuSections('高台寺店')).en[0].items[0].photoUrl,'https://example.com/en.webp');
+});
+test('English fallback never uses another product when order is ambiguous or the explicit source is unavailable',async()=>{
+ for(const reference of [undefined,'missing']){
+  respondMenu([menuPhotoRow('ja1','日本語'),menuPhotoRow('ja2','日本語'),menuPhotoRow('en','英語',{photo:false,reference})]);
+  assert.equal((await getFullMenuSections('高台寺店')).en[0].items[0].photoUrl,undefined);
+ }
+ respondMenu([menuPhotoRow('ja1','日本語'),menuPhotoRow('ja2','日本語'),menuPhotoRow('en','英語',{photo:false,reference:'ja2'})]);
+ assert.equal((await getFullMenuSections('高台寺店')).en[0].items[0].photoUrl,'https://example.com/ja2.webp');
+});

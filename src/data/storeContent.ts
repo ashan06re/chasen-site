@@ -78,6 +78,8 @@ export interface FullMenuItem {
   note?: string;      // 例: "hot / ice", "夏季限定", "平日限定"
   noteEn?: string;
   photoUrl?: string;
+  /** Explicit false hides the photo, including any translated-photo fallback. */
+  showPhoto?: boolean;
   accent?: string;
   photoMatchOrder?: number;
 }

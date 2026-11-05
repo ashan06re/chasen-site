@@ -7,7 +7,7 @@ import MenuUpcoming from "@/components/MenuUpcoming";
 import { getMenuPublication } from "@/lib/notion";
 import Footer from "@/components/Footer";
 import { storeContent } from "@/data/storeContent";
-import { getFullMenuSections, getAllStoreInfo, getReservationUrls, getExperience, getAppearance } from "@/lib/notion";
+import { getFullMenuSections, getAllStoreInfo, getReservationUrls, getAppearance } from "@/lib/notion";
 
 export const revalidate = 0;
 
@@ -33,10 +33,10 @@ export default async function KyotoMenuPage() {
   const currentInfo = stores?.ja["高台寺店"] || info;
   const currentInfoEn = stores?.en["高台寺店"];
   if (!published) return <><MenuUpcoming info={currentInfo} infoEn={currentInfoEn} /><Footer /></>;
-  const [result, reservation, experience, appearance] = await Promise.all([
+  const [result, reservation, appearance] = await Promise.all([
     getFullMenuSections("高台寺店").catch(() => ({ ja: [], en: [] })),
     getReservationUrls().catch(() => ({ ja: "#", en: "#" })),
-    getExperience(), getAppearance(),
+    getAppearance(),
   ]);
 
   if (!result.ja.length && !result.en.length) return <><MenuUpcoming info={currentInfo} infoEn={currentInfoEn} /><Footer /></>;
@@ -45,7 +45,7 @@ export default async function KyotoMenuPage() {
 
   return (
     <>
-      <StoreMenuLayout info={currentInfo} infoEn={currentInfoEn} fullMenu={jaMenu} fullMenuEn={enMenu} experience={experience} appearance={appearance} reservationUrl={reservation.ja !== "#" ? reservation.ja : undefined} reservationUrlEn={reservation.en !== "#" ? reservation.en : undefined} />
+      <StoreMenuLayout info={currentInfo} infoEn={currentInfoEn} fullMenu={jaMenu} fullMenuEn={enMenu} appearance={appearance} reservationUrl={reservation.ja !== "#" ? reservation.ja : undefined} reservationUrlEn={reservation.en !== "#" ? reservation.en : undefined} />
       <Footer />
     </>
   );
